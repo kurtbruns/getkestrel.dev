@@ -1,0 +1,11 @@
+{{- /*
+  Gated on hugo.Environment: production builds (deploy.yml) advertise the
+  sitemap; preview builds (ci.yml, HUGO_ENVIRONMENT=preview) Disallow all
+  crawlers so PR preview aliases on *.workers.dev don't get indexed.
+*/ -}}
+{{- if eq hugo.Environment "production" -}}
+Sitemap: {{ "sitemap.xml" | absURL }}
+{{- else -}}
+User-agent: *
+Disallow: /
+{{- end -}}
