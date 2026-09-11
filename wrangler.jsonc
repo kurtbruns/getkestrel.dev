@@ -16,14 +16,15 @@
     "directory": "./public",
     "html_handling": "auto-trailing-slash",
     "not_found_handling": "404-page"
-  },
-  // Production custom domains. custom_domain = true lets wrangler manage the
-  // proxied DNS record + edge cert. The www route exists so the dashboard's
-  // www -> apex Redirect Rule has a target + cert to sit on top of. The DNS
-  // cutover itself lives in the Publish issue (#6); these routes are here so
-  // the first production deploy from main provisions the custom domains.
-  "routes": [
-    { "pattern": "getkestrel.dev", "custom_domain": true },
-    { "pattern": "www.getkestrel.dev", "custom_domain": true }
-  ]
+  }
+  // Production custom domains — DEFERRED TO #6 (Publish v1). custom_domain =
+  // true makes `wrangler deploy` provision the proxied DNS record + edge cert
+  // and cut getkestrel.dev's DNS over to this worker. They stay commented out
+  // until launch so merging/deploying the hosting layer doesn't publish the
+  // placeholder site early. PR preview aliases (`versions upload`) don't need
+  // routes, so previews work meanwhile. #6 uncomments these for the cutover.
+  // "routes": [
+  //   { "pattern": "getkestrel.dev", "custom_domain": true },
+  //   { "pattern": "www.getkestrel.dev", "custom_domain": true }
+  // ]
 }
