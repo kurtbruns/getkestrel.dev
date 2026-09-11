@@ -5,7 +5,10 @@ locale = 'en-us'
 title = 'Kestrel'
 
 [params]
-description = 'Run your own Kestrel — an open-source, self-hosted newsletter you actually own.'
+description = 'Run your own Kestrel — a small, self-hosted newsletter app. Write in Markdown, preview the exact email, schedule with a review window, and send to a double opt-in list, while owning the list, the consent, the delivery record, and the archive.'
+tagline = 'Own your newsletter.'
+repoApp = 'https://github.com/kurtbruns/kestrel'
+repoSite = 'https://github.com/kurtbruns/getkestrel.dev'
 
 # No tags/categories on this site — clear Hugo's default taxonomies so it
 # doesn't emit empty /tags and /categories term pages and feeds.

@@ -1,4 +1,229 @@
 {{ define "main" }}
-  <h1>{{ .Title }}</h1>
-  {{ .Content }}
+
+{{/* ------------------------------------------------------------- hero */}}
+<section class="hero">
+  <div class="wrap">
+    <p class="eyebrow">Self-hosted newsletter</p>
+    <h1>Run your own newsletter.</h1>
+    <p class="lead">
+      Kestrel is a small, self-hosted newsletter app. Write in Markdown, preview
+      the exact email, schedule with a cancelable review window, and send to a
+      double&nbsp;opt-in list — while <em>you</em> own the list, the consent
+      record, the delivery record, and a permanent per-issue archive.
+    </p>
+    <div class="cta-row">
+      <a class="btn" href="#quickstart">Self-host quickstart</a>
+      <a class="btn btn-ghost" href="{{ site.Params.repoApp }}">View on GitHub</a>
+    </div>
+    <p class="cta-note">Runs on your own Cloudflare account — your data never leaves it.</p>
+
+    <div class="preview" role="img" aria-label="Screenshot of the Kestrel editor, coming soon">
+      <div class="preview-bar">
+        <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+        <span class="addr">localhost:8787/dashboard</span>
+      </div>
+      <div class="preview-body">
+        <p class="ph"><strong>A screenshot of the editor and the published archive lands here.</strong><br>
+        Real pixels from the running app, generated from the demo publication.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+{{/* -------------------------------------------------------- ownership */}}
+<section class="section">
+  <div class="wrap">
+    <div class="section-head">
+      <p class="eyebrow">Ownership</p>
+      <h2>You keep what matters</h2>
+      <p>The pitch isn't another sending API. It's that the parts a newsletter is
+        actually made of stay yours.</p>
+    </div>
+    <div class="grid grid-4">
+      <div class="card">
+        <p class="k">The list</p>
+        <h3>Your subscribers</h3>
+        <p>They live in your own D1 database, not a vendor's. Query or export them
+          any time — nobody rents you access to your own audience.</p>
+      </div>
+      <div class="card">
+        <p class="k">The consent</p>
+        <h3>Proof of permission</h3>
+        <p>Every subscription is double opt-in, with the confirmation and the
+          unsubscribe recorded. The evidence you had consent stays with you.</p>
+      </div>
+      <div class="card">
+        <p class="k">The delivery</p>
+        <h3>An auditable record</h3>
+        <p>Each send records who received which issue, plus suppressions from
+          hard bounces and spam complaints — a trail you control.</p>
+      </div>
+      <div class="card">
+        <p class="k">The archive</p>
+        <h3>A permanent home</h3>
+        <p>Every issue gets a lasting public page on your own domain. The links
+          you send never rot behind someone else's platform.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+{{/* ------------------------------------------------------- how it works */}}
+<section class="section">
+  <div class="wrap">
+    <div class="section-head">
+      <p class="eyebrow">How it works</p>
+      <h2>Write, preview, schedule, send</h2>
+      <p>One interface — an HTTP API — with two clients: a web editor and Claude.
+        The steps are the same either way.</p>
+    </div>
+    <div class="flow">
+      <div class="flow-step">
+        <h3>Write in Markdown</h3>
+        <p>Draft an issue in the web editor or hand it to Claude. Same API
+          underneath, same result — and a stale save is rejected, not clobbered,
+          if a draft changed under you.</p>
+      </div>
+      <div class="flow-step">
+        <h3>Preview the exact email</h3>
+        <p>See precisely what lands in the inbox: the rendered email HTML and
+          plain-text, not an approximation. Send yourself a test first.</p>
+      </div>
+      <div class="flow-step">
+        <h3>Schedule with a review window</h3>
+        <p>Queue a send behind a cancelable countdown. Change your mind and cancel
+          before it fires; a Cron Trigger drives the sweep when it does.</p>
+      </div>
+      <div class="flow-step">
+        <h3>Send to a double opt-in list</h3>
+        <p>Only confirmed subscribers receive it. The send loop is idempotent, so
+          it never double-sends, and bounces and complaints suppress on their own.</p>
+      </div>
+      <div class="flow-step">
+        <h3>Archive it forever</h3>
+        <p>Each sent issue becomes a permanent, indexable page on your domain —
+          the same content, readable long after the email is buried.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+{{/* ------------------------------------------------------- engineering */}}
+<section class="section eng">
+  <div class="wrap">
+    <div class="section-head">
+      <p class="eyebrow">Under the hood</p>
+      <h2>Built to be operated</h2>
+      <p>Small, legible, and boring in the ways that matter. You run it on your
+        own account and can read every line.</p>
+    </div>
+    <div class="stack">
+      <span class="chip">TypeScript</span>
+      <span class="chip">Cloudflare Workers</span>
+      <span class="chip">D1</span>
+      <span class="chip">R2</span>
+      <span class="chip">Cron Triggers</span>
+      <span class="chip">SES</span>
+      <span class="chip">Resend</span>
+    </div>
+    <dl>
+      <div class="spec">
+        <dt>One API, two clients</dt>
+        <dd>A single HTTP API drives everything; the web editor and Claude are
+          just clients of it. Nothing the editor can do is off-API.</dd>
+      </div>
+      <div class="spec">
+        <dt>Optimistic concurrency</dt>
+        <dd>Edits are revision-checked (<code>If-Match</code> / <code>ETag</code>),
+          so a stale write is rejected with <code>409</code> instead of overwriting
+          a newer draft.</dd>
+      </div>
+      <div class="spec">
+        <dt>Idempotent send loop</dt>
+        <dd>The scheduled sweep is safe to retry — it resumes a send without
+          re-mailing anyone who already received the issue.</dd>
+      </div>
+      <div class="spec">
+        <dt>Three isolated environments</dt>
+        <dd>dev, staging, and production each get their own database, storage, and
+          mail transport — so development can never reach a real inbox.</dd>
+      </div>
+      <div class="spec">
+        <dt>Swappable email provider</dt>
+        <dd>SES or Resend in production; a fake in-memory transport for local dev
+          and tests. It's one variable.</dd>
+      </div>
+      <div class="spec">
+        <dt>Access-gated admin</dt>
+        <dd>Authoring sits behind Cloudflare Access. The reader pages are public,
+          gated only by unguessable per-subscriber tokens.</dd>
+      </div>
+    </dl>
+  </div>
+</section>
+
+{{/* ------------------------------------------------------ pieces fit */}}
+<section class="section">
+  <div class="wrap">
+    <div class="section-head">
+      <p class="eyebrow">How the pieces fit</p>
+      <h2>Three repos, one source of truth</h2>
+    </div>
+    <div class="pieces">
+      <div class="piece">
+        <p class="repo">kurtbruns/kestrel</p>
+        <h3>The app</h3>
+        <p>The Worker, the editor, the API, and the operator docs. Fork it, deploy
+          it to your account, own the instance.</p>
+      </div>
+      <div class="piece">
+        <p class="repo">getkestrel.dev</p>
+        <h3>This site</h3>
+        <p>The front door you're reading — a static Hugo site on Cloudflare
+          Workers. It owns none of your data.</p>
+      </div>
+      <div class="piece">
+        <p class="repo">kestrel/docs/setup</p>
+        <h3>The source of truth</h3>
+        <p>The operator guide lives in the app repo and is rendered both here and
+          inside the editor — one canonical copy, never forked.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+{{/* --------------------------------------------------------- quickstart */}}
+<section class="section" id="quickstart">
+  <div class="wrap">
+    <div class="section-head">
+      <p class="eyebrow">Self-host</p>
+      <h2>From clone to a running instance</h2>
+      <p>Local dev needs Node and npm — no Cloudflare account required until you
+        deploy. The shortest honest path:</p>
+    </div>
+    <pre class="card" style="overflow:auto"><code>git clone {{ site.Params.repoApp }}
+cd kestrel &amp;&amp; npm install
+cp .dev.vars.example .dev.vars
+npm run dev     <span class="muted"># http://localhost:8787</span>
+npm run seed    <span class="muted"># load the demo publication</span></code></pre>
+    <p style="color:var(--muted); margin-top:20px;">
+      Standing up a real, deployed instance — Cloudflare, one Access application,
+      SES or Resend, sending-domain DNS — is the
+      <a href="{{ site.Params.repoApp }}/tree/main/docs/setup" style="color:var(--ink); text-decoration:underline; text-underline-offset:2px;">operator setup guide</a>.
+    </p>
+  </div>
+</section>
+
+{{/* --------------------------------------------------------- final cta */}}
+<section class="section cta-end">
+  <div class="wrap">
+    <h2>Your audience. Your data. Your newsletter.</h2>
+    <p>Kestrel is self-hosted and runs entirely on your own Cloudflare account.</p>
+    <div class="cta-row">
+      <a class="btn" href="#quickstart">Self-host quickstart</a>
+      <a class="btn btn-ghost" href="{{ site.Params.repoApp }}">View on GitHub</a>
+    </div>
+  </div>
+</section>
+
 {{ end }}

@@ -1,4 +1,8 @@
 {{ define "main" }}
-  <h1>Page not found</h1>
-  <p>Sorry, that page doesn’t exist. <a href="{{ "/" | relURL }}">Go home</a>.</p>
+<div class="prose">
+  <p class="eyebrow">404</p>
+  <h1>This page flew off.</h1>
+  <p>That page doesn’t exist. Head back to the <a href="{{ "/" | relURL }}">front door</a>,
+    or find the code on <a href="{{ site.Params.repoApp }}">GitHub</a>.</p>
+</div>
 {{ end }}
