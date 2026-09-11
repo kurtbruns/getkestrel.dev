@@ -3,7 +3,7 @@
     <span>&copy; {{ now.Year }} Kestrel</span>
     <nav class="foot-nav">
       <a href="{{ site.Params.repoApp }}">App repo</a>
-      <a href="{{ site.Params.repoApp }}/tree/main/docs/setup">Docs</a>
+      {{ with site.GetPage "/docs" }}<a href="{{ .RelPermalink }}">Docs</a>{{ else }}<a href="{{ site.Params.repoApp }}/tree/main/docs/setup">Docs</a>{{ end }}
       <a href="{{ site.Params.repoSite }}">This site</a>
     </nav>
     <span class="spacer"></span>

@@ -6,7 +6,8 @@
   "private": true,
   "scripts": {
     "serve": "bash scripts/dev-hugo.sh",
-    "dev:worker": "hugo --minify && wrangler dev",
+    "dev:worker": "npm run docs:sync && hugo --minify && wrangler dev",
+    "docs:sync": "node scripts/sync-docs.mjs",
     "hugo:check": "scripts/check-hugo.sh"
   },
   "keywords": [

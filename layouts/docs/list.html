@@ -1,0 +1,15 @@
+{{ define "main" }}
+<div class="docs">
+  <aside class="docs-side">{{ partial "docs-sidebar.html" . }}</aside>
+  <article class="docs-body">
+    <p class="eyebrow">Documentation</p>
+    <h1>{{ .Title }}</h1>
+    {{ .Content }}
+  </article>
+  <aside class="docs-toc">
+    {{ if gt (len .TableOfContents) 80 }}
+    <div class="toc"><p class="toc-h">On this page</p>{{ .TableOfContents }}</div>
+    {{ end }}
+  </aside>
+</div>
+{{ end }}

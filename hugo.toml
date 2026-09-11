@@ -14,6 +14,20 @@ repoSite = 'https://github.com/kurtbruns/getkestrel.dev'
 # doesn't emit empty /tags and /categories term pages and feeds.
 [taxonomies]
 
+[markup]
+  [markup.tableOfContents]
+    startLevel = 2
+    endLevel = 3
+    ordered = false
+  # Class-based syntax highlighting (Chroma) so a light + dark theme can be
+  # swapped via prefers-color-scheme in assets/css/chroma.css.
+  [markup.highlight]
+    noClasses = false
+    tabWidth = 2
+  [markup.goldmark.renderer]
+    # The synced docs are trusted (our own repo); allow their raw HTML if any.
+    unsafe = true
+
 # Runtime tripwire: Hugo refuses to build if the binary is older than `min`.
 # Catches devs who bypass asdf and run a stale local hugo. Keep `min` in
 # sync with `.tool-versions`; `npm run hugo:check` verifies they agree.

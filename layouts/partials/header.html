@@ -5,9 +5,10 @@
       <span>Kestrel</span>
     </a>
     <nav class="nav">
-      {{/* Docs points at the source-of-truth setup guide on GitHub until the
-           mounted /docs/ layout lands (docs-ingestion + docs-layout follow-up). */}}
-      <a class="nav-link" href="{{ site.Params.repoApp }}/tree/main/docs/setup">Docs</a>
+      {{/* /docs/ when the operator docs are synced (issue #3); otherwise fall
+           back to the source-of-truth setup guide on GitHub. */}}
+      {{ with site.GetPage "/docs" }}<a class="nav-link" href="{{ .RelPermalink }}">Docs</a>
+      {{ else }}<a class="nav-link" href="{{ site.Params.repoApp }}/tree/main/docs/setup">Docs</a>{{ end }}
       <a class="nav-link" href="{{ site.Params.repoApp }}">GitHub</a>
       <a class="btn" href="#quickstart">Self-host</a>
     </nav>
