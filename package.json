@@ -5,7 +5,7 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "serve": "hugo serve --port 1516",
+    "serve": "bash scripts/dev-hugo.sh",
     "dev:worker": "hugo --minify && wrangler dev",
     "hugo:check": "scripts/check-hugo.sh"
   },

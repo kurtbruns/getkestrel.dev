@@ -1,0 +1,19 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "Preview site",
+      "runtimeExecutable": "bash",
+      "runtimeArgs": ["scripts/dev-hugo.sh"],
+      "port": 1313,
+      "autoPort": true
+    },
+    {
+      "name": "Preview site — layout & template changes (no fast render)",
+      "runtimeExecutable": "bash",
+      "runtimeArgs": ["scripts/dev-hugo.sh", "--disableFastRender"],
+      "port": 1313,
+      "autoPort": true
+    }
+  ]
+}
