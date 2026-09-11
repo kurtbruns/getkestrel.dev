@@ -1,0 +1,2 @@
+# Hugo version. Mirrored by `min` in hugo.toml; `npm run hugo:check` verifies both match.
+hugo extended_0.164.0

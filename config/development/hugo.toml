@@ -1,0 +1,7 @@
+# Development-environment overrides. `hugo serve` runs in the `development`
+# environment by default, so these apply to the local dev server but NOT to
+# the production `hugo` build. The root hugo.toml is still merged in both.
+#
+# buildDrafts renders draft content on the local dev server without shipping
+# it to production.
+buildDrafts = true

@@ -1,0 +1,12 @@
+{
+  // Keep Hugo build output and deps out of editor search results.
+  "search.exclude": {
+    "public/": true,
+    "resources/": true,
+    "node_modules/": true,
+    ".wrangler/": true
+  },
+  "files.associations": {
+    "*.html": "gotemplate-html"
+  }
+}
