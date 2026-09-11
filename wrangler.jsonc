@@ -1,0 +1,30 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "getkestrel-dev",
+  "compatibility_date": "2026-09-11",
+  // workers_dev: false disables getkestrel-dev.kurtbruns.workers.dev so the
+  // only crawlable production surface is the apex custom domain. PR preview
+  // aliases (pr-<n>-<sha>-getkestrel-dev.kurtbruns.workers.dev) come from
+  // preview_urls + `versions upload --preview-alias`, which is independent
+  // of workers_dev and so still works.
+  "workers_dev": false,
+  "preview_urls": true,
+  "observability": {
+    "enabled": true
+  },
+  "assets": {
+    "directory": "./public",
+    "html_handling": "auto-trailing-slash",
+    "not_found_handling": "404-page"
+  }
+  // Production custom domains — DEFERRED TO #6 (Publish v1). custom_domain =
+  // true makes `wrangler deploy` provision the proxied DNS record + edge cert
+  // and cut getkestrel.dev's DNS over to this worker. They stay commented out
+  // until launch so merging/deploying the hosting layer doesn't publish the
+  // placeholder site early. PR preview aliases (`versions upload`) don't need
+  // routes, so previews work meanwhile. #6 uncomments these for the cutover.
+  // "routes": [
+  //   { "pattern": "getkestrel.dev", "custom_domain": true },
+  //   { "pattern": "www.getkestrel.dev", "custom_domain": true }
+  // ]
+}

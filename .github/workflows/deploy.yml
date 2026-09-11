@@ -1,0 +1,52 @@
+name: Deploy
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:        # manual redeploy
+
+jobs:
+  deploy:
+    runs-on: ubuntu-24.04
+    # CLOUDFLARE_API_TOKEN / CLOUDFLARE_ACCOUNT_ID are scoped to the
+    # `production` GitHub Environment, so the job must opt into it to read them.
+    environment: production
+    concurrency:
+      group: ${{ github.workflow }}-${{ github.ref }}
+    steps:
+
+      - name: Checkout Code
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0    # Full history for .GitInfo and .Lastmod
+
+      - name: Setup Node
+        uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Read Hugo version from .tool-versions
+        id: hugo_version
+        run: echo "version=$(grep '^hugo extended_' .tool-versions | sed 's/^hugo extended_//')" >> "$GITHUB_OUTPUT"
+
+      - name: Setup Hugo
+        uses: peaceiris/actions-hugo@v3
+        with:
+          hugo-version: ${{ steps.hugo_version.outputs.version }}
+          extended: true
+
+      - name: Build
+        run: hugo --minify
+        env:
+          HUGO_ENVIRONMENT: production
+
+      - name: Deploy to Cloudflare Workers
+        uses: cloudflare/wrangler-action@v4
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: deploy

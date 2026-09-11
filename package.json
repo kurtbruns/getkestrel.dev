@@ -16,5 +16,8 @@
     "hugo"
   ],
   "author": "Kurt Bruns",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "wrangler": "^4.131.1"
+  }
 }
