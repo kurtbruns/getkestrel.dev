@@ -1,0 +1,20 @@
+{
+  "name": "getkestrel.dev",
+  "version": "1.0.0",
+  "description": "Landing page and operator docs for Kestrel — getkestrel.dev",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "serve": "hugo serve --port 1516",
+    "dev:worker": "hugo --minify && wrangler dev",
+    "hugo:check": "scripts/check-hugo.sh"
+  },
+  "keywords": [
+    "kestrel",
+    "newsletter",
+    "self-hosted",
+    "hugo"
+  ],
+  "author": "Kurt Bruns",
+  "license": "ISC"
+}
