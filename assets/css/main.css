@@ -363,16 +363,27 @@ pre .muted { color: var(--muted); }
 .docs {
   max-width: 64rem;
   margin: 0 auto;
-  padding: 44px 24px 88px;
+  padding: 0 24px 88px;
   display: grid;
-  grid-template-columns: 12rem minmax(0, 1fr);
-  gap: 40px;
+  grid-template-columns: 13rem minmax(0, 1fr);
+  gap: 44px;
   align-items: start;
 }
-.docs-toc { display: none; }
-.docs-side { position: sticky; top: 76px; }
-.docs-nav-h,
-.docs-toc .toc-h {
+
+/* Contents rail: a viewport-tall sticky pane pinned right under the header
+   with its own scroll, so it stays fixed and never drifts on page scroll.
+   Holds the docs list and the current page's "On this page" TOC below it —
+   the same shape as the Kestrel app's reference-room rail. */
+.docs-side {
+  position: sticky;
+  top: 61px;                 /* header: 60px + 1px border */
+  height: calc(100vh - 61px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 40px 4px 40px 0;
+  scrollbar-width: thin;
+}
+.docs-nav-h {
   font-family: var(--mono);
   font-size: 11px;
   letter-spacing: 0.1em;
@@ -380,9 +391,11 @@ pre .muted { color: var(--muted); }
   color: var(--muted);
   margin: 0 0 12px;
 }
-.docs-side ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 1px; }
-.docs-side a {
-  display: block;
+.docs-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 1px; }
+.docs-list a {
+  display: flex;
+  align-items: center;
+  gap: 9px;
   padding: 6px 10px;
   border-radius: 7px;
   text-decoration: none;
@@ -390,10 +403,27 @@ pre .muted { color: var(--muted); }
   font-size: 14.5px;
   line-height: 1.35;
 }
-.docs-side a:hover { color: var(--ink); background: var(--code-bg); }
-.docs-side a.active { color: var(--ink); background: var(--code-bg); font-weight: 600; }
+.docs-list a svg { width: 15px; height: 15px; flex: none; fill: currentColor; opacity: 0.65; }
+.docs-list a:hover { color: var(--ink); background: var(--code-bg); }
+.docs-list a.active { color: var(--ink); background: var(--code-bg); font-weight: 600; }
+.docs-list a.active svg { opacity: 1; }
 
-.docs-body { min-width: 0; }
+/* On this page — current doc's TOC, stacked below the docs list */
+.docs-onpage { margin-top: 30px; }
+.docs-onpage nav ul { list-style: none; margin: 0; padding: 0; }
+.docs-onpage nav ul ul { padding-left: 12px; }
+.docs-onpage nav a {
+  display: block;
+  padding: 4px 10px;
+  border-radius: 6px;
+  color: var(--muted);
+  text-decoration: none;
+  font-size: 13px;
+  line-height: 1.4;
+}
+.docs-onpage nav a:hover { color: var(--ink); }
+
+.docs-body { min-width: 0; padding-top: 40px; }
 .docs-body > .eyebrow { margin-bottom: 10px; }
 .docs-body > .eyebrow a { color: inherit; text-decoration: none; }
 .docs-body > .eyebrow a:hover { color: var(--ink); }
@@ -417,18 +447,20 @@ pre .muted { color: var(--muted); }
 .docs-body .highlight { margin: 18px 0; border: 1px solid var(--line); border-radius: 10px; overflow: hidden; }
 .docs-body .highlight pre.chroma { margin: 0; padding: 15px 18px; overflow-x: auto; font-size: 13.5px; line-height: 1.6; }
 
-/* in-page TOC */
-.docs-toc { position: sticky; top: 76px; }
-.docs-toc nav ul { list-style: none; margin: 0; padding: 0; }
-.docs-toc nav ul ul { padding-left: 12px; }
-.docs-toc nav a { display: block; padding: 3px 0; color: var(--muted); text-decoration: none; font-size: 13.5px; line-height: 1.4; }
-.docs-toc nav a:hover { color: var(--ink); }
-
 @media (max-width: 1040px) {
-  .docs { grid-template-columns: 1fr; gap: 28px; }
-  .docs-side, .docs-toc { position: static; }
-  .docs-toc { display: none; }
-  .docs-side ul { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 2px 8px; }
+  .docs { grid-template-columns: 1fr; gap: 0; padding-top: 8px; }
+  .docs-side {
+    position: static;
+    height: auto;
+    overflow: visible;
+    padding: 22px 0 6px;
+    border-bottom: 1px solid var(--line);
+    margin-bottom: 22px;
+  }
+  .docs-list { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 2px 8px; }
+  .docs-list a svg { display: none; }
+  .docs-onpage { display: none; }
+  .docs-body { padding-top: 10px; }
 }
 
 @media (prefers-reduced-motion: reduce) {

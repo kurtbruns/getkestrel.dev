@@ -6,10 +6,5 @@
     <h1>{{ .Title }}</h1>
     {{ .Content }}
   </article>
-  <aside class="docs-toc">
-    {{ if gt (len .TableOfContents) 80 }}
-    <div class="toc"><p class="toc-h">On this page</p>{{ .TableOfContents }}</div>
-    {{ end }}
-  </aside>
 </div>
 {{ end }}
