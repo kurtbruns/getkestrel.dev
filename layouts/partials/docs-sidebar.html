@@ -1,22 +1,17 @@
-{{- $page := . -}}
-{{- $cur := .RelPermalink -}}
-{{- $icon := `<svg viewBox="0 -960 960 960" aria-hidden="true"><path d="M280-280h280v-80H280v80Zm0-160h400v-80H280v80Zm0-160h400v-80H280v80Zm-80 480q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h560q33 0 56.5 23.5T840-760v560q0 33-23.5 56.5T760-120H200Zm0-80h560v-560H200v560Zm0-560v560-560Z"/></svg>` -}}
-{{- with site.GetPage "/docs" -}}
-<nav class="docs-nav-inner" aria-label="Documentation">
-  <p class="docs-nav-h">Documentation</p>
-  <ul class="docs-list">
-    <li><a href="{{ .RelPermalink }}"{{ if eq $cur .RelPermalink }} class="active" aria-current="page"{{ end }}>{{ $icon | safeHTML }}<span>{{ .Title }}</span></a></li>
-    {{ range .Pages.ByWeight }}
-    <li><a href="{{ .RelPermalink }}"{{ if eq $cur .RelPermalink }} class="active" aria-current="page"{{ end }}>{{ $icon | safeHTML }}<span>{{ .Title }}</span></a></li>
-    {{ end }}
-  </ul>
+<nav class="docs-side-inner" aria-label="Contents">
+  <p class="docs-rail-h">Contents</p>
+  {{- if eq .Kind "section" -}}
+  {{/* The one-page setup guide: the overview, then each headless step. */}}
+  <ol class="docs-toc-list">
+    <li><a href="#overview"><span class="n">00</span><span>Overview</span></a></li>
+    {{- range .Pages.ByWeight -}}
+      {{- if .Params.guide -}}
+    <li><a href="#{{ .File.ContentBaseName }}"><span class="n">{{ printf "%02d" (int .Weight) }}</span><span>{{ .Title }}</span></a></li>
+      {{- end -}}
+    {{- end -}}
+  </ol>
+  {{- else -}}
+  {{/* A standalone doc (the spec): Hugo's TOC, styled as the rail. */}}
+  <div class="docs-onpage-toc">{{ .TableOfContents }}</div>
+  {{- end -}}
 </nav>
-{{- end -}}
-{{- with $page.TableOfContents -}}
-{{- if gt (len .) 80 -}}
-<div class="docs-onpage">
-  <p class="docs-nav-h">On this page</p>
-  {{ . }}
-</div>
-{{- end -}}
-{{- end -}}

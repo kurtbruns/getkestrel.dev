@@ -2,9 +2,19 @@
 <div class="docs">
   <aside class="docs-side">{{ partial "docs-sidebar.html" . }}</aside>
   <article class="docs-body">
-    <p class="eyebrow">Documentation</p>
-    <h1>{{ .Title }}</h1>
+    <p class="eyebrow">Operator guide</p>
+    <h1 id="overview">{{ .Title }}</h1>
     {{ .Content }}
+    {{ range .Pages.ByWeight }}{{ if .Params.guide }}
+    <section id="{{ .File.ContentBaseName }}" class="doc-sec">
+      <h2 class="doc-sec-title">{{ .Title }}</h2>
+      {{ .Content }}
+    </section>
+    {{ end }}{{ end }}
+    {{ with site.GetPage "/docs/spec" }}
+    <p class="doc-more">Want the full contract behind all this? Read the <a href="{{ .RelPermalink }}">Specification</a> →</p>
+    {{ end }}
   </article>
 </div>
+{{ partial "docs-scrollspy.html" . }}
 {{ end }}

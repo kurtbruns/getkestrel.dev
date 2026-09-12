@@ -47,13 +47,35 @@ const firstH1 = (md, fallback) => {
   const m = md.match(/^\s{0,3}#\s+(.+?)\s*$/m);
   return m ? m[1].trim() : fallback;
 };
-const stripFirstH1 = (md) => md.replace(/^\s{0,3}#\s+.*(\r?\n)+/, "");
+// Drop the first H1 (it becomes the page title) and demote any remaining H1
+// to H2, so a doc that uses `# Appendix` mid-body doesn't leave stray H1s that
+// break the heading tree / Contents rail. Fence-aware: never touches a `#`
+// comment inside a ``` / ~~~ code block.
+function normalizeHeadings(md) {
+  const out = [];
+  let inFence = false, droppedTitle = false;
+  for (const line of md.split(/\r?\n/)) {
+    if (/^\s*(```|~~~)/.test(line)) { inFence = !inFence; out.push(line); continue; }
+    if (!inFence && /^\s{0,3}#\s+/.test(line)) {
+      if (!droppedTitle) { droppedTitle = true; continue; }
+      out.push(line.replace(/^(\s{0,3})#\s+/, "$1## "));
+      continue;
+    }
+    out.push(line);
+  }
+  return out.join("\n").replace(/^\s+/, "");
+}
 
 function write(name, { title, weight, body, extra = "" }) {
   const fm = [`title: "${yamlEscape(title)}"`, `weight: ${weight}`, extra].filter(Boolean).join("\n");
-  writeFileSync(join(OUT, name), `---\n${fm}\n---\n\n${stripFirstH1(body).trimStart()}\n`);
+  writeFileSync(join(OUT, name), `---\n${fm}\n---\n\n${normalizeHeadings(body)}\n`);
 }
 
+// The setup guide renders as ONE page at /docs/: the overview becomes the
+// section landing (_index) and every numbered step is a "headless" page
+// (render: never) that the /docs/ list template assembles inline as a section.
+// So the guide is a single scroll with one Contents rail, not eight URLs.
+const HEADLESS = "guide: true\nbuild:\n  render: never\n  list: local";
 let count = 0;
 for (const file of readdirSync(SETUP_DIR).filter((f) => f.endsWith(".md")).sort()) {
   const md = readFileSync(join(SETUP_DIR, file), "utf8");
@@ -61,8 +83,11 @@ for (const file of readdirSync(SETUP_DIR).filter((f) => f.endsWith(".md")).sort(
   const weight = m ? parseInt(m[1], 10) : 50;
   const slug = m ? m[2] : basename(file, ".md");
   const title = firstH1(md, slug);
-  // The lowest-numbered file (00-overview) becomes the section landing.
-  write(weight === 0 ? "_index.md" : `${slug}.md`, { title, weight, body: md });
+  if (weight === 0) {
+    write("_index.md", { title, weight, body: md });
+  } else {
+    write(`${slug}.md`, { title, weight, body: md, extra: HEADLESS });
+  }
   count++;
 }
 

@@ -1,0 +1,23 @@
+<script>
+  // Contents-rail scroll-spy: mark the rail link for the section nearest the top.
+  (function () {
+    var links = Array.prototype.slice.call(document.querySelectorAll(".docs-side a[href^='#']"));
+    if (!links.length || !("IntersectionObserver" in window)) { return; }
+    var byId = {}, targets = [];
+    links.forEach(function (a) {
+      var id = decodeURIComponent(a.getAttribute("href").slice(1));
+      var el = document.getElementById(id);
+      if (el) { byId[id] = a; targets.push(el); }
+    });
+    function setActive(id) { links.forEach(function (a) { a.classList.toggle("active", a === byId[id]); }); }
+    var visible = {};
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) { visible[e.target.id] = e.isIntersecting; });
+      for (var i = 0; i < targets.length; i++) {
+        if (visible[targets[i].id]) { setActive(targets[i].id); return; }
+      }
+    }, { rootMargin: "-74px 0px -68% 0px", threshold: 0 });
+    targets.forEach(function (t) { io.observe(t); });
+    setActive(targets[0] && targets[0].id);
+  })();
+</script>
