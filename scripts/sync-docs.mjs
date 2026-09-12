@@ -30,7 +30,6 @@ import { basename, join } from "node:path";
 
 const SRC = process.env.KESTREL_DOCS_SRC || join(homedir(), "Git", "kestrel");
 const SETUP_DIR = join(SRC, "docs", "setup");
-const SPEC_FILE = join(SRC, "docs", "SPEC.md");
 const OUT = join(process.cwd(), "content", "docs");
 
 if (!existsSync(SETUP_DIR)) {
@@ -109,7 +108,7 @@ for (const file of readdirSync(SETUP_DIR).filter((f) => f.endsWith(".md")).sort(
   const md = readFileSync(join(SETUP_DIR, file), "utf8");
   const m = file.match(/^(\d+)-(.+)\.md$/);
   // +1 so the overview (00) isn't weight 0, which Hugo treats as unset and
-  // sorts last. Numbering then runs 01…07, with the spec at 99.
+  // sorts last. Numbering then runs 01…07 across the setup docs.
   const weight = m ? parseInt(m[1], 10) + 1 : 50;
   const slug = m ? m[2] : basename(file, ".md");
   const title = firstH1(md, slug);
