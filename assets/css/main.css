@@ -167,7 +167,7 @@ h1, h2, h3 {
 
 /* ------------------------------------------------------------------- hero */
 
-.hero { padding: 96px 0 40px; }
+.hero { padding: 52px 0 40px; }
 .hero .eyebrow { margin-bottom: 20px; }
 .hero h1 {
   font-size: clamp(40px, 6vw, 68px);
@@ -361,14 +361,15 @@ pre .muted { color: var(--muted); }
 /* -------------------------------------------------------------------- docs */
 
 .docs {
-  max-width: 82rem;
+  max-width: 64rem;
   margin: 0 auto;
   padding: 44px 24px 88px;
   display: grid;
-  grid-template-columns: 15rem minmax(0, 1fr) 14rem;
-  gap: 44px;
+  grid-template-columns: 12rem minmax(0, 1fr);
+  gap: 40px;
   align-items: start;
 }
+.docs-toc { display: none; }
 .docs-side { position: sticky; top: 76px; }
 .docs-nav-h,
 .docs-toc .toc-h {
