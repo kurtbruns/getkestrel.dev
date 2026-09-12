@@ -7,7 +7,7 @@
     {{ range .Pages.ByWeight }}
     <li>
       <a class="doc-card" href="{{ .RelPermalink }}">
-        <span class="doc-card-n">{{ if lt (int .Weight) 90 }}{{ printf "%02d" (int .Weight) }}{{ else }}Ref{{ end }}</span>
+        <span class="doc-card-n">{{ printf "%02d" (int .Weight) }}</span>
         <span class="doc-card-main">
           <span class="doc-card-t">{{ .Title }} <span class="doc-card-go" aria-hidden="true">→</span></span>
           {{ with .Description }}<span class="doc-card-d">{{ . }}</span>{{ end }}

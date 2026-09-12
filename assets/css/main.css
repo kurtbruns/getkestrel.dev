@@ -361,42 +361,49 @@ pre .muted { color: var(--muted); }
 /* -------------------------------------------------------------------- docs */
 
 .docs {
-  max-width: 64rem;
+  --header-h: 3.8125rem;      /* 61px: site header 60px + its 1px border */
+  --docs-w: 64rem;            /* container width — matches the top bar */
+  --docs-pad: 1.5rem;         /* 24px side padding */
+  --docs-rail-w: 12.5rem;
+  max-width: var(--docs-w);
   margin: 0 auto;
-  padding: 0 24px 88px;
+  padding: 0 var(--docs-pad) 5.5rem;
   display: grid;
-  grid-template-columns: 12.5rem minmax(0, 1fr);
-  gap: 48px;
+  grid-template-columns: var(--docs-rail-w) minmax(0, 1fr);
+  gap: 3rem;
   align-items: start;
 }
 
-/* Contents rail: a viewport-tall sticky pane pinned under the header with its
-   own scroll, so it stays fixed and never drifts. Lists the sections of the
-   page you're on and marks where you are (scroll-spy, JS in docs-scrollspy). */
-.docs-side {
-  position: sticky;
-  top: 61px;                 /* header: 60px + 1px border */
-  height: calc(100vh - 61px);
+/* Contents rail: fixed to the viewport, so it never moves — not even at the
+   end of the page. The <aside> just reserves the grid column; the <nav> inside
+   is fixed, aligned to the container's left edge, and scrolls internally if it
+   ever outgrows the viewport. */
+.docs-side-inner {
+  position: fixed;
+  top: var(--header-h);
+  left: max(var(--docs-pad), calc((100vw - var(--docs-w)) / 2 + var(--docs-pad)));
+  width: var(--docs-rail-w);
+  max-height: calc(100vh - var(--header-h) - 1.5rem);
   overflow-y: auto;
   overscroll-behavior: contain;
-  padding: 42px 0;
+  padding: 2rem 0;
   scrollbar-width: thin;
 }
 /* back to the index, above the current doc's contents */
 .docs-back {
-  display: inline-flex; align-items: center; gap: 6px;
-  font-size: 13px; color: var(--muted); text-decoration: none;
-  padding-left: 13px; margin-bottom: 24px;
+  display: inline-flex; align-items: center; gap: 0.375rem;
+  font-size: 0.8125rem; color: var(--muted); text-decoration: none;
+  padding-left: 0.8125rem; margin-bottom: 1.25rem;
 }
 .docs-back:hover { color: var(--ink); }
 .docs-rail-h {
   font-family: var(--mono);
-  font-size: 11px;
+  font-size: 0.6875rem;
   letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--muted);
-  margin: 0 0 14px;
-  padding-left: 13px;
+  margin: 0 0 0.75rem;
+  padding-left: 0.8125rem;
 }
 
 /* "On this page" rail: Hugo's nested TOC styled as the rail (scroll-spy) */
@@ -451,7 +458,7 @@ pre .muted { color: var(--muted); }
 .pn:hover b { text-decoration: underline; text-underline-offset: 2px; }
 
 /* -------- /docs/ index -------- */
-.docs-index { max-width: 46rem; margin: 0 auto; padding: 52px 24px 96px; }
+.docs-index { max-width: 64rem; margin: 0 auto; padding: 3.25rem 1.5rem 6rem; }
 .docs-index > .eyebrow { margin-bottom: 12px; }
 .docs-index h1 { font-family: var(--serif); font-weight: 600; font-size: clamp(32px, 5vw, 44px); letter-spacing: -.02em; margin: 0 0 16px; }
 .docs-index-intro { color: var(--muted); font-size: 17px; line-height: 1.7; }
@@ -476,13 +483,13 @@ pre .muted { color: var(--muted); }
 .doc-card-d { color: var(--muted); font-size: 14.5px; line-height: 1.55; }
 
 @media (max-width: 1040px) {
-  .docs { grid-template-columns: 1fr; gap: 0; padding-top: 8px; }
-  .docs-side {
-    position: static; height: auto; overflow: visible;
-    padding: 18px 0 10px; margin-bottom: 22px; border-bottom: 1px solid var(--line);
+  .docs { grid-template-columns: 1fr; gap: 0; padding-top: 0.5rem; }
+  .docs-side-inner {
+    position: static; width: auto; max-height: none; overflow: visible;
+    padding: 1rem 0 0.5rem; margin-bottom: 1.375rem; border-bottom: 1px solid var(--line);
   }
-  .docs-back { margin-bottom: 14px; }
-  .docs-body { padding-top: 12px; }
+  .docs-back { margin-bottom: 0.875rem; }
+  .docs-body { padding-top: 0.75rem; }
   .docs-body h1, .docs-body h2, .docs-body p, .docs-body ul, .docs-body ol, .docs-body blockquote { max-width: none; }
 }
 

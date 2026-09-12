@@ -117,10 +117,7 @@ for (const file of readdirSync(SETUP_DIR).filter((f) => f.endsWith(".md")).sort(
   count++;
 }
 
-if (existsSync(SPEC_FILE)) {
-  const specMd = readFileSync(SPEC_FILE, "utf8");
-  write("spec.md", { title: "Specification", weight: 99, body: specMd, extra: `description: "${yamlEscape(firstPara(specMd))}"` });
-  count++;
-}
+// The SPEC is intentionally not ingested — it lives in the (soon public)
+// kestrel repo, and doesn't belong on the getkestrel.dev docs index.
 
 console.log(`[sync-docs] wrote ${count} doc pages to content/docs/ from ${SRC}`);
