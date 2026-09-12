@@ -1,17 +1,9 @@
 <nav class="docs-side-inner" aria-label="Contents">
-  <p class="docs-rail-h">Contents</p>
-  {{- if eq .Kind "section" -}}
-  {{/* The one-page setup guide: the overview, then each headless step. */}}
-  <ol class="docs-toc-list">
-    <li><a href="#overview"><span class="n">00</span><span>Overview</span></a></li>
-    {{- range .Pages.ByWeight -}}
-      {{- if .Params.guide -}}
-    <li><a href="#{{ .File.ContentBaseName }}"><span class="n">{{ printf "%02d" (int .Weight) }}</span><span>{{ .Title }}</span></a></li>
-      {{- end -}}
-    {{- end -}}
-  </ol>
-  {{- else -}}
-  {{/* A standalone doc (the spec): Hugo's TOC, styled as the rail. */}}
+  {{- with site.GetPage "/docs" }}
+  <a class="docs-back" href="{{ .RelPermalink }}"><span aria-hidden="true">←</span> Documentation</a>
+  {{- end }}
+  {{- if gt (len .TableOfContents) 80 }}
+  <p class="docs-rail-h">On this page</p>
   <div class="docs-onpage-toc">{{ .TableOfContents }}</div>
-  {{- end -}}
+  {{- end }}
 </nav>

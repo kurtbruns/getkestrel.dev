@@ -1,20 +1,20 @@
 {{ define "main" }}
-<div class="docs">
-  <aside class="docs-side">{{ partial "docs-sidebar.html" . }}</aside>
-  <article class="docs-body">
-    <p class="eyebrow">Operator guide</p>
-    <h1 id="overview">{{ .Title }}</h1>
-    {{ .Content }}
-    {{ range .Pages.ByWeight }}{{ if .Params.guide }}
-    <section id="{{ .File.ContentBaseName }}" class="doc-sec">
-      <h2 class="doc-sec-title">{{ .Title }}</h2>
-      {{ .Content }}
-    </section>
-    {{ end }}{{ end }}
-    {{ with site.GetPage "/docs/spec" }}
-    <p class="doc-more">Want the full contract behind all this? Read the <a href="{{ .RelPermalink }}">Specification</a> →</p>
+<div class="docs-index">
+  <p class="eyebrow">Documentation</p>
+  <h1>{{ .Title }}</h1>
+  <div class="docs-index-intro">{{ .Content }}</div>
+  <ol class="doc-cards">
+    {{ range .Pages.ByWeight }}
+    <li>
+      <a class="doc-card" href="{{ .RelPermalink }}">
+        <span class="doc-card-n">{{ if lt (int .Weight) 90 }}{{ printf "%02d" (int .Weight) }}{{ else }}Ref{{ end }}</span>
+        <span class="doc-card-main">
+          <span class="doc-card-t">{{ .Title }} <span class="doc-card-go" aria-hidden="true">→</span></span>
+          {{ with .Description }}<span class="doc-card-d">{{ . }}</span>{{ end }}
+        </span>
+      </a>
+    </li>
     {{ end }}
-  </article>
+  </ol>
 </div>
-{{ partial "docs-scrollspy.html" . }}
 {{ end }}

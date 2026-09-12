@@ -66,33 +66,60 @@ function normalizeHeadings(md) {
   return out.join("\n").replace(/^\s+/, "");
 }
 
+// The first real paragraph, flattened to plain text — the blurb the /docs/
+// index shows under each doc's title. Skips the title, headings, code fences,
+// and any leading list/table/quote.
+function firstPara(md) {
+  const body = md.replace(/^\s{0,3}#\s+.*(\r?\n)+/, "");
+  const para = [];
+  let started = false, inFence = false;
+  for (const line of body.split(/\r?\n/)) {
+    if (/^\s*(```|~~~)/.test(line)) { if (started) break; inFence = !inFence; continue; }
+    if (inFence) { continue; }
+    if (/^\s*$/.test(line)) { if (started) break; else continue; }
+    if (/^\s{0,3}#|^\s*[-*>|]/.test(line)) { if (started) break; else continue; }
+    started = true; para.push(line.trim());
+  }
+  let text = para.join(" ")
+    .replace(/`([^`]*)`/g, "$1")
+    .replace(/\*\*([^*]*)\*\*/g, "$1")
+    .replace(/\*([^*]*)\*/g, "$1")
+    .replace(/\[([^\]]*)\]\([^)]*\)/g, "$1")
+    .replace(/\s+/g, " ")
+    .trim();
+  if (text.length > 150) { text = text.slice(0, 148).replace(/\s+\S*$/, "") + "…"; }
+  return text;
+}
+
 function write(name, { title, weight, body, extra = "" }) {
   const fm = [`title: "${yamlEscape(title)}"`, `weight: ${weight}`, extra].filter(Boolean).join("\n");
   writeFileSync(join(OUT, name), `---\n${fm}\n---\n\n${normalizeHeadings(body)}\n`);
 }
 
-// The setup guide renders as ONE page at /docs/: the overview becomes the
-// section landing (_index) and every numbered step is a "headless" page
-// (render: never) that the /docs/ list template assembles inline as a section.
-// So the guide is a single scroll with one Contents rail, not eight URLs.
-const HEADLESS = "guide: true\nbuild:\n  render: never\n  list: local";
-let count = 0;
+// /docs/ is an index: the overview becomes the section landing (_index) that
+// lists the docs, and each numbered step + the spec is its own page. A `title`
+// and a plain-text `description` (for the index card) go in the front matter.
+// The /docs/ landing: a short lede over the doc cards (the overview doc
+// itself becomes the first card, not the whole landing).
+writeFileSync(join(OUT, "_index.md"),
+  `---\ntitle: "Documentation"\n---\n\nHow to take Kestrel from a cloned repo to a live newsletter — the run-once, out-of-band steps against your own Cloudflare account, DNS, and email provider.\n`);
+
+let count = 1;
 for (const file of readdirSync(SETUP_DIR).filter((f) => f.endsWith(".md")).sort()) {
   const md = readFileSync(join(SETUP_DIR, file), "utf8");
   const m = file.match(/^(\d+)-(.+)\.md$/);
-  const weight = m ? parseInt(m[1], 10) : 50;
+  // +1 so the overview (00) isn't weight 0, which Hugo treats as unset and
+  // sorts last. Numbering then runs 01…07, with the spec at 99.
+  const weight = m ? parseInt(m[1], 10) + 1 : 50;
   const slug = m ? m[2] : basename(file, ".md");
   const title = firstH1(md, slug);
-  if (weight === 0) {
-    write("_index.md", { title, weight, body: md });
-  } else {
-    write(`${slug}.md`, { title, weight, body: md, extra: HEADLESS });
-  }
+  write(`${slug}.md`, { title, weight, body: md, extra: `description: "${yamlEscape(firstPara(md))}"` });
   count++;
 }
 
 if (existsSync(SPEC_FILE)) {
-  write("spec.md", { title: "Specification", weight: 99, body: readFileSync(SPEC_FILE, "utf8") });
+  const specMd = readFileSync(SPEC_FILE, "utf8");
+  write("spec.md", { title: "Specification", weight: 99, body: specMd, extra: `description: "${yamlEscape(firstPara(specMd))}"` });
   count++;
 }
 
