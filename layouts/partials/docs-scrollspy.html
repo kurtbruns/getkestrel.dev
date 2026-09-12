@@ -1,0 +1,31 @@
+<script>
+  // Contents-rail scroll-spy: highlight the last heading you've scrolled past
+  // (the section you're currently in). Robust to jumps and to gaps between
+  // headings — no dead zones.
+  (function () {
+    var links = Array.prototype.slice.call(document.querySelectorAll(".docs-side a[href^='#']"));
+    if (!links.length) { return; }
+    var items = links.map(function (a) {
+      var id = decodeURIComponent(a.getAttribute("href").slice(1));
+      return { a: a, el: document.getElementById(id) };
+    }).filter(function (x) { return x.el; });
+    if (!items.length) { return; }
+
+    var LINE = 92; // px from the top — a heading is "current" once it passes this
+    function update() {
+      var active = items[0];
+      for (var i = 0; i < items.length; i++) {
+        if (items[i].el.getBoundingClientRect().top <= LINE) { active = items[i]; }
+        else { break; }
+      }
+      links.forEach(function (a) { a.classList.toggle("active", a === active.a); });
+    }
+
+    update();
+    var ticking = false;
+    window.addEventListener("scroll", function () {
+      if (!ticking) { ticking = true; requestAnimationFrame(function () { update(); ticking = false; }); }
+    }, { passive: true });
+    window.addEventListener("resize", update, { passive: true });
+  })();
+</script>

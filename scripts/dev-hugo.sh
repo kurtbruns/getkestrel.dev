@@ -19,4 +19,9 @@
 # version the deploy does. Extra flags (e.g. --disableFastRender) passed after
 # the script name are forwarded straight through to hugo server.
 set -eu
+
+# Sync the kestrel operator docs into content/docs/ before serving (best-effort:
+# no-ops if the source checkout isn't present). See scripts/sync-docs.mjs.
+node scripts/sync-docs.mjs || true
+
 exec hugo server --renderToMemory --port "${PORT:-1313}" "$@"

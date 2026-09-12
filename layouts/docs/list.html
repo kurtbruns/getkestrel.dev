@@ -1,0 +1,20 @@
+{{ define "main" }}
+<div class="docs-index">
+  <p class="eyebrow">Documentation</p>
+  <h1>{{ .Title }}</h1>
+  <div class="docs-index-intro">{{ .Content }}</div>
+  <ol class="doc-cards">
+    {{ range .Pages.ByWeight }}
+    <li>
+      <a class="doc-card" href="{{ .RelPermalink }}">
+        <span class="doc-card-n">{{ printf "%02d" (int .Weight) }}</span>
+        <span class="doc-card-main">
+          <span class="doc-card-t">{{ .Title }} <span class="doc-card-go" aria-hidden="true">→</span></span>
+          {{ with .Description }}<span class="doc-card-d">{{ . }}</span>{{ end }}
+        </span>
+      </a>
+    </li>
+    {{ end }}
+  </ol>
+</div>
+{{ end }}

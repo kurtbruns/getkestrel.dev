@@ -1,0 +1,15 @@
+{{- $pages := (site.GetPage "/docs").Pages.ByWeight -}}
+{{- $cur := .RelPermalink -}}
+{{- $prev := false -}}{{- $next := false -}}
+{{- range $i, $p := $pages -}}
+  {{- if eq $p.RelPermalink $cur -}}
+    {{- if gt $i 0 -}}{{- $prev = index $pages (sub $i 1) -}}{{- end -}}
+    {{- if lt (add $i 1) (len $pages) -}}{{- $next = index $pages (add $i 1) -}}{{- end -}}
+  {{- end -}}
+{{- end -}}
+{{- if or $prev $next -}}
+<nav class="doc-prevnext" aria-label="Previous and next">
+  {{ with $prev }}<a class="pn prev" href="{{ .RelPermalink }}"><span class="pn-dir">← Previous</span><b>{{ .Title }}</b></a>{{ else }}<span></span>{{ end }}
+  {{ with $next }}<a class="pn next" href="{{ .RelPermalink }}"><span class="pn-dir">Next →</span><b>{{ .Title }}</b></a>{{ end }}
+</nav>
+{{- end -}}

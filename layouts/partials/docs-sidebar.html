@@ -1,0 +1,12 @@
+<nav class="docs-side-inner" aria-label="Contents">
+  {{- with site.GetPage "/docs" }}
+  <a class="docs-back" href="{{ .RelPermalink }}"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M10 3.5 5.5 8l4.5 4.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>Documentation</a>
+  {{- end }}
+  <div class="docs-onpage">
+    <p class="docs-rail-h">On this page</p>
+    <a class="toc-h1" href="#{{ .File.ContentBaseName }}">{{ .Title }}</a>
+    {{- if gt (len .TableOfContents) 80 }}
+    <div class="docs-onpage-toc">{{ .TableOfContents }}</div>
+    {{- end }}
+  </div>
+</nav>
