@@ -371,18 +371,19 @@ pre .muted { color: var(--muted); }
   display: grid;
   grid-template-columns: var(--docs-rail-w) minmax(0, 1fr);
   gap: 3rem;
-  align-items: start;
+  /* stretch (default) so the aside is as tall as the article — that's the
+     containing block the sticky rail needs to stay pinned the whole scroll. */
+  align-items: stretch;
 }
 
-/* Contents rail: fixed to the viewport, so it never moves — not even at the
-   end of the page. The <aside> just reserves the grid column; the <nav> inside
-   is fixed, aligned to the container's left edge, and scrolls internally if it
-   ever outgrows the viewport. */
+/* Contents rail: sticky at its NATURAL height (not the full viewport height —
+   that was the bug that made it drift a screen early). It pins under the header
+   for the whole scroll, then rides up with the article's end so it bounces with
+   the page instead of floating over the footer. Scrolls internally only if the
+   list ever outgrows the viewport. */
 .docs-side-inner {
-  position: fixed;
+  position: sticky;
   top: var(--header-h);
-  left: max(var(--docs-pad), calc((100vw - var(--docs-w)) / 2 + var(--docs-pad)));
-  width: var(--docs-rail-w);
   max-height: calc(100vh - var(--header-h) - 1.5rem);
   overflow-y: auto;
   overscroll-behavior: contain;
@@ -465,22 +466,24 @@ pre .muted { color: var(--muted); }
 .docs-index-intro p { margin: 0 0 14px; }
 .docs-index-intro a { color: var(--ink); text-decoration: underline; text-underline-offset: 2px; }
 .docs-index-intro code { font-family: var(--mono); font-size: 0.88em; background: var(--code-bg); padding: 0.1em 0.35em; border-radius: 5px; }
-.doc-cards { list-style: none; margin: 34px 0 0; padding: 0; display: flex; flex-direction: column; gap: 2px; }
+/* The straight divider lives on the <li>, so the card's radius (used only for
+   the hover fill) never rounds the dividing line. */
+.doc-cards { list-style: none; margin: 2rem 0 0; padding: 0; }
+.doc-cards li { border-top: 1px solid var(--line); }
+.doc-cards li:first-child { border-top: 0; }
 .doc-card {
-  display: flex; gap: 18px; align-items: baseline;
-  padding: 18px 16px; border-radius: 10px;
+  display: flex; gap: 1.125rem; align-items: baseline;
+  padding: 1rem 0.875rem; margin: 0.25rem 0; border-radius: 10px;
   text-decoration: none; color: inherit;
-  border-top: 1px solid var(--line);
   transition: background .12s;
 }
-.doc-cards li:first-child .doc-card { border-top: 0; }
 .doc-card:hover { background: var(--card); }
-.doc-card-n { font: 500 12px/1.6 var(--mono); color: var(--muted); flex: none; }
-.doc-card-main { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
-.doc-card-t { font-family: var(--serif); font-weight: 600; font-size: 19px; letter-spacing: -.01em; }
+.doc-card-n { font: 500 0.75rem/1.6 var(--mono); color: var(--muted); flex: none; }
+.doc-card-main { display: flex; flex-direction: column; gap: 0.25rem; min-width: 0; max-width: 36rem; }
+.doc-card-t { font-family: var(--serif); font-weight: 600; font-size: 1.1875rem; letter-spacing: -.01em; }
 .doc-card-go { color: var(--muted); font-family: var(--sans); font-weight: 400; transition: transform .12s; display: inline-block; }
 .doc-card:hover .doc-card-go { color: var(--ink); transform: translateX(3px); }
-.doc-card-d { color: var(--muted); font-size: 14.5px; line-height: 1.55; }
+.doc-card-d { color: var(--muted); font-size: 0.90625rem; line-height: 1.55; }
 
 @media (max-width: 1040px) {
   .docs { grid-template-columns: 1fr; gap: 0; padding-top: 0.5rem; }
