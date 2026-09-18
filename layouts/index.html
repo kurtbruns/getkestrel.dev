@@ -6,16 +6,16 @@
     <p class="eyebrow">Self-hosted newsletter</p>
     <h1>Run your own newsletter.</h1>
     <p class="lead">
-      Kestrel is a small, self-hosted newsletter app. Write in Markdown, preview
-      the exact email, schedule with a cancelable review window, and send to a
-      double&nbsp;opt-in list — while <em>you</em> own the list, the consent
-      record, the delivery record, and a permanent per-issue archive.
+      Kestrel is an open-source, self-hosted newsletter app. Write in Markdown,
+      preview the exact email, schedule with a cancelable review window, and send
+      to your subscribers. <em>You</em> keep the list, the consent record, the
+      delivery record, and a permanent per-issue archive.
     </p>
     <div class="cta-row">
       <a class="btn" href="#quickstart">Self-host quickstart</a>
       <a class="btn btn-ghost" href="{{ site.Params.repoApp }}">View on GitHub</a>
     </div>
-    <p class="cta-note">Runs on your own Cloudflare account — your data never leaves it.</p>
+    <p class="cta-note">Runs on your own Cloudflare account. Your data never leaves it.</p>
 
     {{ $shotLight := resources.Get "img/editor-light.png" | fingerprint -}}
     {{ $shotDark := resources.Get "img/editor-dark.png" | fingerprint -}}
@@ -50,7 +50,7 @@
         <p class="k">The list</p>
         <h3>Your subscribers</h3>
         <p>They live in your own D1 database, not a vendor's. Query or export them
-          any time — nobody rents you access to your own audience.</p>
+          any time. Nobody rents you access to your own audience.</p>
       </div>
       <div class="card">
         <p class="k">The consent</p>
@@ -62,7 +62,7 @@
         <p class="k">The delivery</p>
         <h3>An auditable record</h3>
         <p>Each send records who received which issue, plus suppressions from
-          hard bounces and spam complaints — a trail you control.</p>
+          hard bounces and spam complaints. You control the whole trail.</p>
       </div>
       <div class="card">
         <p class="k">The archive</p>
@@ -80,15 +80,15 @@
     <div class="section-head">
       <p class="eyebrow">How it works</p>
       <h2>Write, preview, schedule, send</h2>
-      <p>One interface — an HTTP API — with two clients: a web editor and Claude.
+      <p>One interface, an HTTP API, with two clients: a web editor and Claude.
         The steps are the same either way.</p>
     </div>
     <div class="flow">
       <div class="flow-step">
         <h3>Write in Markdown</h3>
         <p>Draft an issue in the web editor or hand it to Claude. Same API
-          underneath, same result — and a stale save is rejected, not clobbered,
-          if a draft changed under you.</p>
+          underneath, same result. If a draft changed under you, a stale save
+          is rejected rather than clobbered.</p>
       </div>
       <div class="flow-step">
         <h3>Preview the exact email</h3>
@@ -107,8 +107,8 @@
       </div>
       <div class="flow-step">
         <h3>Archive it forever</h3>
-        <p>Each sent issue becomes a permanent, indexable page on your domain —
-          the same content, readable long after the email is buried.</p>
+        <p>Each sent issue becomes a permanent, indexable page on your domain.
+          The same content stays readable long after the email is buried.</p>
       </div>
     </div>
   </div>
@@ -121,7 +121,8 @@
       <p class="eyebrow">Under the hood</p>
       <h2>Built to be operated</h2>
       <p>Small, legible, and boring in the ways that matter. You run it on your
-        own account and can read every line.</p>
+        own account and can read every line. It's open source under the MIT
+        license.</p>
     </div>
     <div class="stack">
       <span class="chip">TypeScript</span>
@@ -146,13 +147,13 @@
       </div>
       <div class="spec">
         <dt>Idempotent send loop</dt>
-        <dd>The scheduled sweep is safe to retry — it resumes a send without
+        <dd>The scheduled sweep is safe to retry. It resumes a send without
           re-mailing anyone who already received the issue.</dd>
       </div>
       <div class="spec">
         <dt>Three isolated environments</dt>
         <dd>dev, staging, and production each get their own database, storage, and
-          mail transport — so development can never reach a real inbox.</dd>
+          mail transport, so development can never reach a real inbox.</dd>
       </div>
       <div class="spec">
         <dt>Swappable email provider</dt>
@@ -174,7 +175,7 @@
     <div class="section-head">
       <p class="eyebrow">Self-host</p>
       <h2>From clone to a running instance</h2>
-      <p>Local dev needs Node and npm — no Cloudflare account required until you
+      <p>Local dev needs Node and npm. No Cloudflare account is required until you
         deploy. The shortest honest path:</p>
     </div>
     <pre class="card" style="overflow:auto"><code>git clone {{ site.Params.repoApp }}
@@ -183,9 +184,10 @@ cp .dev.vars.example .dev.vars
 npm run dev     <span class="muted"># http://localhost:8787</span>
 npm run seed    <span class="muted"># load the demo publication</span></code></pre>
     <p style="color:var(--muted); margin-top:20px;">
-      Standing up a real, deployed instance — Cloudflare, one Access application,
-      SES or Resend, sending-domain DNS — is the
-      {{ with site.GetPage "/docs" }}<a href="{{ .RelPermalink }}" style="color:var(--ink); text-decoration:underline; text-underline-offset:2px;">operator setup guide</a>{{ else }}<a href="{{ site.Params.repoApp }}/tree/main/docs/setup" style="color:var(--ink); text-decoration:underline; text-underline-offset:2px;">operator setup guide</a>{{ end }}.
+      Standing up a real, deployed instance takes more: a Cloudflare account, one
+      Access application, an email provider (SES or Resend), and sending-domain
+      DNS. The
+      {{ with site.GetPage "/docs" }}<a href="{{ .RelPermalink }}" style="color:var(--ink); text-decoration:underline; text-underline-offset:2px;">operator setup guide</a>{{ else }}<a href="{{ site.Params.repoApp }}/tree/main/docs/setup" style="color:var(--ink); text-decoration:underline; text-underline-offset:2px;">operator setup guide</a>{{ end }} covers it.
     </p>
   </div>
 </section>
