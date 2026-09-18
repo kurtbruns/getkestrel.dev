@@ -16,15 +16,14 @@
     "directory": "./public",
     "html_handling": "auto-trailing-slash",
     "not_found_handling": "404-page"
-  }
-  // Production custom domains — DEFERRED TO #6 (Publish v1). custom_domain =
-  // true makes `wrangler deploy` provision the proxied DNS record + edge cert
-  // and cut getkestrel.dev's DNS over to this worker. They stay commented out
-  // until launch so merging/deploying the hosting layer doesn't publish the
-  // placeholder site early. PR preview aliases (`versions upload`) don't need
-  // routes, so previews work meanwhile. #6 uncomments these for the cutover.
-  // "routes": [
-  //   { "pattern": "getkestrel.dev", "custom_domain": true },
-  //   { "pattern": "www.getkestrel.dev", "custom_domain": true }
-  // ]
+  },
+  // Production custom domains (issue #6 — Publish v1). custom_domain = true
+  // makes `wrangler deploy` provision the proxied DNS record + edge cert and
+  // serve getkestrel.dev from this worker, so a push to main goes live.
+  // Requires getkestrel.dev to be an active zone in the Cloudflare account and
+  // the deploy token to carry Workers + DNS edit scope.
+  "routes": [
+    { "pattern": "getkestrel.dev", "custom_domain": true },
+    { "pattern": "www.getkestrel.dev", "custom_domain": true }
+  ]
 }
