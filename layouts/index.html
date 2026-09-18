@@ -168,36 +168,6 @@
   </div>
 </section>
 
-{{/* ------------------------------------------------------ pieces fit */}}
-<section class="section">
-  <div class="wrap">
-    <div class="section-head">
-      <p class="eyebrow">How the pieces fit</p>
-      <h2>Three repos, one source of truth</h2>
-    </div>
-    <div class="pieces">
-      <div class="piece">
-        <p class="repo">kurtbruns/kestrel</p>
-        <h3>The app</h3>
-        <p>The Worker, the editor, the API, and the operator docs. Fork it, deploy
-          it to your account, own the instance.</p>
-      </div>
-      <div class="piece">
-        <p class="repo">getkestrel.dev</p>
-        <h3>This site</h3>
-        <p>The front door you're reading — a static Hugo site on Cloudflare
-          Workers. It owns none of your data.</p>
-      </div>
-      <div class="piece">
-        <p class="repo">kestrel/docs/setup</p>
-        <h3>The source of truth</h3>
-        <p>The operator guide lives in the app repo and is rendered both here and
-          inside the editor — one canonical copy, never forked.</p>
-      </div>
-    </div>
-  </div>
-</section>
-
 {{/* --------------------------------------------------------- quickstart */}}
 <section class="section" id="quickstart">
   <div class="wrap">
@@ -215,7 +185,7 @@ npm run seed    <span class="muted"># load the demo publication</span></code></p
     <p style="color:var(--muted); margin-top:20px;">
       Standing up a real, deployed instance — Cloudflare, one Access application,
       SES or Resend, sending-domain DNS — is the
-      <a href="{{ site.Params.repoApp }}/tree/main/docs/setup" style="color:var(--ink); text-decoration:underline; text-underline-offset:2px;">operator setup guide</a>.
+      {{ with site.GetPage "/docs" }}<a href="{{ .RelPermalink }}" style="color:var(--ink); text-decoration:underline; text-underline-offset:2px;">operator setup guide</a>{{ else }}<a href="{{ site.Params.repoApp }}/tree/main/docs/setup" style="color:var(--ink); text-decoration:underline; text-underline-offset:2px;">operator setup guide</a>{{ end }}.
     </p>
   </div>
 </section>

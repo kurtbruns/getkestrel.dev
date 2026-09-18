@@ -286,14 +286,6 @@ h1, h2, h3 {
   padding: 6px 12px;
 }
 
-/* -------------------------------------------------------------- pieces fit */
-
-.pieces { display: grid; gap: 16px; grid-template-columns: repeat(3, 1fr); }
-.piece { border: 1px solid var(--line); border-radius: var(--radius); padding: 22px; background: var(--card); }
-.piece .repo { font-family: var(--mono); font-size: 12.5px; color: var(--muted); }
-.piece h3 { font-size: 18px; font-family: var(--sans); font-weight: 650; margin: 6px 0 0; }
-.piece p { color: var(--muted); font-size: 15px; margin: 10px 0 0; }
-
 /* ----------------------------------------------------------------- cta end */
 
 .cta-end { text-align: center; }
@@ -333,7 +325,6 @@ pre .muted { color: var(--muted); }
 
 @media (max-width: 900px) {
   .grid-4 { grid-template-columns: repeat(2, 1fr); }
-  .pieces { grid-template-columns: 1fr; }
   .eng .spec { flex-direction: column; gap: 4px; }
   .eng .spec dt { width: auto; }
 }
