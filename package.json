@@ -8,6 +8,7 @@
     "serve": "bash scripts/dev-hugo.sh",
     "dev:worker": "npm run docs:sync && hugo --minify && wrangler dev",
     "docs:sync": "node scripts/sync-docs.mjs",
+    "shots": "node scripts/shots.mjs",
     "hugo:check": "scripts/check-hugo.sh"
   },
   "keywords": [
