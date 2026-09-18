@@ -6,52 +6,23 @@ on:
 
 permissions:
   contents: read
-  pull-requests: write
 
 jobs:
+  # Build-only check: fail a PR fast if the Hugo build or the kestrel docs sync
+  # breaks. No per-PR Cloudflare preview deploy — review happens locally
+  # (`npm run serve`) and the real deploy is deploy.yml on `main`. To restore
+  # previews, see the history of this file (issue #2's setup).
   ci:
     runs-on: ubuntu-24.04
-    # The Cloudflare secrets live in the `production` GitHub Environment; the
-    # preview upload needs them, and the env has no branch protection rules so
-    # same-repo PR runs can read them.
-    environment: production
     concurrency:
-      group: deploy-preview-${{ github.ref }}
+      group: ci-${{ github.ref }}
       cancel-in-progress: true
     steps:
 
       - name: Checkout Code
         uses: actions/checkout@v6
         with:
-          fetch-depth: 0
-
-      - name: Resolve preview alias
-        if: github.event.pull_request.head.repo.full_name == github.repository
-        env:
-          PR_NUMBER: ${{ github.event.pull_request.number }}
-          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
-        run: |
-          ALIAS="pr-${PR_NUMBER}-${HEAD_SHA:0:7}"
-          {
-            echo "PREVIEW_ALIAS=${ALIAS}"
-            echo "HUGO_BASEURL=https://${ALIAS}-getkestrel-dev.kurtbruns.workers.dev"
-          } >> "$GITHUB_ENV"
-
-      - name: Post preview in-progress comment
-        if: github.event.pull_request.head.repo.full_name == github.repository
-        uses: marocchino/sticky-pull-request-comment@v3
-        with:
-          header: cf-workers-preview
-          only_update: true
-          message: |
-            ## Deploying getkestrel-dev with Cloudflare Workers
-
-            |  |  |
-            | --- | --- |
-            | **Latest commit:** | `${{ github.event.pull_request.head.sha }}` |
-            | **Status:** | Build in progress... |
-
-            [View logs](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
+          fetch-depth: 0    # match the production build (.GitInfo / .Lastmod)
 
       - name: Setup Node
         uses: actions/setup-node@v6
@@ -72,64 +43,13 @@ jobs:
           hugo-version: ${{ steps.hugo_version.outputs.version }}
           extended: true
 
-      # Temporary docs ingestion (issue #3): kestrel is public now, so clone it
-      # unauthenticated (no KESTREL_DOCS_TOKEN) and sync docs/ into the
-      # gitignored content/docs/. Tracks the default branch — kestrel has no
-      # release tags yet. Dissolve when a Hugo Modules mount of a pinned tag
-      # replaces this.
+      # Docs ingestion (issue #3): clone public kestrel unauthenticated and sync
+      # docs/ into the gitignored content/docs/, so the PR build exercises the
+      # full docs pipeline. (Moving to a pinned-tag clone — issue #3.)
       - name: Sync operator docs from kestrel
         run: |
           git clone --depth 1 https://github.com/kurtbruns/kestrel.git .kestrel-src
           KESTREL_DOCS_SRC="$PWD/.kestrel-src" node scripts/sync-docs.mjs
 
-      # HUGO_ENVIRONMENT=preview makes layouts/robots.txt emit Disallow: /
-      # so PR preview aliases on *.workers.dev aren't crawlable. HUGO_BASEURL
-      # is inherited from $GITHUB_ENV (set in "Resolve preview alias") so
-      # Hugo's .Permalink uses the preview hostname.
       - name: Build
         run: hugo --minify
-        env:
-          HUGO_ENVIRONMENT: preview
-
-      - name: Upload preview version to Cloudflare Workers
-        id: wrangler
-        if: github.event.pull_request.head.repo.full_name == github.repository
-        uses: cloudflare/wrangler-action@v4
-        with:
-          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          command: >-
-            versions upload
-            --preview-alias=${{ env.PREVIEW_ALIAS }}
-            --message=${{ toJson(github.event.pull_request.title) }}
-
-      - name: Post preview success comment
-        if: success() && github.event.pull_request.head.repo.full_name == github.repository
-        uses: marocchino/sticky-pull-request-comment@v3
-        with:
-          header: cf-workers-preview
-          message: |
-            ## Deploying getkestrel-dev with Cloudflare Workers
-
-            |  |  |
-            | --- | --- |
-            | **Latest commit:** | `${{ github.event.pull_request.head.sha }}` |
-            | **Status:** | Deployed successfully |
-            | **Preview URL:** | ${{ env.HUGO_BASEURL }} |
-
-            [View logs](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
-
-      - name: Post preview failure comment
-        if: failure() && github.event.pull_request.head.repo.full_name == github.repository
-        uses: marocchino/sticky-pull-request-comment@v3
-        with:
-          header: cf-workers-preview
-          message: |
-            ## Deploying getkestrel-dev with Cloudflare Workers
-
-            |  |  |
-            | --- | --- |
-            | **Latest commit:** | `${{ github.event.pull_request.head.sha }}` |
-            | **Status:** | Build failed |
-
-            [View logs](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
