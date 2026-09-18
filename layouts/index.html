@@ -17,14 +17,20 @@
     </div>
     <p class="cta-note">Runs on your own Cloudflare account — your data never leaves it.</p>
 
-    <div class="preview" role="img" aria-label="Screenshot of the Kestrel editor, coming soon">
+    {{ $shotLight := resources.Get "img/editor-light.png" | fingerprint -}}
+    {{ $shotDark := resources.Get "img/editor-dark.png" | fingerprint -}}
+    <div class="preview">
       <div class="preview-bar">
         <span class="dot"></span><span class="dot"></span><span class="dot"></span>
         <span class="addr">localhost:8787/dashboard</span>
       </div>
       <div class="preview-body">
-        <p class="ph"><strong>A screenshot of the editor and the published archive lands here.</strong><br>
-        Real pixels from the running app, generated from the demo publication.</p>
+        <picture>
+          <source srcset="{{ $shotDark.RelPermalink }}" media="(prefers-color-scheme: dark)">
+          <img src="{{ $shotLight.RelPermalink }}" width="2560" height="1440" loading="eager"
+            decoding="async"
+            alt="The Kestrel editor: the dashboard for the Windbreak demo publication, showing subscriber counts, a scheduled issue, two drafts, and the sent issues.">
+        </picture>
       </div>
     </div>
   </div>
