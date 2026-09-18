@@ -11,10 +11,6 @@ jobs:
     # CLOUDFLARE_API_TOKEN / CLOUDFLARE_ACCOUNT_ID are scoped to the
     # `production` GitHub Environment, so the job must opt into it to read them.
     environment: production
-    # Optional read token for the temporary docs sync (issue #3). Unset ->
-    # empty -> the sync step is skipped and the site deploys without /docs/.
-    env:
-      KESTREL_DOCS_TOKEN: ${{ secrets.KESTREL_DOCS_TOKEN }}
     concurrency:
       group: ${{ github.workflow }}-${{ github.ref }}
     steps:
@@ -43,14 +39,14 @@ jobs:
           hugo-version: ${{ steps.hugo_version.outputs.version }}
           extended: true
 
-      # Temporary docs ingestion (issue #3): clone kestrel with a read token
-      # and sync docs/ into the gitignored content/docs/. Skipped when no token
-      # is set (the site just deploys without /docs/). Dissolve when kestrel is
-      # public + a Hugo Modules mount replaces this.
+      # Temporary docs ingestion (issue #3): kestrel is public now, so clone it
+      # unauthenticated (no KESTREL_DOCS_TOKEN) and sync docs/ into the
+      # gitignored content/docs/. Tracks the default branch — kestrel has no
+      # release tags yet. Dissolve when a Hugo Modules mount of a pinned tag
+      # replaces this.
       - name: Sync operator docs from kestrel
-        if: ${{ env.KESTREL_DOCS_TOKEN != '' }}
         run: |
-          git clone --depth 1 "https://x-access-token:${KESTREL_DOCS_TOKEN}@github.com/kurtbruns/kestrel.git" .kestrel-src
+          git clone --depth 1 https://github.com/kurtbruns/kestrel.git .kestrel-src
           KESTREL_DOCS_SRC="$PWD/.kestrel-src" node scripts/sync-docs.mjs
 
       - name: Build
