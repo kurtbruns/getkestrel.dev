@@ -2,7 +2,7 @@
 public/
 resources/
 
-# Operator docs synced from the kestrel repo at build time (issue #3).
+# Developer docs synced from the kestrel repo at build time (issue #3).
 # Single source of truth lives in kurtbruns/kestrel; never commit a copy here.
 content/docs/
 .kestrel-src/

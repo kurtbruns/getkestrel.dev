@@ -44,7 +44,7 @@ jobs:
       # Pinned to the release tag in .kestrel-docs-version, not kestrel's default
       # branch, so prod only moves when that file is bumped (edit it → PR → merge)
       # rather than on every merge into kestrel.
-      - name: Sync operator docs from kestrel
+      - name: Sync developer docs from kestrel
         run: |
           REF="$(cat .kestrel-docs-version)"
           git clone --depth 1 --branch "$REF" https://github.com/kurtbruns/kestrel.git .kestrel-src

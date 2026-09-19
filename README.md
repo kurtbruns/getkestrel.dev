@@ -1,6 +1,6 @@
 # getkestrel.dev
 
-The front door and operator guides for [Kestrel](https://github.com/kurtbruns/kestrel) — a small, open-source, self-hosted newsletter app. Live at **[getkestrel.dev](https://getkestrel.dev)**.
+The front door and developer guides for [Kestrel](https://github.com/kurtbruns/kestrel) — a small, open-source, self-hosted newsletter app. Live at **[getkestrel.dev](https://getkestrel.dev)**.
 
 A static [Hugo](https://gohugo.io) site on Cloudflare Workers. It owns none of your data; the app is the thing you self-host.
 

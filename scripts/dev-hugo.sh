@@ -20,7 +20,7 @@
 # the script name are forwarded straight through to hugo server.
 set -eu
 
-# Sync the kestrel operator docs into content/docs/ before serving (best-effort:
+# Sync the kestrel developer docs into content/docs/ before serving (best-effort:
 # no-ops if the source checkout isn't present). Local dev reads a local kestrel
 # checkout (default ~/Git/kestrel, override with $KESTREL_DOCS_SRC), so you see
 # your working docs; CI/prod instead pin the release tag in .kestrel-docs-version.

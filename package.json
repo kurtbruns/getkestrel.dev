@@ -1,7 +1,7 @@
 {
   "name": "getkestrel.dev",
   "version": "1.0.0",
-  "description": "Landing page and operator docs for Kestrel — getkestrel.dev",
+  "description": "Landing page and developer docs for Kestrel — getkestrel.dev",
   "type": "module",
   "private": true,
   "scripts": {
