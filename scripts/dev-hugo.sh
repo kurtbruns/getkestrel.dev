@@ -21,7 +21,10 @@
 set -eu
 
 # Sync the kestrel operator docs into content/docs/ before serving (best-effort:
-# no-ops if the source checkout isn't present). See scripts/sync-docs.mjs.
+# no-ops if the source checkout isn't present). Local dev reads a local kestrel
+# checkout (default ~/Git/kestrel, override with $KESTREL_DOCS_SRC), so you see
+# your working docs; CI/prod instead pin the release tag in .kestrel-docs-version.
+# See scripts/sync-docs.mjs.
 node scripts/sync-docs.mjs || true
 
 exec hugo server --renderToMemory --port "${PORT:-1313}" "$@"

@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /*
- * TEMPORARY, DISSOLVABLE docs ingestion (issue #3).
+ * Docs ingestion (issue #3).
  *
  * Kestrel's operator docs (docs/setup/*.md + docs/SPEC.md) are the single
  * source of truth — they're also rendered read-only inside the app. Rather
@@ -11,18 +11,21 @@
  * first `# H1`, and the setup files are ordered by an `NN-` filename prefix.
  * This adds a light front-matter shim (title from the H1, weight from the
  * prefix for menu order) and strips the now-duplicated H1 — without editing
- * the source Markdown.
+ * the source Markdown. This shim is why we ingest with a script rather than a
+ * Hugo Modules mount: a mount would carry the raw Markdown, not this transform.
  *
  *   Source:  $KESTREL_DOCS_SRC (a kestrel checkout), default ~/Git/kestrel.
  *   Output:  content/docs/  (gitignored)
  *
- * If the source isn't present (e.g. CI without a read token), this no-ops so
- * the site still builds — just without the /docs/ section. The Docs nav falls
- * back to GitHub in that case (see layouts/partials/header.html).
+ * Which kestrel to point at is decided outside this script, and the two paths
+ * differ on purpose: CI/prod (ci.yml, deploy.yml) clone the release tag pinned
+ * in .kestrel-docs-version, so the live site only moves when that file is
+ * bumped; local dev reads a local checkout (default ~/Git/kestrel, override
+ * with $KESTREL_DOCS_SRC) so you can preview against uncommitted doc changes.
  *
- * DISSOLVE THIS when kestrel is public + tagged: replace the script with a
- * Hugo Modules mount of the pinned tag, drop content/docs/ from .gitignore,
- * and remove the CI "Sync operator docs" step. (issue #3)
+ * If the source isn't present, this no-ops so the site still builds — just
+ * without the /docs/ section. The Docs nav falls back to GitHub in that case
+ * (see layouts/partials/header.html).
  */
 import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync, rmSync } from "node:fs";
 import { homedir } from "node:os";

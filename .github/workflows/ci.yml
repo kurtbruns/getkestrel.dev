@@ -45,10 +45,13 @@ jobs:
 
       # Docs ingestion (issue #3): clone public kestrel unauthenticated and sync
       # docs/ into the gitignored content/docs/, so the PR build exercises the
-      # full docs pipeline. (Moving to a pinned-tag clone — issue #3.)
+      # full docs pipeline. Pinned to the release tag in .kestrel-docs-version
+      # (not kestrel's default branch), so the live site only moves when that
+      # file is bumped. To bump: edit .kestrel-docs-version → PR → merge.
       - name: Sync operator docs from kestrel
         run: |
-          git clone --depth 1 https://github.com/kurtbruns/kestrel.git .kestrel-src
+          REF="$(cat .kestrel-docs-version)"
+          git clone --depth 1 --branch "$REF" https://github.com/kurtbruns/kestrel.git .kestrel-src
           KESTREL_DOCS_SRC="$PWD/.kestrel-src" node scripts/sync-docs.mjs
 
       - name: Build

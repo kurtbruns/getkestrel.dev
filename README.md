@@ -11,7 +11,9 @@ npm install
 npm run serve   # hugo server at http://localhost:1313
 ```
 
-The `/docs/` guides are synced at build time from the app repo's `docs/setup/` — a single source of truth, so no copy is committed here. The build clones the public kestrel repo; point `KESTREL_DOCS_SRC` at a local checkout to preview against uncommitted changes.
+The `/docs/` guides are synced at build time from the app repo's `docs/setup/` — a single source of truth, so no copy is committed here. Locally, the build reads a kestrel checkout (default `~/Git/kestrel`); point `KESTREL_DOCS_SRC` at another checkout to preview against uncommitted changes.
+
+CI and prod builds instead pin a kestrel **release tag** — the ref in [`.kestrel-docs-version`](.kestrel-docs-version) — so the live docs only move when we say so, not on every merge into kestrel. **To pick up a newer kestrel release:** edit `.kestrel-docs-version` to the new tag, open a PR, and merge — the deploy on `main` then rebuilds `/docs/` from that tag.
 
 Regenerate the landing screenshots from a running kestrel dev server with `npm run shots` (see [`scripts/shots.mjs`](scripts/shots.mjs)).
 
