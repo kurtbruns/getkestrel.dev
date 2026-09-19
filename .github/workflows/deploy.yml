@@ -39,14 +39,15 @@ jobs:
           hugo-version: ${{ steps.hugo_version.outputs.version }}
           extended: true
 
-      # Temporary docs ingestion (issue #3): kestrel is public now, so clone it
-      # unauthenticated (no KESTREL_DOCS_TOKEN) and sync docs/ into the
-      # gitignored content/docs/. Tracks the default branch — kestrel has no
-      # release tags yet. Dissolve when a Hugo Modules mount of a pinned tag
-      # replaces this.
+      # Docs ingestion (issue #3): kestrel is public, so clone it unauthenticated
+      # (no KESTREL_DOCS_TOKEN) and sync docs/ into the gitignored content/docs/.
+      # Pinned to the release tag in .kestrel-docs-version, not kestrel's default
+      # branch, so prod only moves when that file is bumped (edit it → PR → merge)
+      # rather than on every merge into kestrel.
       - name: Sync operator docs from kestrel
         run: |
-          git clone --depth 1 https://github.com/kurtbruns/kestrel.git .kestrel-src
+          REF="$(cat .kestrel-docs-version)"
+          git clone --depth 1 --branch "$REF" https://github.com/kurtbruns/kestrel.git .kestrel-src
           KESTREL_DOCS_SRC="$PWD/.kestrel-src" node scripts/sync-docs.mjs
 
       - name: Build
