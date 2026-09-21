@@ -2,7 +2,7 @@
 /*
  * Docs ingestion (issue #3).
  *
- * Kestrel's operator docs (docs/setup/*.md + docs/SPEC.md) are the single
+ * Kestrel's developer docs (docs/setup/*.md + docs/SPEC.md) are the single
  * source of truth — they're also rendered read-only inside the app. Rather
  * than fork them into this repo, we sync them at build time into a GITIGNORED
  * content/docs/ tree, so no copy of that Markdown is ever committed here.

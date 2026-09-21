@@ -5,7 +5,7 @@
       <span>Kestrel</span>
     </a>
     <nav class="nav">
-      {{/* /docs/ when the operator docs are synced (issue #3); otherwise fall
+      {{/* /docs/ when the developer docs are synced (issue #3); otherwise fall
            back to the source-of-truth setup guide on GitHub. */}}
       {{ with site.GetPage "/docs" }}<a class="nav-link" href="{{ .RelPermalink }}">Docs</a>
       {{ else }}<a class="nav-link" href="{{ site.Params.repoApp }}/tree/main/docs/setup">Docs</a>{{ end }}
