@@ -1,0 +1,166 @@
+{
+  "$comment": [
+    "Landing-section → kestrel-behavior map for the refresh-from-kestrel skill.",
+    "",
+    "WHY THIS FILE EXISTS: at a version bump the skill has to answer 'which part of",
+    "getkestrel.dev now describes kestrel wrongly?'. The changelog is the INDEX of what",
+    "changed; this file is the reverse index — for each thing the landing page claims,",
+    "it records where that claim lives and which kestrel behaviours it depends on. The",
+    "skill crosses the two: a changelog entry that touches a surface's behaviour is a",
+    "candidate for a copy edit or a screenshot refresh.",
+    "",
+    "HOW TO KEEP IT CURRENT: the landing copy is still in flux (#5, #19). When you edit",
+    "layouts/index.html, update the matching surface here in the same change — the copy",
+    "quote, the asserts, and the keywords. Treat this as documentation of the landing's",
+    "factual claims, not as a lookup table to be trusted blindly. `keywords` only drive",
+    "the script's *candidate* hints; the real mapping is editorial judgement (see the",
+    "role model in SKILL.md). A keyword hit is a prompt to go look, never a verdict.",
+    "",
+    "SCHEMA (per surface): id, label, kind, source, anchor, asserts[], keywords[],",
+    "regen? (screenshot surfaces only), notes."
+  ],
+  "roleModel": {
+    "publisher": "Writes and sends the newsletter (the person running a publication).",
+    "developer": "Deploys and operates the app on their own Cloudflare account. getkestrel.dev's /docs are the developer/setup guides — this is the audience the landing's 'self-host' framing addresses.",
+    "reader": "Subscribes to and reads a newsletter.",
+    "note": "kestrel retired the old 'operator' word into publisher + developer. A mechanical find-replace gets this wrong (see PR #27, which corrected a bad operator->publisher edit to operator->developer). When a changelog entry names a role or a role-specific action, decide which of these three it means before touching copy."
+  },
+  "surfaces": [
+    {
+      "id": "hero-screenshot",
+      "label": "Hero app-preview screenshot",
+      "kind": "screenshot",
+      "source": "layouts/index.html (the .preview block) → assets/img/editor-{light,dark}.png",
+      "anchor": "class=\"preview\" / localhost:8787/dashboard",
+      "asserts": [
+        "The dashboard looks as pictured: subscriber counts, a scheduled issue, drafts, and sent issues.",
+        "The editor/composer chrome (tabs, toolbars, notices, alerts) matches the current app."
+      ],
+      "keywords": [
+        "dashboard", "composer", "editor", "tab", "tabs", "edit | preview", "preview tab",
+        "notice", "dismissible", "alert", "banner", "toolbar", "button", "icon", "ui",
+        "screen", "page", "layout", "sent page", "scheduled state", "status filter"
+      ],
+      "regen": {
+        "command": "npm run shots",
+        "prerequisite": "A seeded kestrel dev server at the NEW ref must be running: in a kestrel checkout at <new> run `npm run dev` then `npm run seed`, then `npm run shots` here. See scripts/shots.mjs.",
+        "outputs": ["assets/img/editor-light.png", "assets/img/editor-dark.png", "assets/img/archive-light.png", "assets/img/archive-dark.png"],
+        "followUpIssue": 19
+      },
+      "notes": "This is the surface most likely to go stale and the one a docs-only re-sync will never catch. ANY editor/dashboard UI change in the changelog (new tab, moved page, new notice, removed alert) makes the shipped PNGs suspect. Regenerating needs a running v0.2.0-or-later dev server, so if one isn't available, FLAG it as a follow-up (#19) rather than silently leaving stale images — that is exactly what the v0.1.0→v0.2.0 bump did."
+    },
+    {
+      "id": "hero-lead",
+      "label": "Hero lead paragraph",
+      "kind": "copy",
+      "source": "layouts/index.html (section.hero .lead)",
+      "anchor": "Write in Markdown, preview the exact email, schedule with a cancelable review window",
+      "asserts": [
+        "You write in Markdown.",
+        "You preview the exact email that will be sent.",
+        "You schedule with a cancelable review window.",
+        "You send to your subscribers.",
+        "You keep the list, the consent record, the delivery record, and a permanent per-issue archive."
+      ],
+      "keywords": [
+        "markdown", "preview", "schedule", "cancel", "review window", "send", "subscriber",
+        "consent", "delivery record", "archive", "per-issue", "per-post"
+      ],
+      "notes": "The one-sentence promise of the whole app. A changelog entry that renames or removes any of these verbs (write/preview/schedule/send/archive) or the ownership nouns (list/consent/delivery/archive) lands here first."
+    },
+    {
+      "id": "ownership-cards",
+      "label": "Ownership — 'You keep what matters' (4 cards)",
+      "kind": "cards",
+      "source": "layouts/index.html (section after hero, .grid-4)",
+      "anchor": "You keep what matters",
+      "asserts": [
+        "The list: subscribers live in your own D1 database; query or export any time.",
+        "The consent: every subscription is double opt-in, with confirmation and unsubscribe recorded.",
+        "The delivery: each send records who received which issue, plus suppressions from hard bounces and spam complaints.",
+        "The archive: every issue gets a lasting public page on your own domain."
+      ],
+      "keywords": [
+        "subscriber", "d1", "database", "export", "double opt-in", "opt-in", "consent",
+        "confirmation", "unsubscribe", "suppress", "suppression", "bounce", "complaint",
+        "delivery", "archive", "domain"
+      ],
+      "notes": "These are data-ownership guarantees, not UI. They change rarely, and when they do it is usually a Breaking or a Changed entry about consent, suppression, storage, or the archive."
+    },
+    {
+      "id": "how-it-works",
+      "label": "How it works — write/preview/schedule/send/archive (5 steps)",
+      "kind": "flow",
+      "source": "layouts/index.html (section .flow)",
+      "anchor": "Write, preview, schedule, send",
+      "asserts": [
+        "Write in Markdown in the web editor or via Claude; a stale save is rejected rather than clobbered.",
+        "Preview the exact rendered email HTML and plain-text; send yourself a test first.",
+        "Schedule behind a cancelable countdown; a Cron Trigger drives the sweep.",
+        "Send only to confirmed subscribers; the send loop is idempotent so it never double-sends; bounces and complaints suppress on their own.",
+        "Archive each sent issue as a permanent, indexable page on your domain."
+      ],
+      "keywords": [
+        "markdown", "web editor", "claude", "stale save", "clobber", "optimistic concurrency",
+        "if-match", "etag", "409", "preview", "test", "test recipient", "schedule", "cancel",
+        "countdown", "cron", "sweep", "double opt-in", "confirmed", "idempotent", "double-send",
+        "resume", "retry", "bounce", "complaint", "suppress", "archive"
+      ],
+      "notes": "This restates the flow with mechanism detail, so it overlaps the hero-lead and the under-the-hood spec list. A behaviour change to any step (e.g. the schedule/send-now flow, the send loop, the stale-save rejection) should be checked against the exact wording here."
+    },
+    {
+      "id": "under-the-hood-chips",
+      "label": "Under the hood — tech-stack chips",
+      "kind": "chips",
+      "source": "layouts/index.html (section.eng .stack)",
+      "anchor": "class=\"chip\"",
+      "asserts": [
+        "The stack is: TypeScript, Cloudflare Workers, D1, R2, Cron Triggers, SES, Resend."
+      ],
+      "keywords": [
+        "typescript", "cloudflare", "workers", "worker", "d1", "r2", "cron", "cron trigger",
+        "ses", "resend", "provider", "adapter", "transport", "dependency", "queue", "kv", "durable object"
+      ],
+      "notes": "The literal dependency/provider list. A new provider adapter → add a chip; a dropped or renamed dependency → remove/rename one. This is the surface a 'new provider' change (the issue's own example) maps to."
+    },
+    {
+      "id": "under-the-hood-spec",
+      "label": "Under the hood — engineering spec list (6 items)",
+      "kind": "copy",
+      "source": "layouts/index.html (section.eng dl)",
+      "anchor": "Built to be operated",
+      "asserts": [
+        "One API, two clients: a single HTTP API; the web editor and Claude are just clients; nothing the editor can do is off-API.",
+        "Optimistic concurrency: edits are revision-checked (If-Match / ETag); a stale write is rejected with 409.",
+        "Idempotent send loop: the scheduled sweep is safe to retry and resumes without re-mailing anyone.",
+        "Three isolated environments: dev, staging, production each get their own database, storage, and mail transport.",
+        "Swappable email provider: SES or Resend in production; a fake in-memory transport for local dev and tests; one variable.",
+        "Access-gated admin: authoring behind Cloudflare Access; reader pages public, gated by unguessable per-subscriber tokens."
+      ],
+      "keywords": [
+        "api", "http api", "web editor", "claude", "off-api", "optimistic concurrency",
+        "revision", "if-match", "etag", "409", "stale write", "idempotent", "send loop",
+        "sweep", "retry", "re-mail", "environment", "dev", "staging", "production",
+        "database", "storage", "transport", "provider", "ses", "resend", "fake transport",
+        "cloudflare access", "access", "token", "per-subscriber", "authoring"
+      ],
+      "notes": "The most technical claims, and the ones most exactly worded (409, If-Match/ETag, 'one variable', 'three environments'). A changelog entry that changes an interface contract, the environment set, the provider seam, or the auth model needs the exact wording here re-checked, not just the gist."
+    },
+    {
+      "id": "quickstart",
+      "label": "Self-host quickstart commands",
+      "kind": "code",
+      "source": "layouts/index.html (section#quickstart pre)",
+      "anchor": "From clone to a running instance",
+      "asserts": [
+        "The shortest path is: git clone; npm install; cp .dev.vars.example .dev.vars; npm run dev (http://localhost:8787); npm run seed.",
+        "A real deployed instance additionally needs a Cloudflare account, one Access application, an email provider (SES or Resend), and sending-domain DNS."
+      ],
+      "keywords": [
+        "npm run dev", "npm run seed", "npm install", ".dev.vars", "clone", "localhost:8787",
+        "port", "seed", "migrate", "setup", "install", "command", "script", "env var", "access application"
+      ],
+      "notes": "The only place the landing pins literal commands and a port. A renamed npm script, a changed dev port, a new required setup step, or a changed env file name breaks this. Cross-check with the synced /docs/ setup guides, which cover the full deploy."
+    }
+  ]
+}
