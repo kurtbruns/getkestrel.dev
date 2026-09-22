@@ -41,9 +41,7 @@ kestrel retired the old word "operator" into publisher + developer. A mechanical
 find-replace gets this wrong: PR #27 had to correct a bad `operator → publisher`
 edit to `operator → developer`, because the setup docs are for the person
 *running* the app. When a changelog entry names a role or a role-specific action,
-decide which of the three it means before editing anything. The full statement of
-this lives in [`references/landing-map.json`](references/landing-map.json)
-(`roleModel`).
+decide which of the three it means before editing anything.
 
 ## Why "the setup docs didn't change" is never the whole answer
 
@@ -77,15 +75,16 @@ node .claude/skills/refresh-from-kestrel/scripts/gather-delta.mjs <newRef> [oldR
 ```
 
 It uses your local kestrel checkout (`$KESTREL_DOCS_SRC` or `~/Git/kestrel`) and
-falls back to a blobless clone if a tag is missing. The report has five parts:
+falls back to a blobless clone if a tag is missing. The report is three factual
+sections, then a pointer back to your judgement:
 
 1. **Changelog delta** — every `## [x.y.z]` section in `(old, new]`. This is your INDEX of what changed.
 2. **Rendered /docs/ comparison** — it runs the real `sync-docs.mjs` against *both* tags and diffs the output, so "unchanged" is proven, not assumed.
 3. **Drill-down diff** — `docs/setup/` vs `docs/SPEC.md` / `docs/DESIGN.md`. The changelog is one line per change; SPEC/DESIGN are the detail behind it.
-4. **Screenshot staleness signal** — whether editor/dashboard UI words appear in the delta.
-5. **Landing-surface candidates** — for each changelog line, which landing surfaces it *might* touch. These are **hints, not verdicts** (see the warning below).
 
-Read the whole report before doing anything.
+It stops at facts on purpose: mapping them onto the landing (step 3) is judgement
+against the live page, not something a script should guess. Read the whole report
+before doing anything.
 
 ### 2. Read the drill-down, not just the changelog
 
@@ -99,41 +98,29 @@ git -C <kestrel-checkout> diff <oldRef>..<newRef> -- docs/SPEC.md docs/DESIGN.md
 The changelog tells you *that* the send loop changed; SPEC tells you *how*, which
 is what decides whether a sentence on the landing page is still true.
 
-### 3. Decide each landing surface
+### 3. Judge the landing copy against the delta
 
-[`references/landing-map.json`](references/landing-map.json) is the reverse index:
-for each thing the landing page claims, it records where the claim lives
-(`source`), what it asserts (`asserts`), and the keywords that flag it
-(`keywords`). Keep it current — when landing copy changes (#5, #19), update the
-matching surface in the same edit.
+`layouts/index.html` is the landing page and the only source of truth for what it
+claims — read it directly, don't trust a cached list. (As it stands the page has a
+hero with the app screenshot and a lead paragraph, the "You keep what matters"
+ownership cards, the "write / preview / schedule / send" how-it-works flow, the
+"Under the hood" tech-stack chips and engineering spec list, and the self-host
+quickstart — but read the file, not this sentence.)
 
-For each surface the report flagged, and each surface below regardless, reach a
-verdict by reading the real copy in `layouts/index.html` against the real delta:
+Go section by section. For each claim, weigh it against the changelog (§1) and the
+SPEC/DESIGN drill-down (§2 above / the report's §3) and reach one verdict:
 
-| Surface | What it claims | Typical trigger |
-| --- | --- | --- |
-| `hero-screenshot` | the dashboard/editor looks as pictured | any editor/dashboard UI change |
-| `hero-lead` | write · preview · schedule · send · you keep the data | a renamed/removed core verb or ownership noun |
-| `ownership-cards` | list / consent / delivery / archive guarantees | consent, suppression, storage, archive changes |
-| `how-it-works` | the 5-step flow, with mechanism | a behaviour change to any step |
-| `under-the-hood-chips` | the literal stack + providers | a new/removed provider or dependency |
-| `under-the-hood-spec` | exact engineering claims (409, If-Match, "three environments") | an interface/env/auth/provider change |
-| `quickstart` | literal commands + port | a renamed script, changed port, new setup step |
+- **still accurate** — no edit.
+- **needs a copy edit** — say what changed and make it, filtered through the role model above; a role word is a judgement, never a find-replace.
+- **screenshot stale** — the editor/dashboard UI moved under the hero shot (see step 5).
+- **no landing impact** — the change is internal, or a net-new feature the landing doesn't describe.
 
-A verdict is one of: **still accurate** (no edit), **needs a copy edit** (say
-what, and make it), **screenshot stale** (§5), or **no landing impact**.
+This is the whole reason a skill does this and a `sed` script cannot: whether a
+claim is still true is a judgement, made by reading the real copy against the real
+delta, not a keyword match. Two things to hold onto:
 
-> **The candidate hints are hints, not instructions.** A keyword match means "go
-> read the copy and decide", never "edit the copy". This is the whole reason a
-> skill does this and a `sed` script cannot: the judgement of whether a claim is
-> still true — filtered through the role model — is yours. Do not let a keyword
-> hit talk you into a mechanical edit, and do not skip a surface just because it
-> had no hit.
-
-Net-new features and internal changes usually map to **no landing impact**: the
-landing describes what the app *is*, not its full feature list. Only change copy
-that has become *wrong*, not copy that has become *incomplete* — new-feature
-marketing is a separate, deliberate decision (#5), not part of a version bump.
+- **The screenshot is the easiest thing to miss** and the one a `/docs` re-sync will never catch. Any editor or dashboard UI change in the delta makes `assets/img/editor-*.png` suspect — treat it as its own mandatory check, not an afterthought.
+- **Only fix copy that has become *wrong*, not copy that has become *incomplete*.** The landing describes what the app *is*, not its full feature list; new-feature marketing is a separate, deliberate decision (#5), not part of a version bump.
 
 ### 4. Bump the pin and prove the build
 
@@ -155,10 +142,9 @@ screenshots from step 5.
 
 ### 5. Screenshots
 
-If the delta changed the editor or dashboard UI (the report's §4 signal, or your
-own reading of the changelog), the hero screenshot is stale. Regenerating it
-needs a **running, seeded kestrel dev server at the new ref** — see
-`scripts/shots.mjs` and the `regen` block in the landing map:
+If the delta changed the editor or dashboard UI (your reading of the changelog in
+step 3), the hero screenshot is stale. Regenerating it needs a **running, seeded
+kestrel dev server at the new ref** — see `scripts/shots.mjs`:
 
 ```bash
 # in a kestrel checkout at <newRef>:
@@ -169,10 +155,9 @@ npm run shots
 
 If such a server is available in this run, regenerate and include the updated
 `assets/img/*.png`. If it is **not** available, do not ship stale images and do
-not block the pin bump — **flag it as a follow-up** (the issue in the landing
-map's `regen.followUpIssue`, currently #19) and call it out in the PR. Deferring
-the screenshot to its own change is the correct, honest outcome — it is what the
-`v0.1.0 → v0.2.0` bump did.
+not block the pin bump — **flag it as a follow-up (#19)** and call it out in the
+PR. Deferring the screenshot to its own change is the correct, honest outcome — it
+is what the `v0.1.0 → v0.2.0` bump did.
 
 ### 6. Open a draft PR with a checklist
 
@@ -188,7 +173,7 @@ Advance `.kestrel-docs-version` from `<old>` to `<new>` — kestrel cut `<new>`.
 ## Downstream impact
 - **Synced /docs/ pages:** <unchanged (byte-identical, proven by re-render) | changed: …>. Build clean (<N> pages).
 - **Landing copy:** <re-checked against the changelog; still accurate | edited: …>.
-  <per-entry → surface verdicts — the table you built in step 3>
+  <the per-section verdicts from step 3>
 
 ## Follow-up (separate)
 - <hero screenshot flagged stale (composer/dashboard changed) → #19, needs a running <new> dev server> — or "none".
@@ -212,11 +197,12 @@ Include a checklist so the reviewer can see what was and wasn't done:
 - **Draft PR, human-reviewed, never auto-merged.** This skill produces a proposal.
 - **Scope of edits:** `.kestrel-docs-version`, landing copy in `layouts/index.html`, and `assets/img/*` screenshots. `content/docs/` is gitignored — never commit it. Don't touch CI/deploy or the sync/shots scripts as part of a bump.
 - **Do not rename `/docs/` → `/guides/`.** That is issue #15's separate, deliberate change; keep it out of a version bump.
-- **Reference issues from data, not memory.** The screenshot follow-up number lives in the landing map (`regen.followUpIssue`); use it rather than hard-coding.
+- **Flag follow-ups against the right issue** — a stale hero screenshot is #19 — rather than inventing a number.
 - **When the changelog and the diff disagree, trust the diff** — and when a claim's truth is genuinely unclear, flag it for the human rather than guessing.
 
 ## Files in this skill
 
-- `SKILL.md` — this workflow.
+- `SKILL.md` — this workflow: the role model, the mandatory copy + screenshot checks, and how to judge the live landing page.
 - `scripts/gather-delta.mjs` — the deterministic evidence-gatherer (zero-dep, Node built-ins only; read-only for this repo — it never bumps the pin, edits the site, or opens a PR).
-- `references/landing-map.json` — the data-driven landing-surface → behaviour map and the role model. Update it whenever the landing copy changes.
+
+There is deliberately no landing "map" data file: `layouts/index.html` is the live source of truth for the copy, so the skill reads it directly rather than maintaining a second copy that could drift.

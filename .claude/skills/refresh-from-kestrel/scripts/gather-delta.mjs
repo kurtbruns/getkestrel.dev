@@ -2,13 +2,13 @@
 /*
  * refresh-from-kestrel: gather the old→new kestrel delta (issue #21).
  *
- * This is the deterministic evidence-gathering half of the skill. It does NOT
- * bump anything, touch the working tree, or open a PR — it reads two kestrel
- * tags and prints a report the skill reasons over. The editorial judgement
- * (which landing copy is now wrong) stays with the model; see the skill's
- * SKILL.md and references/landing-map.json.
+ * This is the deterministic evidence-gathering half of the skill. It reads two
+ * kestrel tags and prints a report of FACTS; it never bumps the pin, edits the
+ * site, or opens a PR. The judgement — which landing copy is now wrong, whether
+ * the hero screenshot is stale — stays with the model, which weighs these facts
+ * against the live landing page (layouts/index.html). See SKILL.md for that half.
  *
- * It answers four questions the bump has to get right:
+ * It answers three factual questions the bump turns on:
  *   1. What does the changelog say changed between the tags? (the INDEX)
  *   2. Did the rendered /docs/ pages actually change? (proven by running the
  *      real sync-docs.mjs against each tag and diffing its output — NOT by
@@ -17,8 +17,11 @@
  *      yet the release carried a full editor-UI + spec delta.)
  *   3. What changed that the sync does NOT ingest? (docs/SPEC.md, docs/DESIGN.md
  *      — the DRILL-DOWN behind the changelog.)
- *   4. Which landing surfaces might now be stale? (candidate hints from the
- *      landing map + an editor/dashboard-UI signal for screenshot staleness.)
+ *
+ * Mapping those facts onto the landing surfaces (and the screenshot call) is
+ * deliberately NOT done here: it's the model's job, done by reading the live
+ * layouts/index.html, because that judgement is the whole point of the skill
+ * (see SKILL.md step 3).
  *
  * Usage:
  *   node .claude/skills/refresh-from-kestrel/scripts/gather-delta.mjs <newRef> [oldRef]
@@ -36,11 +39,7 @@
 import { execFileSync } from "node:child_process";
 import { existsSync, mkdirSync, mkdtempSync, readdirSync, readFileSync, rmSync, statSync, writeFileSync } from "node:fs";
 import { homedir, tmpdir } from "node:os";
-import { dirname, join, relative } from "node:path";
-import { fileURLToPath } from "node:url";
-
-const SKILL_DIR = join(dirname(fileURLToPath(import.meta.url)), "..");
-const MAP_PATH = join(SKILL_DIR, "references", "landing-map.json");
+import { join, relative } from "node:path";
 
 // ---------------------------------------------------------------- args
 function parseArgs(argv) {
@@ -187,54 +186,12 @@ function renderedDocsComparison(kestrelDir, oldRef, newRef, repoRoot) {
   }
 }
 
-// ------------------------------------------------------ candidate hints
-function bulletLines(sections) {
-  const lines = [];
-  for (const s of sections) {
-    for (const line of s.text.split(/\r?\n/)) {
-      if (/^\s*[-*]\s+/.test(line)) lines.push(line.replace(/^\s*[-*]\s+/, "").trim());
-    }
-  }
-  return lines;
-}
-// Match a keyword as a whole token, not a raw substring — so "ses" doesn't fire
-// on "pulses" and "ui" doesn't fire on "rebuilt". Letters and digits are the
-// word characters; punctuation (/, -, :, .) is a boundary, so "d1", "if-match",
-// "npm run dev", and "SES" all match the way an editor would expect.
-const esc = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-function matchesKeyword(text, keyword) {
-  return new RegExp(`(?<![a-z0-9])${esc(keyword.toLowerCase())}(?![a-z0-9])`, "i").test(text);
-}
-function candidateHints(map, sections) {
-  const bullets = bulletLines(sections);
-  const perSurface = {};
-  for (const surf of map.surfaces) {
-    const hits = [];
-    for (const line of bullets) {
-      const matched = surf.keywords.filter((k) => matchesKeyword(line, k));
-      if (matched.length) hits.push({ line, matched });
-    }
-    if (hits.length) perSurface[surf.id] = hits;
-  }
-  return perSurface;
-}
-// Editor/dashboard UI signal → screenshot staleness. Reuse the hero-screenshot
-// surface's keywords as the definition of "UI-ish".
-function uiSignal(map, sections) {
-  const screen = map.surfaces.find((s) => s.id === "hero-screenshot");
-  const kws = screen ? screen.keywords : [];
-  const lines = bulletLines(sections)
-    .map((line) => ({ line, matched: kws.filter((k) => matchesKeyword(line, k)) }))
-    .filter((h) => h.matched.length);
-  return { hit: lines.length > 0, lines };
-}
-
 // -------------------------------------------------------------- report
 function fmtDiff(files, label) {
   if (!files.length) return `- ${label}: unchanged`;
   return `- ${label}:\n` + files.map((f) => `    ${f.path}  (+${f.added ?? "?"} / -${f.removed ?? "?"})`).join("\n");
 }
-function buildReport(d, map) {
+function buildReport(d) {
   const L = [];
   L.push(`# refresh-from-kestrel — delta report: ${d.oldRef} → ${d.newRef}`);
   L.push("");
@@ -256,7 +213,7 @@ function buildReport(d, map) {
     L.push(`> The sync produced **0 pages** at ${d.newRef} — nothing to compare, so this proves nothing. Check that \`docs/setup/\` exists at the ref, then rely on the setup-docs diff in §3.`);
   } else if (d.rendered.identical) {
     L.push(`**Identical.** Running sync-docs.mjs against both tags produced byte-identical \`content/docs/\` (${d.rendered.pageCount} pages).`);
-    L.push(`→ The /docs/ section will not change from this bump. This is NOT permission to stop: the delta lives in the changelog, SPEC/DESIGN, and the editor UI (§1, §3, §4). Re-check landing copy and the hero screenshot regardless.`);
+    L.push(`→ The /docs/ section will not change from this bump. This is NOT permission to stop: the delta lives in the changelog, SPEC/DESIGN, and the editor UI (§1, §3). Re-check landing copy and the hero screenshot regardless (§4).`);
   } else {
     L.push(`**Changed.** The synced \`content/docs/\` differs between the tags:`);
     if (d.rendered.added.length) L.push(`- new pages: ${d.rendered.added.join(", ")}`);
@@ -274,37 +231,15 @@ function buildReport(d, map) {
   L.push(`- full text: \`git -C ${d.kestrelSource} diff ${d.oldRef}..${d.newRef} -- docs/\``);
   L.push("");
 
-  L.push(`## 4. Screenshot staleness signal`);
-  if (d.ui.hit) {
-    L.push(`**Editor/dashboard UI keywords appear in the delta → the hero screenshot is SUSPECT.**`);
-    L.push(`assets/img/editor-{light,dark}.png (and archive-*) may no longer match ${d.newRef}. Lines that triggered this:`);
-    for (const h of d.ui.lines) L.push(`- ${h.line}   _[matched: ${h.matched.join(", ")}]_`);
-    const regen = (map.surfaces.find((s) => s.id === "hero-screenshot") || {}).regen || {};
-    L.push(`Regenerate with \`${regen.command || "npm run shots"}\` — ${regen.prerequisite || "needs a running, seeded kestrel dev server at the new ref."}`);
-    L.push(`If no such dev server is available in this run, FLAG it as a follow-up (issue #${regen.followUpIssue || 19}) rather than shipping stale images.`);
-  } else {
-    L.push(`No editor/dashboard UI keywords in the delta. The hero screenshot is likely still accurate — confirm against §1 anyway.`);
-  }
-  L.push("");
-
-  L.push(`## 5. Landing-surface candidates — VERIFY, these are hints not verdicts`);
-  L.push(`Each changelog line below mentions a keyword tied to a landing surface. A hit means "go read the copy and decide", not "edit it". Use the role model and the exact wording in layouts/index.html (see references/landing-map.json).`);
-  const ids = map.surfaces.map((s) => s.id);
-  const hitIds = Object.keys(d.candidates);
-  for (const id of ids) {
-    if (!d.candidates[id]) continue;
-    const surf = map.surfaces.find((s) => s.id === id);
-    L.push("");
-    L.push(`### ${id} — ${surf.label}`);
-    L.push(`source: ${surf.source}`);
-    for (const h of d.candidates[id]) L.push(`- ${h.line}   _[matched: ${h.matched.join(", ")}]_`);
-  }
-  const noHits = ids.filter((id) => !hitIds.includes(id));
-  if (noHits.length) { L.push(""); L.push(`Surfaces with no keyword hits (still worth a glance if a change is subtle): ${noHits.join(", ")}`); }
+  L.push(`## 4. Now judge the landing — your job, against the live page`);
+  L.push(`The script stops at facts. Open \`layouts/index.html\` (the always-current source of every landing claim) and read it section by section against §1 and §3. For each claim decide: still accurate, needs a copy edit, screenshot-stale, or no landing impact — filtered through the role model in SKILL.md, never a mechanical match.`);
+  L.push(`Two checks are mandatory even when §2 says /docs/ is identical:`);
+  L.push(`- **Landing copy** — does any claim in \`layouts/index.html\` now misdescribe kestrel?`);
+  L.push(`- **Hero screenshot** — did any changelog entry change the editor/dashboard UI? If so the shipped \`assets/img/editor-*.png\` are suspect: regenerate with \`npm run shots\` (needs a seeded dev server at ${d.newRef}), or flag #19.`);
   L.push("");
 
   L.push(`## Next: the bump checklist`);
-  L.push(`Continue with the checklist in SKILL.md — bump \`.kestrel-docs-version\`, re-sync, \`hugo\` build, decide each surface above, then open a **draft** PR (never merge).`);
+  L.push(`Continue with the checklist in SKILL.md — bump \`.kestrel-docs-version\`, re-sync, \`hugo\` build, give each landing section a verdict, then open a **draft** PR (never merge).`);
   return L.join("\n") + "\n";
 }
 
@@ -322,7 +257,6 @@ function main() {
   }
   if (cmpSemver(newRef, oldRef) <= 0) console.error(`[gather-delta] warning: new ref ${newRef} is not newer than old ref ${oldRef}.`);
 
-  const map = JSON.parse(readFileSync(MAP_PATH, "utf8"));
   const { dir: kestrelDir, cloned, tmp } = resolveKestrel(args.src, [oldRef, newRef]);
 
   try {
@@ -334,7 +268,7 @@ function main() {
       design: allDiff.filter((f) => /(^|\/)DESIGN\.md$/.test(f.path)),
       other: allDiff.filter((f) => f.path.startsWith("docs/") && !f.path.startsWith("docs/setup/") && !/DESIGN\.md$|SPEC\.md$/.test(f.path)),
     };
-    // §1/§3/§4/§5 don't depend on rendering, so a render failure (no `tar`, a
+    // §1/§3 don't depend on rendering, so a render failure (no `tar`, a
     // sync-docs error, a bad archive) must degrade to a skipped §2, not abort
     // the whole report. The --no-render path already produces a usable report.
     let rendered = { ran: false, reason: "--no-render" };
@@ -342,11 +276,9 @@ function main() {
       try { rendered = renderedDocsComparison(kestrelDir, oldRef, newRef, repoRoot); }
       catch (err) { rendered = { ran: false, reason: `render step failed: ${err instanceof Error ? err.message : String(err)}` }; }
     }
-    const ui = uiSignal(map, changelog.sections);
-    const candidates = candidateHints(map, changelog.sections);
 
-    const data = { oldRef, newRef, kestrelSource: cloned ? `${kestrelDir} (fresh clone)` : kestrelDir, changelog, diff, rendered, ui, candidates };
-    const report = buildReport(data, map);
+    const data = { oldRef, newRef, kestrelSource: cloned ? `${kestrelDir} (fresh clone)` : kestrelDir, changelog, diff, rendered };
+    const report = buildReport(data);
     process.stdout.write(report);
     if (args.json) {
       writeFileSync(args.json, JSON.stringify(data, null, 2));
