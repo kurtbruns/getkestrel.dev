@@ -67,15 +67,17 @@ So two checks are **mandatory on every run, even when `/docs/` is identical**:
 
 ### 1. Gather the delta (the deterministic part)
 
-Run the evidence-gatherer. It reads the two tags and prints a report; it changes
-nothing.
+Run the evidence-gatherer. It reads the two tags and prints a report — it never
+bumps the pin, edits the site, or opens a PR. (Its one side effect: if a tag is
+missing from your local kestrel checkout it runs `git fetch --tags` there; it
+never touches this repo or any working tree.)
 
 ```bash
 node .claude/skills/refresh-from-kestrel/scripts/gather-delta.mjs <newRef> [oldRef] --json /tmp/kestrel-delta.json
 ```
 
 It uses your local kestrel checkout (`$KESTREL_DOCS_SRC` or `~/Git/kestrel`) and
-falls back to a shallow clone if a tag is missing. The report has five parts:
+falls back to a blobless clone if a tag is missing. The report has five parts:
 
 1. **Changelog delta** — every `## [x.y.z]` section in `(old, new]`. This is your INDEX of what changed.
 2. **Rendered /docs/ comparison** — it runs the real `sync-docs.mjs` against *both* tags and diffs the output, so "unchanged" is proven, not assumed.
@@ -216,5 +218,5 @@ Include a checklist so the reviewer can see what was and wasn't done:
 ## Files in this skill
 
 - `SKILL.md` — this workflow.
-- `scripts/gather-delta.mjs` — the deterministic evidence-gatherer (zero-dep, Node built-ins only; changes nothing).
+- `scripts/gather-delta.mjs` — the deterministic evidence-gatherer (zero-dep, Node built-ins only; read-only for this repo — it never bumps the pin, edits the site, or opens a PR).
 - `references/landing-map.json` — the data-driven landing-surface → behaviour map and the role model. Update it whenever the landing copy changes.

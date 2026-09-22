@@ -28,7 +28,7 @@
  *
  * Options:
  *   --src <dir>    kestrel checkout to read (default: $KESTREL_DOCS_SRC or ~/Git/kestrel;
- *                  falls back to a shallow clone of kurtbruns/kestrel if refs are missing).
+ *                  falls back to a blobless clone of kurtbruns/kestrel if refs are missing).
  *   --repo <dir>   getkestrel.dev root (default: cwd) — for sync-docs.mjs and .kestrel-docs-version.
  *   --json <path>  also write the structured report as JSON.
  *   --no-render    skip the render-and-diff of /docs/ (question 2). Faster, less proof.
@@ -60,7 +60,10 @@ function fail(msg) {
   console.error(`[gather-delta] ${msg}`);
   process.exit(1);
 }
-const git = (dir, args) => execFileSync("git", ["-C", dir, ...args], { encoding: "utf8", maxBuffer: 64 * 1024 * 1024 });
+// stderr is ignored: the resolve path probes refs with `rev-parse --verify` and
+// expects some to fail (a local checkout behind on tags), so git's "fatal:
+// Needed a single revision" is normal control flow, not noise worth printing.
+const git = (dir, args) => execFileSync("git", ["-C", dir, ...args], { encoding: "utf8", maxBuffer: 64 * 1024 * 1024, stdio: ["ignore", "pipe", "ignore"] });
 const gitOk = (dir, args) => { try { git(dir, args); return true; } catch { return false; } };
 
 // -------------------------------------------------------------- resolve
@@ -71,10 +74,11 @@ function resolveKestrel(preferred, needRefs) {
     if (!needRefs.every((r) => gitOk(candidate, ["rev-parse", "--verify", `${r}^{commit}`]))) {
       gitOk(candidate, ["fetch", "--tags", "--quiet"]);
     }
-    if (needRefs.every((r) => gitOk(candidate, ["rev-parse", "--verify", `${r}^{commit}`]))) {
+    const missing = needRefs.filter((r) => !gitOk(candidate, ["rev-parse", "--verify", `${r}^{commit}`]));
+    if (!missing.length) {
       return { dir: candidate, cloned: false };
     }
-    console.error(`[gather-delta] ${candidate} is missing ${needRefs.join(" / ")}; cloning kestrel instead.`);
+    console.error(`[gather-delta] ${candidate} is missing ${missing.join(" / ")}; cloning kestrel instead.`);
   } else {
     console.error(`[gather-delta] no kestrel checkout at ${candidate}; cloning kurtbruns/kestrel.`);
   }
@@ -172,7 +176,12 @@ function renderedDocsComparison(kestrelDir, oldRef, newRef, repoRoot) {
       else if (!(n in newDocs)) removed.push(n);
       else if (oldDocs[n] !== newDocs[n]) changed.push(n);
     }
-    return { ran: true, identical: !added.length && !removed.length && !changed.length, added, removed, changed, pageCount: Object.keys(newDocs).length };
+    const pageCount = Object.keys(newDocs).length;
+    // Guard against a hollow all-clear: zero pages on both sides diffs as
+    // "identical" but actually means the sync produced nothing (e.g. an empty
+    // docs/setup at the ref), which proves nothing — surface it instead.
+    const identical = pageCount > 0 && !added.length && !removed.length && !changed.length;
+    return { ran: true, identical, empty: pageCount === 0, added, removed, changed, pageCount };
   } finally {
     rmSync(tmpRoot, { recursive: true, force: true });
   }
@@ -243,6 +252,8 @@ function buildReport(d, map) {
   L.push(`## 2. Rendered /docs/ comparison — did the synced pages actually change?`);
   if (!d.rendered.ran) {
     L.push(`> Skipped (${d.rendered.reason || "--no-render"}). Fall back to the setup-docs diff in §3.`);
+  } else if (d.rendered.empty) {
+    L.push(`> The sync produced **0 pages** at ${d.newRef} — nothing to compare, so this proves nothing. Check that \`docs/setup/\` exists at the ref, then rely on the setup-docs diff in §3.`);
   } else if (d.rendered.identical) {
     L.push(`**Identical.** Running sync-docs.mjs against both tags produced byte-identical \`content/docs/\` (${d.rendered.pageCount} pages).`);
     L.push(`→ The /docs/ section will not change from this bump. This is NOT permission to stop: the delta lives in the changelog, SPEC/DESIGN, and the editor UI (§1, §3, §4). Re-check landing copy and the hero screenshot regardless.`);
@@ -323,7 +334,14 @@ function main() {
       design: allDiff.filter((f) => /(^|\/)DESIGN\.md$/.test(f.path)),
       other: allDiff.filter((f) => f.path.startsWith("docs/") && !f.path.startsWith("docs/setup/") && !/DESIGN\.md$|SPEC\.md$/.test(f.path)),
     };
-    const rendered = args.render ? renderedDocsComparison(kestrelDir, oldRef, newRef, repoRoot) : { ran: false, reason: "--no-render" };
+    // §1/§3/§4/§5 don't depend on rendering, so a render failure (no `tar`, a
+    // sync-docs error, a bad archive) must degrade to a skipped §2, not abort
+    // the whole report. The --no-render path already produces a usable report.
+    let rendered = { ran: false, reason: "--no-render" };
+    if (args.render) {
+      try { rendered = renderedDocsComparison(kestrelDir, oldRef, newRef, repoRoot); }
+      catch (err) { rendered = { ran: false, reason: `render step failed: ${err instanceof Error ? err.message : String(err)}` }; }
+    }
     const ui = uiSignal(map, changelog.sections);
     const candidates = candidateHints(map, changelog.sections);
 
