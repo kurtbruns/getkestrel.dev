@@ -16,7 +16,10 @@
       var active = items[0];
       // At the very bottom the last heading wins, so a short final section that
       // can't scroll up to the line (even with the .docs-body runway) still lights.
-      if (Math.ceil(window.innerHeight + window.scrollY) >= document.documentElement.scrollHeight) {
+      // Only on a page that scrolls: one that fits the viewport is "at the bottom" on
+      // load, and should keep the first entry.
+      var sh = document.documentElement.scrollHeight;
+      if (sh > window.innerHeight && Math.ceil(window.innerHeight + window.scrollY) >= sh) {
         active = items[items.length - 1];
       } else {
         for (var i = 0; i < items.length; i++) {
