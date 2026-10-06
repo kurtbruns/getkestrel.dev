@@ -5,3 +5,9 @@
 # buildDrafts renders draft content on the local dev server without shipping
 # it to production.
 buildDrafts = true
+
+# Cloudflare's Turnstile test key that always passes, so the contact form works
+# against `wrangler dev` without a real widget. Pair it with the always-pass test
+# secret in .dev.vars.
+[params]
+turnstileSiteKey = '1x00000000000000000000AA'

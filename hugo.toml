@@ -11,6 +11,10 @@ repoApp = 'https://github.com/kurtbruns/kestrel'
 repoSite = 'https://github.com/kurtbruns/getkestrel.dev'
 # The hosted, per-visitor sandbox demo (kurtbruns/demo.getkestrel.dev).
 demoURL = 'https://demo.getkestrel.dev'
+# The contact form's Turnstile widget (public; its secret is the Worker's
+# TURNSTILE_SECRET). config/development/hugo.toml swaps in Cloudflare's always-pass
+# test key for the local server.
+turnstileSiteKey = '0x4AAAAAAFPrnxhdh0_sZDHN'
 
 # No tags/categories on this site — clear Hugo's default taxonomies so it
 # doesn't emit empty /tags and /categories term pages and feeds.
