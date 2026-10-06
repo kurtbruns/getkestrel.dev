@@ -3,18 +3,26 @@
   <p class="eyebrow">Documentation</p>
   <h1>{{ .Title }}</h1>
   <div class="docs-index-intro">{{ .Content }}</div>
+  {{- $all := .Pages.ByWeight }}
+  {{- with .Params.sections }}
+  {{- /* Sections, as kestrel's docs/README.md lays them out (scripts/sync-docs.mjs). */}}
+  {{- range . }}
+  {{- $pages := where $all "Params.docsection" .id }}
+  {{- if $pages }}
+  <section class="doc-section">
+    <h2 class="doc-section-t">{{ .title }}</h2>
+    {{- with .blurb }}<div class="doc-section-blurb">{{ . | markdownify }}</div>{{ end }}
+    {{- if .numbered }}<ol class="doc-cards">{{ else }}<ul class="doc-cards">{{ end }}
+      {{- range $pages }}{{ partial "doc-card.html" . }}{{ end }}
+    {{- if .numbered }}</ol>{{ else }}</ul>{{ end }}
+  </section>
+  {{- end }}
+  {{- end }}
+  {{- else }}
+  {{- /* The flat layout of releases up to kestrel v1.2.0: one numbered list. */}}
   <ol class="doc-cards">
-    {{ range .Pages.ByWeight }}
-    <li>
-      <a class="doc-card" href="{{ .RelPermalink }}">
-        <span class="doc-card-n">{{ printf "%02d" (int .Weight) }}</span>
-        <span class="doc-card-main">
-          <span class="doc-card-t">{{ .Title }} <span class="doc-card-go" aria-hidden="true">→</span></span>
-          {{ with .Description }}<span class="doc-card-d">{{ . }}</span>{{ end }}
-        </span>
-      </a>
-    </li>
-    {{ end }}
+    {{- range $all }}{{ partial "doc-card.html" (dict "Page" . "N" .Weight) }}{{ end }}
   </ol>
+  {{- end }}
 </div>
 {{ end }}

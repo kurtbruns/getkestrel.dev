@@ -1,0 +1,14 @@
+{{- /* One doc on the /docs/ landing: its step number (in a numbered section), its
+       title, and its blurb. Takes a page, or a dict of Page and N for the flat
+       layout, whose numbers are the page weights. */ -}}
+{{- $p := . -}}{{- $n := 0 -}}
+{{- if reflect.IsMap . }}{{ $p = .Page }}{{ $n = .N }}{{ else }}{{ $n = .Params.step | default 0 }}{{ end -}}
+<li>
+  <a class="doc-card" href="{{ $p.RelPermalink }}">
+    {{- if $n }}<span class="doc-card-n">{{ printf "%02d" (int $n) }}</span>{{ end }}
+    <span class="doc-card-main">
+      <span class="doc-card-t">{{ $p.Title }} <span class="doc-card-go" aria-hidden="true">→</span></span>
+      {{- with $p.Description }}<span class="doc-card-d">{{ . }}</span>{{ end }}
+    </span>
+  </a>
+</li>

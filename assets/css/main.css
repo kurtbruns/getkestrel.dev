@@ -472,6 +472,12 @@ pre .muted { color: var(--muted); }
 .docs-index-intro code { font-family: var(--mono); font-size: 0.88em; background: var(--code-bg); padding: 0.1em 0.35em; border-radius: 5px; }
 /* The straight divider lives on the <li>, so the card's radius (used only for
    the hover fill) never rounds the dividing line. */
+/* A section of the landing (kestrel's docs/README.md): its title and blurb over its cards. */
+.doc-section { margin-top: 3rem; }
+.doc-section-t { font-family: var(--serif); font-weight: 600; font-size: 24px; letter-spacing: -.01em; margin: 0 0 6px; }
+.doc-section-blurb { color: var(--muted); font-size: 16px; line-height: 1.6; }
+.doc-section-blurb p { margin: 0; }
+.doc-section .doc-cards { margin-top: 1rem; }
 .doc-cards { list-style: none; margin: 2rem 0 0; padding: 0; }
 .doc-cards li { border-top: 1px solid var(--line); }
 .doc-cards li:first-child { border-top: 0; }
