@@ -425,7 +425,8 @@ pre .muted { color: var(--muted); }
   transition: color .12s, border-color .12s;
 }
 .docs-onpage-toc nav a:hover { color: var(--ink); }
-.docs-onpage-toc nav a.active { color: var(--ink); border-left-color: var(--ink); font-weight: 600; }
+/* no weight change: bolder text is wider and can rewrap the entry, shifting the rail */
+.docs-onpage-toc nav a.active { color: var(--ink); border-left-color: var(--ink); }
 
 /* article — readable text caps at a comfortable measure; code and tables use
    the fuller column, so the container width (and the header) never changes. */
