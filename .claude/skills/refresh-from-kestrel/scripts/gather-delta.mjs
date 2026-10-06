@@ -235,7 +235,7 @@ function buildReport(d) {
   L.push(`The script stops at facts. Open \`layouts/index.html\` (the always-current source of every landing claim) and read it section by section against §1 and §3. For each claim decide: still accurate, needs a copy edit, screenshot-stale, or no landing impact — filtered through the role model in SKILL.md, never a mechanical match.`);
   L.push(`Two checks are mandatory even when §2 says /docs/ is identical:`);
   L.push(`- **Landing copy** — does any claim in \`layouts/index.html\` now misdescribe kestrel?`);
-  L.push(`- **Hero screenshot** — did any changelog entry change the editor/dashboard UI? If so the shipped \`assets/img/editor-*.png\` are suspect: regenerate with \`npm run shots\` (needs a seeded dev server at ${d.newRef}), or flag it in a follow-up issue.`);
+  L.push(`- **Hero screenshot** — did any changelog entry change the editor/dashboard UI? If so the shipped \`assets/img/{dashboard,editor}-*.png\` are suspect: regenerate with \`npm run shots\` (needs a seeded dev server at ${d.newRef}), or flag it in a follow-up issue.`);
   L.push("");
 
   L.push(`## Next: the bump checklist`);

@@ -17,22 +17,96 @@
     </div>
     <p class="cta-note">Runs on your own Cloudflare account. Your data never leaves it.</p>
 
-    {{ $shotLight := resources.Get "img/editor-light.png" | fingerprint -}}
-    {{ $shotDark := resources.Get "img/editor-dark.png" | fingerprint -}}
-    <div class="preview">
+    {{/* App preview: a tabbed switcher over real screenshots (npm run shots). Each view
+         keeps a light + dark pair, swapped by prefers-color-scheme, served as WebP at two
+         widths. Only the first view loads eagerly; the others carry data-src/data-srcset,
+         which the script attaches the first time their tab is hovered, focused, or picked
+         (loading=lazy alone isn't enough: Chrome fetches lazy images in a hidden panel
+         once the frame nears the viewport). Without JS the tabs stay hidden and the
+         dashboard shows. */ -}}
+    {{ $views := slice
+      (dict "id" "dashboard" "label" "Dashboard" "path" "/dashboard/"
+        "alt" "The Kestrel dashboard for the Field Notes demo publication, showing subscriber counts, a scheduled issue, two drafts, and the sent issues with their delivery counts.")
+      (dict "id" "editor" "label" "Editor" "path" "/dashboard/#/edit/5eed0006-0000-4000-8000-000000000006"
+        "alt" "The Kestrel editor with the Field Notes draft “Try editing this draft” open on its Preview tab, showing the rendered email exactly as subscribers will receive it.")
+      (dict "id" "archive" "label" "Archive" "path" "/archive/the-hovering-hunter"
+        "alt" "A published Field Notes issue, “The hovering hunter,” on its permanent public archive page, with a photo of a kestrel in flight.")
+    -}}
+    {{ $sizes := "(min-width: 1024px) 976px, calc(100vw - 48px)" -}}
+    <div class="preview" data-preview>
       <div class="preview-bar">
         <span class="dot"></span><span class="dot"></span><span class="dot"></span>
-        <span class="addr">localhost:8787/dashboard</span>
+        <span class="addr" data-addr>localhost:8787{{ (index $views 0).path }}</span>
+        <div class="preview-tabs" role="tablist" aria-label="App screenshots" hidden>
+          {{- range $i, $v := $views }}
+          <button type="button" role="tab" id="shot-tab-{{ $v.id }}" aria-controls="shot-{{ $v.id }}"
+            aria-selected="{{ if eq $i 0 }}true{{ else }}false{{ end }}"{{ if ne $i 0 }} tabindex="-1"{{ end }}
+            data-path="{{ $v.path }}">{{ $v.label }}</button>
+          {{- end }}
+        </div>
       </div>
-      <div class="preview-body">
+      {{- range $i, $v := $views }}
+      {{- $light := resources.Get (printf "img/%s-light.png" $v.id) -}}
+      {{- $dark := resources.Get (printf "img/%s-dark.png" $v.id) -}}
+      {{- $l1 := $light.Resize "1000x webp q82" | fingerprint -}}
+      {{- $l2 := $light.Resize "2000x webp q82" | fingerprint -}}
+      {{- $d1 := $dark.Resize "1000x webp q82" | fingerprint -}}
+      {{- $d2 := $dark.Resize "2000x webp q82" | fingerprint }}
+      {{- $pre := cond (eq $i 0) "" "data-" }}
+      <div class="preview-body" role="tabpanel" id="shot-{{ $v.id }}" aria-labelledby="shot-tab-{{ $v.id }}"{{ if ne $i 0 }} hidden{{ end }}>
         <picture>
-          <source srcset="{{ $shotDark.RelPermalink }}" media="(prefers-color-scheme: dark)">
-          <img src="{{ $shotLight.RelPermalink }}" width="2560" height="1440" loading="eager"
-            decoding="async"
-            alt="The Kestrel editor: the dashboard for the Field Notes demo publication, showing subscriber counts, a scheduled issue, two drafts, and the sent issues.">
+          <source type="image/webp" media="(prefers-color-scheme: dark)" sizes="{{ $sizes }}"
+            {{ $pre | safeHTMLAttr }}srcset="{{ $d1.RelPermalink }} 1000w, {{ $d2.RelPermalink }} 2000w">
+          <source type="image/webp" sizes="{{ $sizes }}"
+            {{ $pre | safeHTMLAttr }}srcset="{{ $l1.RelPermalink }} 1000w, {{ $l2.RelPermalink }} 2000w">
+          <img {{ $pre | safeHTMLAttr }}src="{{ $l2.RelPermalink }}" width="2000" height="1125" decoding="async"
+            alt="{{ $v.alt }}">
         </picture>
       </div>
+      {{- end }}
     </div>
+    <script>
+      // The preview's tabs (WAI-ARIA tabs, automatic activation): click or arrow keys
+      // swap the panel and the fake address bar. No autoplay; the reader drives it.
+      (function () {
+        var root = document.querySelector("[data-preview]");
+        if (!root) { return; }
+        var list = root.querySelector("[role=tablist]");
+        var tabs = Array.prototype.slice.call(list.querySelectorAll("[role=tab]"));
+        var addr = root.querySelector("[data-addr]");
+        // Attach a panel's deferred image sources (a no-op once they're attached).
+        function hydrate(tab) {
+          var panel = document.getElementById(tab.getAttribute("aria-controls"));
+          panel.querySelectorAll("[data-srcset], [data-src]").forEach(function (el) {
+            if (el.dataset.srcset) { el.srcset = el.dataset.srcset; el.removeAttribute("data-srcset"); }
+            if (el.dataset.src) { el.src = el.dataset.src; el.removeAttribute("data-src"); }
+          });
+        }
+        function select(tab, focus) {
+          hydrate(tab);
+          tabs.forEach(function (t) {
+            var on = t === tab;
+            t.setAttribute("aria-selected", on ? "true" : "false");
+            t.tabIndex = on ? 0 : -1;
+            document.getElementById(t.getAttribute("aria-controls")).hidden = !on;
+          });
+          addr.textContent = "localhost:8787" + tab.dataset.path;
+          if (focus) { tab.focus(); }
+        }
+        tabs.forEach(function (tab, i) {
+          tab.addEventListener("click", function () { select(tab, false); });
+          tab.addEventListener("pointerenter", function () { hydrate(tab); });
+          tab.addEventListener("focus", function () { hydrate(tab); });
+          tab.addEventListener("keydown", function (e) {
+            var next = { ArrowRight: i + 1, ArrowLeft: i - 1, Home: 0, End: tabs.length - 1 }[e.key];
+            if (next === undefined) { return; }
+            e.preventDefault();
+            select(tabs[(next + tabs.length) % tabs.length], true);
+          });
+        });
+        list.hidden = false;
+      })();
+    </script>
   </div>
 </section>
 

@@ -42,8 +42,26 @@ const BASE = parseBase();
 
 // 16:9 at a 2x device scale → 2560×1440 PNGs, crisp in the ~976px hero frame.
 const VIEW = { width: 1280, height: 720, scale: 2 };
+// `steps` (optional) is an in-page async expression run after load: it drives the SPA to
+// the state worth showing (the editor is hash-routed by a seed-assigned post id, so the
+// shot opens the draft by its title rather than hardcoding an id).
 const SHOTS = [
-  { name: "editor", path: "/dashboard/", label: "editor dashboard" },
+  { name: "dashboard", path: "/dashboard/", label: "editor dashboard" },
+  {
+    name: "editor",
+    path: "/dashboard/#/drafts",
+    label: "draft editor with email preview",
+    steps: `(async () => {
+      const until = async (fn) => { for (let i = 0; i < 100; i++) { const v = fn(); if (v) return v; await new Promise((r) => setTimeout(r, 50)); } throw new Error("timed out"); };
+      const link = await until(() => [...document.querySelectorAll("a")].find((a) => a.textContent.includes("Try editing this draft")));
+      link.click();
+      const tab = await until(() => document.querySelector('.ctab[data-tab="preview"]'));
+      tab.click();
+      const frame = document.getElementById("previewFrame");
+      await until(() => frame.srcdoc && frame.contentDocument?.readyState === "complete" && frame.contentDocument.body?.childElementCount);
+      return location.hash;
+    })()`,
+  },
   { name: "archive", path: "/archive/the-hovering-hunter", label: "published archive issue" },
 ];
 const THEMES = ["light", "dark"];
@@ -132,7 +150,7 @@ async function launchChrome() {
   } };
 }
 
-async function capture(cdp, url, theme) {
+async function capture(cdp, url, theme, steps) {
   const { targetId } = await cdp.send("Target.createTarget", { url: "about:blank" });
   const { sessionId } = await cdp.send("Target.attachToTarget", { targetId, flatten: true });
   await cdp.send("Page.enable", {}, sessionId);
@@ -168,6 +186,15 @@ async function capture(cdp, url, theme) {
     },
     sessionId,
   );
+  if (steps) {
+    const { result, exceptionDetails } = await cdp.send(
+      "Runtime.evaluate",
+      { expression: steps, awaitPromise: true, returnByValue: true },
+      sessionId,
+    );
+    if (exceptionDetails) throw new Error(`steps failed: ${exceptionDetails.exception?.description ?? exceptionDetails.text}`);
+    if (result?.value) console.log(`[shots]   steps → ${result.value}`);
+  }
   await sleep(400);
   const { data } = await cdp.send(
     "Page.captureScreenshot",
@@ -195,7 +222,7 @@ async function main() {
   try {
     for (const shot of SHOTS) {
       for (const theme of THEMES) {
-        const png = await capture(cdp, `${BASE}${shot.path}`, theme);
+        const png = await capture(cdp, `${BASE}${shot.path}`, theme, shot.steps);
         const file = join(OUT_DIR, `${shot.name}-${theme}.png`);
         await writeFile(file, png);
         console.log(

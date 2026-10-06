@@ -119,7 +119,7 @@ This is the whole reason a skill does this and a `sed` script cannot: whether a
 claim is still true is a judgement, made by reading the real copy against the real
 delta, not a keyword match. Two things to hold onto:
 
-- **The screenshot is the easiest thing to miss** and the one a `/docs` re-sync will never catch. Any editor or dashboard UI change in the delta makes `assets/img/editor-*.png` suspect — treat it as its own mandatory check, not an afterthought.
+- **The screenshot is the easiest thing to miss** and the one a `/docs` re-sync will never catch. Any editor or dashboard UI change in the delta makes `assets/img/{dashboard,editor}-*.png` suspect — treat it as its own mandatory check, not an afterthought.
 - **Only fix copy that has become *wrong*, not copy that has become *incomplete*.** The landing describes what the app *is*, not its full feature list; new-feature marketing is a separate, deliberate decision (#5), not part of a version bump.
 
 ### 4. Bump the pin and prove the build
