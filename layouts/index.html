@@ -170,15 +170,16 @@
 </section>
 
 {{/* ------------------------------------------------------- get started */}}
-{{- /* A stepped path down a numbered rail: step 1 is trying it (the demo, with trying
-       it locally folded in as the developer's alternative), step 2 is deploying your
-       own, the destination once a visitor has decided. */ -}}
+{{- /* A stepped path down a numbered rail: step 1 is trying it (the demo, with a quiet
+       link to running it locally, the developer's alternative, which the README owns),
+       step 2 is deploying your own, the destination once a visitor has decided. */ -}}
 {{- $readme := printf "%s#local-setup" site.Params.repoApp -}}
 {{- $guide := printf "%s/tree/main/docs" site.Params.repoApp -}}
 {{- with site.GetPage "/docs/overview" }}{{ $guide = .RelPermalink }}{{ end -}}
 <section class="section ways-b" id="get-started">
   <div class="wrap">
     <div class="section-head">
+      <p class="eyebrow">Get started</p>
       <h2>Try it, then run your own</h2>
       <p>Kestrel is for publishers who want to own their list and don't mind running a
         small app to do it. It has no paid subscriptions or discovery network, and you
@@ -197,22 +198,8 @@
           <div class="wb-act">
             <a class="btn" href="{{ site.Params.demoURL }}">Open the demo</a>
             <span class="wb-meta">In your browser · instant</span>
+            <a class="wb-link" id="try-it-locally" href="{{ $readme }}">Or run it on your computer →</a>
           </div>
-
-          <details class="wb-local" id="try-it-locally">
-            <summary><b>Try it locally</b> <span class="wb-meta">On your computer · a few minutes</span></summary>
-            <div class="wb-local-body">
-              <p>You need Node.js 22 or later. Email goes to a stand-in, so nothing reaches a
-                real inbox.</p>
-              <pre class="wb-code"><code>git clone {{ site.Params.repoApp }}
-cd kestrel &amp;&amp; npm install
-cp .dev.vars.example .dev.vars
-npm run dev     <span class="muted"># http://localhost:8787</span></code></pre>
-              <p>Then, in a second terminal, load the demo publication:</p>
-              <pre class="wb-code"><code>npm run seed</code></pre>
-              <p><a class="wb-link" href="{{ $readme }}">More in the README →</a></p>
-            </div>
-          </details>
         </div>
       </li>
 

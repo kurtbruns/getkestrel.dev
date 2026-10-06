@@ -286,47 +286,6 @@ h1, h2, h3 {
 .ways-b .wb-meta { font-family: var(--mono); font-size: 12px; color: var(--muted); margin: 0 0 0 4px; }
 .ways-b .wb-act { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 16px; margin-top: 20px; }
 
-/* Step 1's alternative: try it locally, closed by default. */
-.ways-b .wb-local {
-  margin-top: 24px;
-  max-width: 40rem;
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
-  background: var(--card);
-  scroll-margin-top: 90px;
-}
-.ways-b .wb-local summary {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  gap: 4px 12px;
-  padding: 16px 20px;
-  cursor: pointer;
-  list-style: none;
-}
-.ways-b .wb-local summary::-webkit-details-marker { display: none; }
-.ways-b .wb-local summary::before {
-  content: "+";
-  font-family: var(--mono);
-  color: var(--muted);
-  width: 1ch;
-}
-.ways-b .wb-local[open] summary::before { content: "−"; }
-.ways-b .wb-local summary b { font-weight: 650; font-size: 16px; }
-.ways-b .wb-local .wb-meta { margin: 0; }
-.ways-b .wb-local-body { padding: 0 20px 20px; border-top: 1px solid var(--line); }
-.ways-b .wb-local-body p { color: var(--muted); font-size: 15.5px; margin: 14px 0 0; }
-.ways-b .wb-code {
-  margin: 10px 0 0;
-  padding: 14px 16px;
-  border: 1px solid var(--line);
-  border-radius: var(--radius-sm);
-  background: var(--code-bg);
-  font-size: 13px;
-  overflow-x: auto;
-  max-width: 100%;
-}
-
 /* Step 2's needs, set off as a checklist beside the cost. */
 .ways-b .wb-needs {
   margin-top: 18px;
@@ -352,9 +311,7 @@ h1, h2, h3 {
   .ways-b .wb-n { width: 32px; height: 32px; font-size: 12.5px; }
   .ways-b .wb-step:not(:last-child)::after { left: 15px; top: 36px; }
   .ways-b .wb-host { margin-left: 46px; }
-  .ways-b .wb-local summary, .ways-b .wb-needs { padding-left: 16px; padding-right: 16px; }
-  .ways-b .wb-local-body { padding: 0 16px 16px; }
-  .ways-b .wb-code { font-size: 12px; padding: 12px; }
+  .ways-b .wb-needs { padding-left: 16px; padding-right: 16px; }
 }
 
 /* ------------------------------------------------------------------- flow */
