@@ -14,7 +14,7 @@ demoURL = 'https://demo.getkestrel.dev'
 # The contact form's Turnstile widget (public; its secret is the Worker's
 # TURNSTILE_SECRET). config/development/hugo.toml swaps in Cloudflare's always-pass
 # test key for the local server.
-turnstileSiteKey = 'REPLACE_WITH_TURNSTILE_SITE_KEY'
+turnstileSiteKey = '0x4AAAAAAFPrnxhdh0_sZDHN'
 
 # No tags/categories on this site — clear Hugo's default taxonomies so it
 # doesn't emit empty /tags and /categories term pages and feeds.
