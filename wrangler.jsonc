@@ -12,25 +12,10 @@
   "observability": {
     "enabled": true
   },
-  // The site is static except for one route: the contact form posts to
-  // /api/contact, which worker/index.js handles. run_worker_first sends only
-  // /api/* to the script, so every page is still served straight from assets.
-  "main": "worker/index.js",
   "assets": {
     "directory": "./public",
-    "binding": "ASSETS",
     "html_handling": "auto-trailing-slash",
-    "not_found_handling": "404-page",
-    "run_worker_first": ["/api/*"]
-  },
-  // The contact form's mail. Sending to a destination address verified in the
-  // account is free on every plan; the sender must be on a domain with Cloudflare
-  // email turned on (getkestrel.dev, through Email Routing). Where it goes is the
-  // CONTACT_TO secret, kept out of this public file; TURNSTILE_SECRET is the
-  // other one. Locally both come from .dev.vars (see .dev.vars.example).
-  "send_email": [{ "name": "CONTACT" }],
-  "vars": {
-    "CONTACT_FROM": "contact@getkestrel.dev"
+    "not_found_handling": "404-page"
   },
   // Production custom domains (issue #6 — Publish v1). custom_domain = true
   // makes `wrangler deploy` provision the proxied DNS record + edge cert and
