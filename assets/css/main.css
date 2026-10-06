@@ -236,6 +236,127 @@ h1, h2, h3 {
   margin: 0 0 12px;
 }
 
+/* ------------------------------------------------------------ get started */
+
+/* "Try it, then run your own": a stepped path down a numbered rail. Step 1 (the demo,
+   with trying it locally behind a disclosure) leads; step 2 is deploying your own. */
+.ways-b .wb-steps { list-style: none; margin: 0; padding: 0; }
+.ways-b .wb-step {
+  position: relative;
+  display: grid;
+  grid-template-columns: 44px minmax(0, 1fr);
+  column-gap: 24px;
+  padding-bottom: 40px;
+  scroll-margin-top: 90px;
+}
+.ways-b .wb-step:last-child { padding-bottom: 0; }
+/* The rail: a hairline from one step's number down to the next. */
+.ways-b .wb-step:not(:last-child)::after {
+  content: "";
+  position: absolute;
+  left: 21px;
+  top: 48px;
+  bottom: 4px;
+  border-left: 1px solid var(--line-strong);
+}
+.ways-b .wb-n {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 1px solid var(--line-strong);
+  background: var(--card);
+  display: grid;
+  place-items: center;
+  font-family: var(--mono);
+  font-size: 14px;
+  color: var(--ink);
+}
+.ways-b .wb-step:first-child .wb-n { background: var(--accent); border-color: var(--accent); color: var(--accent-fg); }
+.ways-b .wb-body { min-width: 0; padding-top: 2px; }
+.ways-b .wb-label {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin: 0 0 6px;
+}
+.ways-b .wb-body > h3 { font-size: clamp(24px, 3vw, 28px); }
+.ways-b .wb-body > p:not(.wb-label) { color: var(--muted); margin: 10px 0 0; max-width: 56ch; }
+.ways-b .wb-meta { font-family: var(--mono); font-size: 12px; color: var(--muted); margin: 0 0 0 4px; }
+.ways-b .wb-act { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 16px; margin-top: 20px; }
+
+/* Step 1's alternative: try it locally, closed by default. */
+.ways-b .wb-local {
+  margin-top: 24px;
+  max-width: 40rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--card);
+  scroll-margin-top: 90px;
+}
+.ways-b .wb-local summary {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 12px;
+  padding: 16px 20px;
+  cursor: pointer;
+  list-style: none;
+}
+.ways-b .wb-local summary::-webkit-details-marker { display: none; }
+.ways-b .wb-local summary::before {
+  content: "+";
+  font-family: var(--mono);
+  color: var(--muted);
+  width: 1ch;
+}
+.ways-b .wb-local[open] summary::before { content: "−"; }
+.ways-b .wb-local summary b { font-weight: 650; font-size: 16px; }
+.ways-b .wb-local .wb-meta { margin: 0; }
+.ways-b .wb-local-body { padding: 0 20px 20px; border-top: 1px solid var(--line); }
+.ways-b .wb-local-body p { color: var(--muted); font-size: 15.5px; margin: 14px 0 0; }
+.ways-b .wb-code {
+  margin: 10px 0 0;
+  padding: 14px 16px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  background: var(--code-bg);
+  font-size: 13px;
+  overflow-x: auto;
+  max-width: 100%;
+}
+
+/* Step 2's needs, set off as a checklist beside the cost. */
+.ways-b .wb-needs {
+  margin-top: 18px;
+  max-width: 40rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--card);
+  padding: 18px 20px;
+}
+.ways-b .wb-needs ul { margin: 0; padding-left: 1.2em; color: var(--ink); font-size: 15.5px; }
+.ways-b .wb-needs li { margin: 4px 0; }
+.ways-b .wb-needs p { color: var(--muted); font-size: 14.5px; margin: 14px 0 0; padding-top: 14px; border-top: 1px solid var(--line); }
+
+.ways-b .wb-link,
+.ways-b .wb-host a { color: var(--ink); text-decoration: underline; text-underline-offset: 3px; text-decoration-color: var(--line-strong); }
+.ways-b .wb-link { font-weight: 600; font-size: 15px; }
+.ways-b .wb-link:hover,
+.ways-b .wb-host a:hover { text-decoration-color: currentColor; }
+.ways-b .wb-host { margin: 40px 0 0 68px; color: var(--muted); font-size: 15.5px; }
+
+@media (max-width: 620px) {
+  .ways-b .wb-step { grid-template-columns: 32px minmax(0, 1fr); column-gap: 14px; }
+  .ways-b .wb-n { width: 32px; height: 32px; font-size: 12.5px; }
+  .ways-b .wb-step:not(:last-child)::after { left: 15px; top: 36px; }
+  .ways-b .wb-host { margin-left: 46px; }
+  .ways-b .wb-local summary, .ways-b .wb-needs { padding-left: 16px; padding-right: 16px; }
+  .ways-b .wb-local-body { padding: 0 16px 16px; }
+  .ways-b .wb-code { font-size: 12px; padding: 12px; }
+}
+
 /* ------------------------------------------------------------------- flow */
 
 .flow { counter-reset: step; }
@@ -509,3 +630,26 @@ pre .muted { color: var(--muted); }
 @media (prefers-reduced-motion: reduce) {
   * { transition: none !important; }
 }
+
+/* ---------------------------------------------------------------- contact */
+
+/* /contact/: a short intro over one card holding the form. */
+.contact h1 { font-family: var(--serif); font-weight: 600; font-size: clamp(32px, 5vw, 44px); letter-spacing: -.02em; margin: 0; }
+.contact-intro { color: var(--muted); font-size: 17px; line-height: 1.7; margin-top: 14px; }
+.contact-intro p { margin: 0 0 12px; }
+.contact-intro a { color: var(--ink); text-decoration: underline; text-underline-offset: 3px; text-decoration-color: var(--line-strong); }
+.contact-form { display: flex; flex-direction: column; gap: 8px; max-width: 36rem; }
+.contact-form label { font-weight: 600; font-size: 15px; margin-top: 10px; }
+.contact-form label:first-child { margin-top: 0; }
+.contact-form input, .contact-form textarea, .contact-form select {
+  font: inherit; font-size: 16px; color: var(--ink); background: var(--bg);
+  border: 1px solid var(--line-strong); border-radius: 10px; padding: 10px 12px; width: 100%;
+}
+.contact-form input:focus, .contact-form textarea:focus, .contact-form select:focus { outline: 2px solid var(--ink); outline-offset: 1px; }
+.contact-form textarea { resize: vertical; }
+.contact-form .cf-turnstile { margin-top: 14px; }
+.contact-form .btn { align-self: flex-start; margin-top: 14px; }
+.contact-trap { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+.contact-alt { margin: 18px 0 0; color: var(--muted); font-size: 15px; }
+.contact-alt u { color: var(--ink); text-decoration-color: var(--line-strong); text-underline-offset: 3px; }
+.contact-error { max-width: 36rem; margin: 0 0 16px; padding: 12px 16px; border: 1px solid var(--line-strong); border-radius: 10px; background: var(--card); }

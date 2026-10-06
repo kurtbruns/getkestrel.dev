@@ -12,10 +12,10 @@
       delivery record, and a permanent per-issue archive.
     </p>
     <div class="cta-row">
-      <a class="btn" href="#quickstart">Self-host quickstart</a>
-      <a class="btn btn-ghost" href="{{ site.Params.repoApp }}">View on GitHub</a>
+      <a class="btn" href="{{ site.Params.demoURL }}">Try the demo</a>
+      <a class="btn btn-ghost" href="#deploy-your-own">Deploy your own</a>
     </div>
-    <p class="cta-note">Runs on your own Cloudflare account. Your data never leaves it.</p>
+    <p class="cta-note">Free and open source. You pay only for Cloudflare and your email provider, often nothing for a small list.</p>
 
     {{ $shotLight := resources.Get "img/editor-light.png" | fingerprint -}}
     {{ $shotDark := resources.Get "img/editor-dark.png" | fingerprint -}}
@@ -169,26 +169,78 @@
   </div>
 </section>
 
-{{/* --------------------------------------------------------- quickstart */}}
-<section class="section" id="quickstart">
+{{/* ------------------------------------------------------- get started */}}
+{{- /* A stepped path down a numbered rail: step 1 is trying it (the demo, with trying
+       it locally folded in as the developer's alternative), step 2 is deploying your
+       own, the destination once a visitor has decided. */ -}}
+{{- $readme := printf "%s#local-setup" site.Params.repoApp -}}
+{{- $guide := printf "%s/tree/main/docs" site.Params.repoApp -}}
+{{- with site.GetPage "/docs/overview" }}{{ $guide = .RelPermalink }}{{ end -}}
+<section class="section ways-b" id="get-started">
   <div class="wrap">
     <div class="section-head">
-      <p class="eyebrow">Self-host</p>
-      <h2>From clone to a running instance</h2>
-      <p>Local dev needs Node 22+ and npm. No Cloudflare account is required until you
-        deploy. The shortest honest path:</p>
+      <h2>Try it, then run your own</h2>
+      <p>Kestrel is for writers who want to own their list and don't mind running a
+        small app to do it. It has no paid subscriptions or discovery network, and you
+        apply its updates. Try it first, in your browser or on your computer.</p>
     </div>
-    <pre class="card" style="overflow:auto"><code>git clone {{ site.Params.repoApp }}
+
+    <ol class="wb-steps">
+      <li class="wb-step" id="try-the-demo">
+        <span class="wb-n" aria-hidden="true">1</span>
+        <div class="wb-body">
+          <p class="wb-label">Step 1 · Try it</p>
+          <h3>Try the demo</h3>
+          <p>Your own private copy of Kestrel, filled with a demo publication. Write a
+            post, preview the email, and schedule a send. Nothing reaches a real inbox,
+            and your copy is cleared after a while.</p>
+          <div class="wb-act">
+            <a class="btn" href="{{ site.Params.demoURL }}">Open the demo</a>
+            <span class="wb-meta">In your browser · instant</span>
+          </div>
+
+          <details class="wb-local" id="try-it-locally">
+            <summary><b>Try it locally</b> <span class="wb-meta">On your computer · a few minutes</span></summary>
+            <div class="wb-local-body">
+              <p>You need Node.js 22 or later. Email goes to a stand-in, so nothing reaches a
+                real inbox.</p>
+              <pre class="wb-code"><code>git clone {{ site.Params.repoApp }}
 cd kestrel &amp;&amp; npm install
 cp .dev.vars.example .dev.vars
-npm run dev     <span class="muted"># http://localhost:8787</span>
-npm run seed    <span class="muted"># load the demo publication</span></code></pre>
-    <p style="color:var(--muted); margin-top:20px;">
-      Standing up a real, deployed instance takes more: a Cloudflare account, one
-      Access application, an email provider (SES or Resend), and sending-domain
-      DNS. The
-      {{ with site.GetPage "/docs" }}<a href="{{ .RelPermalink }}" style="color:var(--ink); text-decoration:underline; text-underline-offset:2px;">developer setup guide</a>{{ else }}<a href="{{ site.Params.repoApp }}/tree/main/docs" style="color:var(--ink); text-decoration:underline; text-underline-offset:2px;">developer setup guide</a>{{ end }} covers it.
-    </p>
+npm run dev     <span class="muted"># http://localhost:8787</span></code></pre>
+              <p>Then, in a second terminal, load the demo publication:</p>
+              <pre class="wb-code"><code>npm run seed</code></pre>
+              <p><a class="wb-link" href="{{ $readme }}">More in the README →</a></p>
+            </div>
+          </details>
+        </div>
+      </li>
+
+      <li class="wb-step" id="deploy-your-own">
+        <span class="wb-n" aria-hidden="true">2</span>
+        <div class="wb-body">
+          <p class="wb-label">Step 2 · Run your own</p>
+          <h3>Deploy your own</h3>
+          <p>A step-by-step guide takes you to a live newsletter on your own domain.
+            You'll need:</p>
+          <div class="wb-needs">
+            <ul>
+              <li>A Cloudflare account, with your domain's DNS on Cloudflare</li>
+              <li>An email provider: Resend or Amazon SES</li>
+              <li>Node.js 22 or later, and Git</li>
+            </ul>
+            <p>Free to set up and test. A growing list costs from about $5
+              a month, depending on your email provider.</p>
+          </div>
+          <div class="wb-act">
+            <a class="btn btn-ghost" href="{{ $guide }}">Open the setup guide</a>
+            <span class="wb-meta">On your Cloudflare account · about an hour</span>
+          </div>
+        </div>
+      </li>
+    </ol>
+
+    <p class="wb-host">Rather not run it yourself? <a href="{{ "contact/?topic=hosting" | relURL }}">Ask about hosting</a>.</p>
   </div>
 </section>
 
@@ -196,10 +248,10 @@ npm run seed    <span class="muted"># load the demo publication</span></code></p
 <section class="section cta-end">
   <div class="wrap">
     <h2>Your audience. Your data. Your newsletter.</h2>
-    <p>Kestrel is self-hosted and runs entirely on your own Cloudflare account.</p>
+    <p>Open source under the MIT license, and yours to run.</p>
     <div class="cta-row">
-      <a class="btn" href="#quickstart">Self-host quickstart</a>
-      <a class="btn btn-ghost" href="{{ site.Params.repoApp }}">View on GitHub</a>
+      <a class="btn" href="{{ site.Params.demoURL }}">Try the demo</a>
+      <a class="btn btn-ghost" href="#deploy-your-own">Deploy your own</a>
     </div>
   </div>
 </section>

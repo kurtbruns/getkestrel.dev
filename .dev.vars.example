@@ -1,0 +1,11 @@
+# Copy to .dev.vars (gitignored) for `npm run dev:worker`. Deployed, set each with
+# `npx wrangler secret put <NAME>`.
+
+# Where the contact form's messages go: an address verified as a destination in the
+# Cloudflare account (Email Routing → Destination addresses). Locally, wrangler only
+# simulates the send and prints the message, so any address works.
+CONTACT_TO="you@example.com"
+
+# Cloudflare's Turnstile test secret that always passes, matching the test site key
+# the development config uses. Deployed, this is the real widget's secret.
+TURNSTILE_SECRET="1x0000000000000000000000000000000AA"
