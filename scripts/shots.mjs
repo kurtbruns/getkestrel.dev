@@ -158,6 +158,16 @@ async function capture(cdp, url, theme) {
       sessionId,
     )
     .catch(() => {});
+  // Hide the "Open dashboard" pill kestrel adds to public pages on a local dev server
+  // only; a deployed reader page never shows it, so neither should the landing.
+  await cdp.send(
+    "Runtime.evaluate",
+    {
+      expression:
+        "document.head.appendChild(Object.assign(document.createElement('style'), { textContent: '.r-dev { display: none !important; }' }))",
+    },
+    sessionId,
+  );
   await sleep(400);
   const { data } = await cdp.send(
     "Page.captureScreenshot",
