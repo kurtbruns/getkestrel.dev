@@ -14,9 +14,15 @@
     var LINE = 92; // px from the top — a heading is "current" once it passes this
     function update() {
       var active = items[0];
-      for (var i = 0; i < items.length; i++) {
-        if (items[i].el.getBoundingClientRect().top <= LINE) { active = items[i]; }
-        else { break; }
+      // At the very bottom the last heading wins, so a short final section that
+      // can't scroll up to the line (even with the .docs-body runway) still lights.
+      if (Math.ceil(window.innerHeight + window.scrollY) >= document.documentElement.scrollHeight) {
+        active = items[items.length - 1];
+      } else {
+        for (var i = 0; i < items.length; i++) {
+          if (items[i].el.getBoundingClientRect().top <= LINE) { active = items[i]; }
+          else { break; }
+        }
       }
       links.forEach(function (a) { a.classList.toggle("active", a === active.a); });
     }
