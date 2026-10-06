@@ -30,7 +30,7 @@ The landing screenshots (`assets/img/*.png`) are captured from a running, seeded
 
 ## Bumping the pinned kestrel version
 
-When kestrel cuts a new release, use the **`refresh-from-kestrel` skill** (`.claude/skills/refresh-from-kestrel/`) rather than editing the pin by hand. Bumping `.kestrel-docs-version` is a one-line edit; the skill exists to catch what a plain re-sync leaves silently stale — a landing claim that stopped being true, or a hero screenshot of an editor UI that has since changed. It reads the old→new changelog delta, re-syncs the docs, proves whether the rendered `/docs/` actually changed, flags stale landing copy and a stale screenshot by reading the live landing page against the delta, and opens a **draft** PR for review. Merging that PR is the same flow as always — `edit .kestrel-docs-version → PR → merge` — and the deploy on `main` then rebuilds `/docs/` from the new tag.
+Bump `.kestrel-docs-version` only via the **`refresh-from-kestrel` skill**, never by hand — it catches the stale landing copy and screenshots a plain re-sync misses.
 
 ## The role model (before editing copy)
 
