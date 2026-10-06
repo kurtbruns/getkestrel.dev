@@ -283,7 +283,6 @@ h1, h2, h3 {
 }
 .ways-b .wb-body > h3 { font-size: clamp(24px, 3vw, 28px); }
 .ways-b .wb-body > p:not(.wb-label) { color: var(--muted); margin: 10px 0 0; max-width: 56ch; }
-.ways-b .wb-meta { font-family: var(--mono); font-size: 12px; color: var(--muted); margin: 0 0 0 4px; }
 .ways-b .wb-act { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 16px; margin-top: 20px; }
 
 /* Step 2's needs, set off as a checklist beside the cost. */
