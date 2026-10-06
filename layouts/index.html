@@ -29,7 +29,7 @@
           <source srcset="{{ $shotDark.RelPermalink }}" media="(prefers-color-scheme: dark)">
           <img src="{{ $shotLight.RelPermalink }}" width="2560" height="1440" loading="eager"
             decoding="async"
-            alt="The Kestrel editor: the dashboard for the Windbreak demo publication, showing subscriber counts, a scheduled issue, two drafts, and the sent issues.">
+            alt="The Kestrel editor: the dashboard for the Field Notes demo publication, showing subscriber counts, a scheduled issue, two drafts, and the sent issues.">
         </picture>
       </div>
     </div>
@@ -175,7 +175,7 @@
     <div class="section-head">
       <p class="eyebrow">Self-host</p>
       <h2>From clone to a running instance</h2>
-      <p>Local dev needs Node and npm. No Cloudflare account is required until you
+      <p>Local dev needs Node 22+ and npm. No Cloudflare account is required until you
         deploy. The shortest honest path:</p>
     </div>
     <pre class="card" style="overflow:auto"><code>git clone {{ site.Params.repoApp }}

@@ -155,7 +155,7 @@ npm run shots
 
 If such a server is available in this run, regenerate and include the updated
 `assets/img/*.png`. If it is **not** available, do not ship stale images and do
-not block the pin bump — **flag it as a follow-up (#19)** and call it out in the
+not block the pin bump — **open a follow-up issue for it** and call it out in the
 PR. Deferring the screenshot to its own change is the correct, honest outcome — it
 is what the `v0.1.0 → v0.2.0` bump did.
 
@@ -176,7 +176,7 @@ Advance `.kestrel-docs-version` from `<old>` to `<new>` — kestrel cut `<new>`.
   <the per-section verdicts from step 3>
 
 ## Follow-up (separate)
-- <hero screenshot flagged stale (composer/dashboard changed) → #19, needs a running <new> dev server> — or "none".
+- <hero screenshot flagged stale (composer/dashboard changed) → follow-up issue #<n>, needs a running <new> dev server> — or "none".
 
 ## Provenance
 Produced by the `refresh-from-kestrel` skill (#21). Draft for review; not auto-merged.
@@ -197,7 +197,7 @@ Include a checklist so the reviewer can see what was and wasn't done:
 - **Draft PR, human-reviewed, never auto-merged.** This skill produces a proposal.
 - **Scope of edits:** `.kestrel-docs-version`, landing copy in `layouts/index.html`, and `assets/img/*` screenshots. `content/docs/` is gitignored — never commit it. Don't touch CI/deploy or the sync/shots scripts as part of a bump.
 - **Do not rename `/docs/` → `/guides/`.** That is issue #15's separate, deliberate change; keep it out of a version bump.
-- **Flag follow-ups against the right issue** — a stale hero screenshot is #19 — rather than inventing a number.
+- **Flag follow-ups against a real issue** — find an existing one that fits, or open one — rather than inventing a number. (#19 is *more* screenshots on the landing, not stale ones; don't file staleness there.)
 - **When the changelog and the diff disagree, trust the diff** — and when a claim's truth is genuinely unclear, flag it for the human rather than guessing.
 
 ## Files in this skill

@@ -10,7 +10,7 @@
  *
  * Prerequisite: a seeded Kestrel dev server. In a kestrel checkout:
  *   npm run dev            # wrangler dev (fake transport, local D1/R2)
- *   npm run seed           # loads the "Windbreak" demo publication
+ *   npm run seed           # loads the demo publication
  * then here:
  *   npm run shots          # defaults to http://localhost:8787
  *   npm run shots -- 8788  # or a port / full URL if dev runs elsewhere
@@ -158,6 +158,16 @@ async function capture(cdp, url, theme) {
       sessionId,
     )
     .catch(() => {});
+  // Hide the "Open dashboard" pill kestrel adds to public pages on a local dev server
+  // only; a deployed reader page never shows it, so neither should the landing.
+  await cdp.send(
+    "Runtime.evaluate",
+    {
+      expression:
+        "document.head.appendChild(Object.assign(document.createElement('style'), { textContent: '.r-dev { display: none !important; }' }))",
+    },
+    sessionId,
+  );
   await sleep(400);
   const { data } = await cdp.send(
     "Page.captureScreenshot",
