@@ -44,5 +44,6 @@ tmp/
 
 # Environment variables
 .env
+.dev.vars
 .env.local
 .env.*.local

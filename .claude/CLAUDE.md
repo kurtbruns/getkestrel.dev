@@ -36,6 +36,14 @@ Bump `.kestrel-docs-version` only via the **`refresh-from-kestrel` skill**, neve
 
 Kestrel has three roles and the site's copy depends on getting them right: a **publisher** writes and sends the newsletter, a **developer** deploys and operates the app, and a **reader** subscribes. getkestrel.dev's `/docs/` are the developer/setup guides, and the landing's "self-host" framing addresses the developer. Kestrel retired the old word "operator" into publisher + developer; don't mechanically find-replace it (PR #27 had to correct a bad `operator → publisher` edit to `operator → developer`). The skill's `SKILL.md` restates this where copy edits happen.
 
+## The contact form
+
+The site is static except for one route. `/contact/` (Hugo pages `content/contact.md` and `content/contact-sent.md`) posts to `/api/contact`, which `worker/index.js` handles; `run_worker_first: ["/api/*"]` in `wrangler.jsonc` sends only that path to the script, so every page still comes straight from the static assets. The Worker checks Turnstile, then emails the message through the `send_email` binding to the owner's verified address (free on every plan, through Email Routing on getkestrel.dev), with the visitor in Reply-To. The form works without JavaScript: every outcome is a 303 to `/contact/sent/` or back to `/contact/?error=…`.
+
+- **Secrets:** `TURNSTILE_SECRET` and `CONTACT_TO` (the destination address, kept out of this public repo), set with `npx wrangler secret put` from this repo. Locally they come from `.dev.vars` (copy `.dev.vars.example`, which carries Cloudflare's always-pass Turnstile test secret).
+- **The Turnstile site key** is public: `params.turnstileSiteKey` in `hugo.toml`, with the always-pass test key in `config/development/hugo.toml`.
+- **To try it locally,** build with `hugo -e development` and run `npx wrangler dev`; the send is simulated and printed. `wrangler dev` serves only the files it saw at startup, so restart it after a rebuild that adds pages.
+
 ## Deploy
 
 Cloudflare Workers Static Assets, config in `wrangler.jsonc`. A push to `main` deploys via `.github/workflows/deploy.yml`; pull requests run a build-only check (`.github/workflows/ci.yml`). Both read `.kestrel-docs-version` and clone that kestrel tag before building.
