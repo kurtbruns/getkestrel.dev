@@ -17,22 +17,33 @@
     </div>
     <p class="cta-note">Free and open source. You pay only for Cloudflare and your email provider, often nothing for a small list.</p>
 
-    {{ $shotLight := resources.Get "img/editor-light.png" | fingerprint -}}
-    {{ $shotDark := resources.Get "img/editor-dark.png" | fingerprint -}}
-    <div class="preview">
+    {{- /* The frame is a link into the live demo's dashboard. The screenshot is served
+         as WebP at 1000w/2000w; the frame is at most 976px wide (the 64rem wrap less
+         its padding). */}}
+    {{ $light := resources.Get "img/editor-light.png" -}}
+    {{ $dark := resources.Get "img/editor-dark.png" -}}
+    {{ $light1x := $light.Resize "1000x webp q82" -}}
+    {{ $light2x := $light.Resize "2000x webp q82" -}}
+    {{ $dark1x := $dark.Resize "1000x webp q82" -}}
+    {{ $dark2x := $dark.Resize "2000x webp q82" -}}
+    {{ $sizes := "(min-width: 64rem) 976px, calc(100vw - 48px)" -}}
+    <a class="preview" href="{{ site.Params.demoURL }}/dashboard/">
       <div class="preview-bar">
         <span class="dot"></span><span class="dot"></span><span class="dot"></span>
-        <span class="addr">localhost:8787/dashboard</span>
+        <span class="addr" aria-hidden="true">{{ (urls.Parse site.Params.demoURL).Host }}/dashboard/</span>
+        <span class="preview-cta" aria-hidden="true"><span class="long">Open the live demo</span><span class="short">Live demo</span>&nbsp;↗</span>
       </div>
       <div class="preview-body">
         <picture>
-          <source srcset="{{ $shotDark.RelPermalink }}" media="(prefers-color-scheme: dark)">
-          <img src="{{ $shotLight.RelPermalink }}" width="2560" height="1440" loading="eager"
-            decoding="async"
-            alt="The Kestrel editor: the dashboard for the Field Notes demo publication, showing subscriber counts, a scheduled post, two drafts, and the sent posts.">
+          <source media="(prefers-color-scheme: dark)" sizes="{{ $sizes }}"
+            srcset="{{ $dark1x.RelPermalink }} 1000w, {{ $dark2x.RelPermalink }} 2000w">
+          <img src="{{ $light1x.RelPermalink }}" sizes="{{ $sizes }}"
+            srcset="{{ $light1x.RelPermalink }} 1000w, {{ $light2x.RelPermalink }} 2000w"
+            width="{{ $light2x.Width }}" height="{{ $light2x.Height }}" loading="eager" decoding="async"
+            alt="Open the live demo: the Kestrel dashboard for the Field Notes demo publication, showing subscriber counts, a scheduled post, two drafts, and the sent posts.">
         </picture>
       </div>
-    </div>
+    </a>
   </div>
 </section>
 
