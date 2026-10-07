@@ -45,8 +45,9 @@ decide which of the three it means before editing anything.
 
 ## Why "the setup docs didn't change" is never the whole answer
 
-The trap this skill is built to avoid: the sync only ingests kestrel's
-`docs/setup/*.md`. A release can leave those byte-identical while still shipping a
+The trap this skill is built to avoid: the sync only ingests kestrel's setup
+guide (`docs/README.md` and the section folders it lists; `docs/setup/*.md` before
+v1.3). A release can leave those byte-identical while still shipping a
 large, site-relevant delta everywhere the sync *doesn't* look — the changelog,
 `docs/SPEC.md`, `docs/DESIGN.md`, and the editor UI the hero screenshot shows.
 
@@ -80,7 +81,7 @@ sections, then a pointer back to your judgement:
 
 1. **Changelog delta** — every `## [x.y.z]` section in `(old, new]`. This is your INDEX of what changed.
 2. **Rendered /docs/ comparison** — it runs the real `sync-docs.mjs` against *both* tags and diffs the output, so "unchanged" is proven, not assumed.
-3. **Drill-down diff** — `docs/setup/` vs `docs/SPEC.md` / `docs/DESIGN.md`. The changelog is one line per change; SPEC/DESIGN are the detail behind it.
+3. **Drill-down diff** — the setup guide vs `docs/SPEC.md` / `docs/DESIGN.md`. The changelog is one line per change; SPEC/DESIGN are the detail behind it.
 
 It stops at facts on purpose: mapping them onto the landing (step 3) is judgement
 against the live page, not something a script should guess. Read the whole report

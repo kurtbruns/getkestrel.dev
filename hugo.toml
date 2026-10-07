@@ -9,6 +9,8 @@ description = 'Run your own Kestrel — a small, self-hosted newsletter app. Wri
 tagline = 'Own your newsletter.'
 repoApp = 'https://github.com/kurtbruns/kestrel'
 repoSite = 'https://github.com/kurtbruns/getkestrel.dev'
+# The hosted, per-visitor sandbox demo (kurtbruns/demo.getkestrel.dev).
+demoURL = 'https://demo.getkestrel.dev'
 # The contact form's Turnstile widget (public; its secret is the Worker's
 # TURNSTILE_SECRET). config/development/hugo.toml swaps in Cloudflare's always-pass
 # test key for the local server.

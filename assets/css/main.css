@@ -236,6 +236,83 @@ h1, h2, h3 {
   margin: 0 0 12px;
 }
 
+/* ------------------------------------------------------------ get started */
+
+/* "Try it, then run your own": a stepped path down a numbered rail. Step 1 (the demo,
+   with trying it locally behind a disclosure) leads; step 2 is deploying your own. */
+.ways-b .wb-steps { list-style: none; margin: 0; padding: 0; }
+.ways-b .wb-step {
+  position: relative;
+  display: grid;
+  grid-template-columns: 44px minmax(0, 1fr);
+  column-gap: 24px;
+  padding-bottom: 40px;
+  scroll-margin-top: 90px;
+}
+.ways-b .wb-step:last-child { padding-bottom: 0; }
+/* The rail: a hairline from one step's number down to the next. */
+.ways-b .wb-step:not(:last-child)::after {
+  content: "";
+  position: absolute;
+  left: 21px;
+  top: 48px;
+  bottom: 4px;
+  border-left: 1px solid var(--line-strong);
+}
+.ways-b .wb-n {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 1px solid var(--line-strong);
+  background: var(--card);
+  display: grid;
+  place-items: center;
+  font-family: var(--mono);
+  font-size: 14px;
+  color: var(--ink);
+}
+.ways-b .wb-step:first-child .wb-n { background: var(--accent); border-color: var(--accent); color: var(--accent-fg); }
+.ways-b .wb-body { min-width: 0; padding-top: 2px; }
+.ways-b .wb-label {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin: 0 0 6px;
+}
+.ways-b .wb-body > h3 { font-size: clamp(24px, 3vw, 28px); }
+.ways-b .wb-body > p:not(.wb-label) { color: var(--muted); margin: 10px 0 0; max-width: 56ch; }
+.ways-b .wb-act { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 16px; margin-top: 20px; }
+
+/* Step 2's needs, set off as a checklist beside the cost. */
+.ways-b .wb-needs {
+  margin-top: 18px;
+  max-width: 40rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--card);
+  padding: 18px 20px;
+}
+.ways-b .wb-needs ul { margin: 0; padding-left: 1.2em; color: var(--ink); font-size: 15.5px; }
+.ways-b .wb-needs li { margin: 4px 0; }
+.ways-b .wb-needs p { color: var(--muted); font-size: 14.5px; margin: 14px 0 0; padding-top: 14px; border-top: 1px solid var(--line); }
+
+.ways-b .wb-link,
+.ways-b .wb-host a { color: var(--ink); text-decoration: underline; text-underline-offset: 3px; text-decoration-color: var(--line-strong); }
+.ways-b .wb-link { font-weight: 600; font-size: 15px; }
+.ways-b .wb-link:hover,
+.ways-b .wb-host a:hover { text-decoration-color: currentColor; }
+.ways-b .wb-host { margin: 40px 0 0 68px; color: var(--muted); font-size: 15.5px; }
+
+@media (max-width: 620px) {
+  .ways-b .wb-step { grid-template-columns: 32px minmax(0, 1fr); column-gap: 14px; }
+  .ways-b .wb-n { width: 32px; height: 32px; font-size: 12.5px; }
+  .ways-b .wb-step:not(:last-child)::after { left: 15px; top: 36px; }
+  .ways-b .wb-host { margin-left: 46px; }
+  .ways-b .wb-needs { padding-left: 16px; padding-right: 16px; }
+}
+
 /* ------------------------------------------------------------------- flow */
 
 .flow { counter-reset: step; }
@@ -428,37 +505,34 @@ pre .muted { color: var(--muted); }
 /* no weight change: bolder text is wider and can rewrap the entry, shifting the rail */
 .docs-onpage-toc nav a.active { color: var(--ink); border-left-color: var(--ink); }
 
-/* article — readable text caps at a comfortable measure; code and tables use
-   the fuller column, so the container width (and the header) never changes. */
-.docs-body {
-  min-width: 0; padding-top: 42px; --measure: 40rem;
-  /* A runway below the pager so the last sections can scroll up to the spy line and
-     be reached + highlighted (the scroll-spy also force-marks the last one at the
-     very bottom, as a fallback for a short final section). */
-  padding-bottom: 40vh;
-}
+/* article — one measure for the whole column; everything inside (text, code,
+   tables) fills it, so every block shares the same right edge. A runway below the
+   pager lets the last sections scroll up to the spy line and be reached + highlighted
+   (the scroll-spy also force-marks the last one at the very bottom, as a fallback for
+   a short final section). */
+.docs-body { min-width: 0; max-width: var(--measure-prose); padding-top: 42px; padding-bottom: 40vh; }
 .docs-body > .eyebrow { margin-bottom: 10px; }
 .docs-body > .eyebrow a { color: inherit; text-decoration: none; }
 .docs-body > .eyebrow a:hover { color: var(--ink); }
-.docs-body h1 { font-size: clamp(30px, 4vw, 40px); margin: 0 0 14px; max-width: var(--measure); scroll-margin-top: 80px; }
+.docs-body h1 { font-size: clamp(30px, 4vw, 40px); margin: 0 0 14px; scroll-margin-top: 80px; }
 
-.docs-body h2 { font-family: var(--serif); font-weight: 600; font-size: 23px; letter-spacing: -.01em; margin: 34px 0 10px; max-width: var(--measure); scroll-margin-top: 80px; }
-.docs-body h3 { font-family: var(--sans); font-weight: 650; font-size: 16.5px; margin: 26px 0 8px; max-width: var(--measure); scroll-margin-top: 80px; letter-spacing: -0.01em; }
-.docs-body p { margin: 14px 0; line-height: 1.72; max-width: var(--measure); }
-.docs-body ul, .docs-body ol { padding-left: 1.35em; margin: 14px 0; max-width: var(--measure); }
+.docs-body h2 { font-family: var(--serif); font-weight: 600; font-size: 23px; letter-spacing: -.01em; margin: 34px 0 10px; scroll-margin-top: 80px; }
+.docs-body h3 { font-family: var(--sans); font-weight: 650; font-size: 16.5px; margin: 26px 0 8px; scroll-margin-top: 80px; letter-spacing: -0.01em; }
+.docs-body p { margin: 14px 0; line-height: 1.72; }
+.docs-body ul, .docs-body ol { padding-left: 1.35em; margin: 14px 0; }
 .docs-body li { margin: 6px 0; line-height: 1.65; }
 .docs-body a { color: var(--ink); text-decoration: underline; text-underline-offset: 2px; text-decoration-color: var(--line-strong); }
 .docs-body a:hover { text-decoration-color: currentColor; }
 .docs-body strong { font-weight: 650; }
-.docs-body blockquote { margin: 18px 0; padding: 4px 18px; border-left: 3px solid var(--line-strong); color: var(--muted); max-width: var(--measure); }
-.docs-body table { border-collapse: collapse; width: 100%; max-width: 46rem; margin: 18px 0; font-size: 14.5px; display: block; overflow-x: auto; }
+.docs-body blockquote { margin: 18px 0; padding: 4px 18px; border-left: 3px solid var(--line-strong); color: var(--muted); }
+.docs-body table { border-collapse: collapse; width: 100%; margin: 18px 0; font-size: 14.5px; display: block; overflow-x: auto; }
 .docs-body th, .docs-body td { border: 1px solid var(--line); padding: 8px 12px; text-align: left; vertical-align: top; }
 .docs-body th { background: var(--code-bg); font-weight: 650; }
 .docs-body img { border: 1px solid var(--line); border-radius: 8px; }
 .docs-body hr { border: 0; border-top: 1px solid var(--line); margin: 32px 0; }
 
 /* code blocks (Chroma) — full column width */
-.docs-body .highlight { margin: 18px 0; border: 1px solid var(--line); border-radius: 10px; overflow: hidden; max-width: 46rem; }
+.docs-body .highlight { margin: 18px 0; border: 1px solid var(--line); border-radius: 10px; overflow: hidden; }
 .docs-body .highlight pre.chroma { margin: 0; padding: 15px 18px; overflow-x: auto; font-size: 13.5px; line-height: 1.6; }
 
 /* prev / next at the foot of a doc */
@@ -479,6 +553,12 @@ pre .muted { color: var(--muted); }
 .docs-index-intro code { font-family: var(--mono); font-size: 0.88em; background: var(--code-bg); padding: 0.1em 0.35em; border-radius: 5px; }
 /* The straight divider lives on the <li>, so the card's radius (used only for
    the hover fill) never rounds the dividing line. */
+/* A section of the landing (kestrel's docs/README.md): its title and blurb over its cards. */
+.doc-section { margin-top: 3rem; }
+.doc-section-t { font-family: var(--serif); font-weight: 600; font-size: 24px; letter-spacing: -.01em; margin: 0 0 6px; }
+.doc-section-blurb { color: var(--muted); font-size: 16px; line-height: 1.6; }
+.doc-section-blurb p { margin: 0; }
+.doc-section .doc-cards { margin-top: 1rem; }
 .doc-cards { list-style: none; margin: 2rem 0 0; padding: 0; }
 .doc-cards li { border-top: 1px solid var(--line); }
 .doc-cards li:first-child { border-top: 0; }
@@ -504,7 +584,7 @@ pre .muted { color: var(--muted); }
   }
   .docs-back { margin-bottom: 0.875rem; }
   .docs-body { padding-top: 0.75rem; padding-bottom: 0; } /* rail isn't sticky here: no spy to reach */
-  .docs-body h1, .docs-body h2, .docs-body p, .docs-body ul, .docs-body ol, .docs-body blockquote { max-width: none; }
+  .docs-body { max-width: none; }
 }
 
 @media (prefers-reduced-motion: reduce) {

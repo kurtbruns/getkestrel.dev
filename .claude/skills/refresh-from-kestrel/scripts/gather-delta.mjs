@@ -42,6 +42,11 @@ import { homedir, tmpdir } from "node:os";
 import { join, relative } from "node:path";
 
 // ---------------------------------------------------------------- args
+// The setup guide's files: docs/README.md and its section folders, or the flat
+// docs/setup/ of releases up to v1.2.0. Everything else under docs/ is drill-down.
+const isGuide = (path) =>
+  path === "docs/README.md" || /^docs\/(setup|get-started|guides|reference)\//.test(path);
+
 function parseArgs(argv) {
   const out = { positional: [], render: true };
   for (let i = 0; i < argv.length; i++) {
@@ -178,7 +183,7 @@ function renderedDocsComparison(kestrelDir, oldRef, newRef, repoRoot) {
     const pageCount = Object.keys(newDocs).length;
     // Guard against a hollow all-clear: zero pages on both sides diffs as
     // "identical" but actually means the sync produced nothing (e.g. an empty
-    // docs/setup at the ref), which proves nothing — surface it instead.
+    // guide at the ref), which proves nothing — surface it instead.
     const identical = pageCount > 0 && !added.length && !removed.length && !changed.length;
     return { ran: true, identical, empty: pageCount === 0, added, removed, changed, pageCount };
   } finally {
@@ -210,7 +215,7 @@ function buildReport(d) {
   if (!d.rendered.ran) {
     L.push(`> Skipped (${d.rendered.reason || "--no-render"}). Fall back to the setup-docs diff in §3.`);
   } else if (d.rendered.empty) {
-    L.push(`> The sync produced **0 pages** at ${d.newRef} — nothing to compare, so this proves nothing. Check that \`docs/setup/\` exists at the ref, then rely on the setup-docs diff in §3.`);
+    L.push(`> The sync produced **0 pages** at ${d.newRef} — nothing to compare, so this proves nothing. Check that \`docs/README.md\` (or, before v1.3, \`docs/setup/\`) exists at the ref, then rely on the setup-docs diff in §3.`);
   } else if (d.rendered.identical) {
     L.push(`**Identical.** Running sync-docs.mjs against both tags produced byte-identical \`content/docs/\` (${d.rendered.pageCount} pages).`);
     L.push(`→ The /docs/ section will not change from this bump. This is NOT permission to stop: the delta lives in the changelog, SPEC/DESIGN, and the editor UI (§1, §3). Re-check landing copy and the hero screenshot regardless (§4).`);
@@ -223,8 +228,8 @@ function buildReport(d) {
   L.push("");
 
   L.push(`## 3. Drill-down diff — what the sync does NOT ingest`);
-  L.push(`The sync only ingests \`docs/setup/*.md\`. SPEC/DESIGN and everything else are the drill-down behind the changelog — read them to turn a one-line entry into an actual copy verdict.`);
-  L.push(fmtDiff(d.diff.setup, "docs/setup/ (feeds the synced /docs/ pages)"));
+  L.push(`The sync only ingests the setup guide (\`docs/README.md\` and its section folders). SPEC/DESIGN and everything else are the drill-down behind the changelog — read them to turn a one-line entry into an actual copy verdict.`);
+  L.push(fmtDiff(d.diff.setup, "the setup guide (feeds the synced /docs/ pages)"));
   L.push(fmtDiff(d.diff.spec, "docs/SPEC.md"));
   L.push(fmtDiff(d.diff.design, "docs/DESIGN.md"));
   L.push(fmtDiff(d.diff.other, "other docs/"));
@@ -263,10 +268,10 @@ function main() {
     const changelog = changelogDelta(kestrelDir, oldRef, newRef);
     const allDiff = diffFiles(kestrelDir, oldRef, newRef, ["docs/", "SPEC/", "DESIGN/", "SPEC.md", "DESIGN.md"]);
     const diff = {
-      setup: allDiff.filter((f) => f.path.startsWith("docs/setup/")),
+      setup: allDiff.filter((f) => isGuide(f.path)),
       spec: allDiff.filter((f) => /(^|\/)SPEC\.md$/.test(f.path)),
       design: allDiff.filter((f) => /(^|\/)DESIGN\.md$/.test(f.path)),
-      other: allDiff.filter((f) => f.path.startsWith("docs/") && !f.path.startsWith("docs/setup/") && !/DESIGN\.md$|SPEC\.md$/.test(f.path)),
+      other: allDiff.filter((f) => f.path.startsWith("docs/") && !isGuide(f.path) && !/DESIGN\.md$|SPEC\.md$/.test(f.path)),
     };
     // §1/§3 don't depend on rendering, so a render failure (no `tar`, a
     // sync-docs error, a bad archive) must degrade to a skipped §2, not abort

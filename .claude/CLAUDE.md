@@ -19,7 +19,7 @@ hugo --minify        # the production build that CI and deploy run
 
 ## How the docs pin works
 
-The `/docs/` guides are not committed here. `scripts/sync-docs.mjs` syncs them at build time from kestrel's `docs/setup/*.md` into a gitignored `content/docs/` tree, adding a small front-matter shim (title from the first `# H1`, menu weight from the `NN-` filename prefix, and an index page). That shim is why the ingest is a script and not a Hugo Modules mount — a mount would carry the raw Markdown, not the transform.
+The `/docs/` guides are not committed here. `scripts/sync-docs.mjs` syncs them at build time from kestrel into a gitignored `content/docs/` tree. kestrel's `docs/README.md` is the guide's landing page and table of contents: its title and intro, then a `##` per section (blurb, and a numbered or bulleted list of the section's pages, which live in folders such as `docs/get-started/`). The sync turns that into the `/docs/` landing's front matter and adds a small shim to each page (title from the first `# H1`, its weight, section, and step), and points the pages' relative links at the site's URLs. Releases up to v1.2.0 have the older flat `docs/setup/NN-*.md` layout instead, which the sync still reads. That shim is why the ingest is a script and not a Hugo Modules mount — a mount would carry the raw Markdown, not the transform.
 
 Which kestrel to sync from differs by environment, on purpose:
 
