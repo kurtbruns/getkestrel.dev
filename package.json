@@ -9,6 +9,7 @@
     "dev:worker": "npm run docs:sync && hugo --minify && wrangler dev",
     "docs:sync": "node scripts/sync-docs.mjs",
     "shots": "node scripts/shots.mjs",
+    "og": "bash scripts/og.sh",
     "hugo:check": "scripts/check-hugo.sh"
   },
   "keywords": [

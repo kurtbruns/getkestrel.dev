@@ -17,9 +17,13 @@
 <meta property="og:title" content="{{ $title }}">
 <meta property="og:description" content="{{ $desc }}">
 <meta property="og:url" content="{{ .Permalink }}">
-<meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="{{ $title }}">
-<meta name="twitter:description" content="{{ $desc }}">
+{{ $og := resources.Get "img/og.png" | fingerprint -}}
+<meta property="og:image" content="{{ $og.Permalink }}">
+<meta property="og:image:width" content="{{ $og.Width }}">
+<meta property="og:image:height" content="{{ $og.Height }}">
+<meta property="og:image:alt" content="The Kestrel logo and name">
+{{/* X reads the og:* tags; twitter:card has no OG equivalent and picks the large-image layout. */}}
+<meta name="twitter:card" content="summary_large_image">
 
 <link rel="icon" href="{{ "favicon.svg" | relURL }}" type="image/svg+xml">
 

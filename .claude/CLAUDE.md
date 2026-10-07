@@ -13,6 +13,7 @@ npm install
 npm run serve        # hugo server at http://localhost:1313 (scripts/dev-hugo.sh)
 npm run docs:sync    # sync /docs/ from a kestrel checkout into the gitignored content/docs/
 npm run shots        # regenerate the landing screenshots from a running, seeded kestrel dev server
+npm run og           # re-render the social card (assets/img/og.png) from scripts/og-card.html
 npm run hugo:check   # verify the Hugo version in .tool-versions matches hugo.toml's `min`
 hugo --minify        # the production build that CI and deploy run
 ```
