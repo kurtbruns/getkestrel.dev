@@ -185,8 +185,12 @@ h1, h2, h3 {
 .hero .cta-note code { background: none; padding: 0; }
 
 /* app preview frame — a browser-chrome shell around a real editor screenshot
-   (assets/img/editor-{light,dark}.png, swapped by prefers-color-scheme). */
+   (assets/img/editor-{light,dark}.png, swapped by prefers-color-scheme), linking
+   into the live demo. */
 .preview {
+  display: block;
+  text-decoration: none;
+  transition: border-color 0.15s, box-shadow 0.15s;
   margin: 56px 0 8px;
   border: 1px solid var(--line-strong);
   border-radius: var(--radius);
@@ -194,6 +198,7 @@ h1, h2, h3 {
   overflow: hidden;
   box-shadow: 0 24px 48px -32px rgba(0, 0, 0, 0.35);
 }
+.preview:hover { border-color: var(--muted); box-shadow: 0 28px 56px -32px rgba(0, 0, 0, 0.45); }
 .preview-bar {
   display: flex;
   align-items: center;
