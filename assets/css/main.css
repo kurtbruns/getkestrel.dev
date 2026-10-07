@@ -198,13 +198,15 @@ h1, h2, h3 {
   box-shadow: 0 24px 48px -32px rgba(0, 0, 0, 0.35);
 }
 /* Hover/focus: the frame stays put; the bar's "Open the live demo ↗" label brightens
-   and underlines. It matches kestrel's "View publication ↗" link (system sans,
-   12.5px, muted, no transition), and it's always shown, since touch has no hover. */
+   and underlines. It follows kestrel's "View publication ↗" link (system sans,
+   muted, no transition), a touch larger and heavier. It's always shown, since touch
+   has no hover. */
 .preview-cta {
   margin-left: auto;
   padding-left: 12px;
   font-family: var(--sans);
-  font-size: 12.5px;
+  font-size: 13px;
+  font-weight: 500;
   color: var(--muted);
   white-space: nowrap;
 }
