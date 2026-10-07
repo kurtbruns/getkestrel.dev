@@ -30,7 +30,8 @@
     <a class="preview" href="{{ site.Params.demoURL }}/dashboard/">
       <div class="preview-bar">
         <span class="dot"></span><span class="dot"></span><span class="dot"></span>
-        <span class="addr">{{ (urls.Parse site.Params.demoURL).Host }}/dashboard/</span>
+        <span class="addr" aria-hidden="true">{{ (urls.Parse site.Params.demoURL).Host }}/dashboard/</span>
+        <span class="preview-cta" aria-hidden="true"><span class="long">Open the live demo</span><span class="short">Live demo</span> ↗</span>
       </div>
       <div class="preview-body">
         <picture>
