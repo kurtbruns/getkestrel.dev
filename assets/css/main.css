@@ -198,8 +198,9 @@ h1, h2, h3 {
   box-shadow: 0 24px 48px -32px rgba(0, 0, 0, 0.35);
 }
 /* Hover/focus: the frame stays put; the bar's "Open the live demo" label brightens
-   and underlines, like a link elsewhere on the site. It's always shown, since touch
-   has no hover. No transition. */
+   and underlines (not the arrow), like a link elsewhere on the site. It's always
+   shown, since touch has no hover. No transition. The arrow is an SVG drawn like the
+   docs sidebar's back chevron, not the ↗ glyph. */
 .preview-cta {
   margin-left: auto;
   padding-left: 12px;
@@ -208,6 +209,7 @@ h1, h2, h3 {
   color: var(--muted);
   white-space: nowrap;
 }
+.preview-cta svg { width: 0.75rem; height: 0.75rem; margin-left: 4px; vertical-align: -1px; }
 .preview-cta .short { display: none; }
 .preview:hover .preview-cta, .preview:focus-visible .preview-cta { color: var(--ink); }
 .preview:hover .preview-cta :is(.long, .short), .preview:focus-visible .preview-cta :is(.long, .short) {
