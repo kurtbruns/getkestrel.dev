@@ -190,7 +190,6 @@ h1, h2, h3 {
 .preview {
   display: block;
   text-decoration: none;
-  transition: border-color 0.15s, box-shadow 0.15s;
   margin: 56px 0 8px;
   border: 1px solid var(--line-strong);
   border-radius: var(--radius);
@@ -198,12 +197,13 @@ h1, h2, h3 {
   overflow: hidden;
   box-shadow: 0 24px 48px -32px rgba(0, 0, 0, 0.35);
 }
-/* Hover/focus: a 2px accent outline (border + a 1px ring, so nothing shifts) and the
-   bar's "Open the live demo" label lights up. The label is always shown, since touch
-   has no hover. */
+/* Hover/focus: an accent border with a soft ~1.5px glow (a shadow, so nothing shifts),
+   and the bar's "Open the live demo" label lights up. No transition. The label is
+   always shown, since touch has no hover. */
 .preview:hover, .preview:focus-visible {
   border-color: var(--accent);
-  box-shadow: 0 0 0 1px var(--accent), 0 24px 48px -32px rgba(0, 0, 0, 0.35);
+  box-shadow: 0 0 3px 1.5px color-mix(in srgb, var(--accent) 40%, transparent),
+    0 24px 48px -32px rgba(0, 0, 0, 0.35);
 }
 .preview-cta {
   margin-left: auto;
@@ -212,7 +212,6 @@ h1, h2, h3 {
   font-size: 12px;
   color: var(--muted);
   white-space: nowrap;
-  transition: color 0.15s;
 }
 .preview-cta .short { display: none; }
 .preview:hover .preview-cta, .preview:focus-visible .preview-cta { color: var(--ink); }
