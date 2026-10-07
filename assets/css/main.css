@@ -502,11 +502,15 @@ pre .muted { color: var(--muted); }
   transition: color .12s, border-color .12s;
 }
 .docs-onpage-toc nav a:hover { color: var(--ink); }
-.docs-onpage-toc nav a.active { color: var(--ink); border-left-color: var(--ink); font-weight: 600; }
+/* no weight change: bolder text is wider and can rewrap the entry, shifting the rail */
+.docs-onpage-toc nav a.active { color: var(--ink); border-left-color: var(--ink); }
 
 /* article — one measure for the whole column; everything inside (text, code,
-   tables) fills it, so every block shares the same right edge. */
-.docs-body { min-width: 0; max-width: var(--measure-prose); padding-top: 42px; }
+   tables) fills it, so every block shares the same right edge. A runway below the
+   pager lets the last sections scroll up to the spy line and be reached + highlighted
+   (the scroll-spy also force-marks the last one at the very bottom, as a fallback for
+   a short final section). */
+.docs-body { min-width: 0; max-width: var(--measure-prose); padding-top: 42px; padding-bottom: 40vh; }
 .docs-body > .eyebrow { margin-bottom: 10px; }
 .docs-body > .eyebrow a { color: inherit; text-decoration: none; }
 .docs-body > .eyebrow a:hover { color: var(--ink); }
@@ -579,7 +583,7 @@ pre .muted { color: var(--muted); }
     padding: 1rem 0 0.5rem; margin-bottom: 1.375rem; border-bottom: 1px solid var(--line);
   }
   .docs-back { margin-bottom: 0.875rem; }
-  .docs-body { padding-top: 0.75rem; }
+  .docs-body { padding-top: 0.75rem; padding-bottom: 0; } /* rail isn't sticky here: no spy to reach */
   .docs-body { max-width: none; }
 }
 
