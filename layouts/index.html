@@ -9,7 +9,7 @@
       Kestrel is an open-source, self-hosted newsletter app. Write in Markdown,
       preview the exact email, schedule with a cancelable review window, and send
       to your subscribers. <em>You</em> keep the list, the consent record, the
-      delivery record, and a permanent per-issue archive.
+      delivery record, and a permanent per-post archive.
     </p>
     <div class="cta-row">
       <a class="btn" href="{{ site.Params.demoURL }}">Try the demo</a>
@@ -29,7 +29,7 @@
           <source srcset="{{ $shotDark.RelPermalink }}" media="(prefers-color-scheme: dark)">
           <img src="{{ $shotLight.RelPermalink }}" width="2560" height="1440" loading="eager"
             decoding="async"
-            alt="The Kestrel editor: the dashboard for the Field Notes demo publication, showing subscriber counts, a scheduled issue, two drafts, and the sent issues.">
+            alt="The Kestrel editor: the dashboard for the Field Notes demo publication, showing subscriber counts, a scheduled post, two drafts, and the sent posts.">
         </picture>
       </div>
     </div>
@@ -61,13 +61,13 @@
       <div class="card">
         <p class="k">The delivery</p>
         <h3>An auditable record</h3>
-        <p>Each send records who received which issue, plus suppressions from
+        <p>Each send records who received which post, plus suppressions from
           hard bounces and spam complaints. You control the whole trail.</p>
       </div>
       <div class="card">
         <p class="k">The archive</p>
         <h3>A permanent home</h3>
-        <p>Every issue gets a lasting public page on your own domain. The links
+        <p>Every post gets a lasting public page on your own domain. The links
           you send never rot behind someone else's platform.</p>
       </div>
     </div>
@@ -86,7 +86,7 @@
     <div class="flow">
       <div class="flow-step">
         <h3>Write in Markdown</h3>
-        <p>Draft an issue in the web editor or hand it to Claude. Same API
+        <p>Draft a post in the web editor or hand it to Claude. Same API
           underneath, same result. If a draft changed under you, a stale save
           is rejected rather than clobbered.</p>
       </div>
@@ -107,7 +107,7 @@
       </div>
       <div class="flow-step">
         <h3>Archive it forever</h3>
-        <p>Each sent issue becomes a permanent, indexable page on your domain.
+        <p>Each sent post becomes a permanent, indexable page on your domain.
           The same content stays readable long after the email is buried.</p>
       </div>
     </div>
@@ -148,7 +148,7 @@
       <div class="spec">
         <dt>Idempotent send loop</dt>
         <dd>The scheduled sweep is safe to retry. It resumes a send without
-          re-mailing anyone who already received the issue.</dd>
+          re-mailing anyone who already received the post.</dd>
       </div>
       <div class="spec">
         <dt>Isolated environments</dt>
@@ -214,6 +214,7 @@
               <li>A Cloudflare account, with your domain's DNS on Cloudflare</li>
               <li>An email provider: Resend or Amazon SES</li>
               <li>Node.js 22 or later, and Git</li>
+              <li>A GitHub account, or another Git host, for your own copy of the repository</li>
             </ul>
             <p>No per-subscriber fees. A small list runs free; a large one costs your
               email provider's rates and Cloudflare's $5 Workers Paid plan.</p>
