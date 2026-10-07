@@ -8,8 +8,9 @@
     <p class="lead">
       Kestrel is an open-source, self-hosted newsletter app. Write in Markdown,
       preview the exact email, schedule with a cancelable review window, and send
-      to your subscribers. <em>You</em> keep the list, the consent record, the
-      delivery record, and a permanent per-post archive.
+      to your subscribers. Work in the editor, or <strong>just ask Claude</strong>. You
+      keep the list, the consent record, the delivery record, and a permanent
+      per-post archive.
     </p>
     <div class="cta-row">
       <a class="btn" href="{{ site.Params.demoURL }}">Try the demo</a>
@@ -38,14 +39,103 @@
   </div>
 </section>
 
+{{/* ------------------------------------------------------- how it works */}}
+<section class="section">
+  <div class="wrap">
+    <div class="section-head">
+      <p class="eyebrow">How it works</p>
+      <h2>Write, preview, schedule, send</h2>
+      <p>Every post follows the same path, from a draft in Markdown to an email in
+        your subscribers' inboxes and a permanent page on your own domain.</p>
+    </div>
+    <div class="flow">
+      <div class="flow-step">
+        <h3>Write in Markdown</h3>
+        <p>Draft a post in the web editor. If a draft changed under you, a stale
+          save is rejected rather than clobbered.</p>
+      </div>
+      <div class="flow-step">
+        <h3>Preview the exact email</h3>
+        <p>See precisely what lands in the inbox: the rendered email HTML and
+          plain-text, not an approximation. Send yourself a test first.</p>
+      </div>
+      <div class="flow-step">
+        <h3>Schedule with a review window</h3>
+        <p>Queue a send behind a cancelable countdown. Cancel it or move it any
+          time before it fires; when the window closes, it sends on its own.</p>
+      </div>
+      <div class="flow-step">
+        <h3>Send to a double opt-in list</h3>
+        <p>Only confirmed subscribers receive it. Nobody is mailed twice, even if a
+          send has to resume, and bounces and spam complaints suppress on their own.</p>
+      </div>
+      <div class="flow-step">
+        <h3>Archived automatically</h3>
+        <p>Each sent post becomes a permanent, indexable page on your domain.
+          The same content stays readable long after the email is buried.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+{{/* -------------------------------------------------- working with robots */}}
+{{- /* The premise the demo publication's own "Working with robots" post makes:
+       Kestrel is built on an API, the app is one client of it, and Claude reaches
+       the same one. A short sample conversation carries it, because the claim is
+       more convincing shown than asserted. */ -}}
+{{- $connect := printf "%s/blob/main/docs/guides/01-connect-claude.md" site.Params.repoApp -}}
+{{- with site.GetPage "/docs/connect-claude" }}{{ $connect = .RelPermalink }}{{ end -}}
+<section class="section robots">
+  <div class="wrap">
+    <div class="section-head">
+      <p class="eyebrow">Working with robots</p>
+      <h2>Ask Claude to do it</h2>
+      <p>Kestrel is built on an API. Everything the app does, it does through that
+        API. Connect Claude to your instance and it can do everything you can do in
+        the editor. The same guardrails hold either way: a scheduled post waits out
+        its review window, and you can still move it or cancel it.</p>
+    </div>
+
+    <div class="chat">
+      <div class="chat-bar">
+        <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+        <span class="who">Claude &middot; Field Notes</span>
+      </div>
+      <div class="chat-body">
+
+        <p class="msg-you">Can you proofread my draft titled &ldquo;First frost&rdquo; and schedule it to go out Friday at 7am?</p>
+
+        <ul class="acts">
+          <li class="act"><b>Read draft</b> &middot; First frost</li>
+          <li class="act"><b>Scheduled</b> &middot; Friday, 7:00 AM</li>
+        </ul>
+
+        <div class="msg-claude">
+          <span class="who">Claude</span>
+          <p>One typo: &ldquo;kestral&rdquo; in the third paragraph, now
+            &ldquo;kestrel&rdquo;. The rest reads clean.</p>
+          <p>Scheduled for Friday at 7:00 AM, cancelable until it sends.</p>
+        </div>
+
+      </div>
+    </div>
+
+    <p class="chat-note">Claude Code connects with a Cloudflare Access service token,
+      and its edits are recorded as Claude, not as you.
+      <a href="{{ $connect }}">How to connect Claude &rarr;</a></p>
+  </div>
+</section>
+
 {{/* -------------------------------------------------------- ownership */}}
 <section class="section">
   <div class="wrap">
     <div class="section-head">
       <p class="eyebrow">Ownership</p>
       <h2>You keep what matters</h2>
-      <p>The pitch isn't another sending API. It's that the parts a newsletter is
-        actually made of stay yours.</p>
+      <p>When you have something to share, you should be able to reach the people
+        who signed up to hear from you. With Kestrel you own that relationship: the
+        list, the proof they opted in, the record of what you sent, and the archive
+        it lives in.</p>
     </div>
     <div class="grid grid-4">
       <div class="card">
@@ -76,46 +166,6 @@
   </div>
 </section>
 
-{{/* ------------------------------------------------------- how it works */}}
-<section class="section">
-  <div class="wrap">
-    <div class="section-head">
-      <p class="eyebrow">How it works</p>
-      <h2>Write, preview, schedule, send</h2>
-      <p>One interface, an HTTP API, with two clients: a web editor and Claude.
-        The steps are the same either way.</p>
-    </div>
-    <div class="flow">
-      <div class="flow-step">
-        <h3>Write in Markdown</h3>
-        <p>Draft a post in the web editor or hand it to Claude. Same API
-          underneath, same result. If a draft changed under you, a stale save
-          is rejected rather than clobbered.</p>
-      </div>
-      <div class="flow-step">
-        <h3>Preview the exact email</h3>
-        <p>See precisely what lands in the inbox: the rendered email HTML and
-          plain-text, not an approximation. Send yourself a test first.</p>
-      </div>
-      <div class="flow-step">
-        <h3>Schedule with a review window</h3>
-        <p>Queue a send behind a cancelable countdown. Change your mind and cancel
-          before it fires; a Cron Trigger drives the sweep when it does.</p>
-      </div>
-      <div class="flow-step">
-        <h3>Send to a double opt-in list</h3>
-        <p>Only confirmed subscribers receive it. The send loop is idempotent, so
-          it never double-sends, and bounces and complaints suppress on their own.</p>
-      </div>
-      <div class="flow-step">
-        <h3>Archive it forever</h3>
-        <p>Each sent post becomes a permanent, indexable page on your domain.
-          The same content stays readable long after the email is buried.</p>
-      </div>
-    </div>
-  </div>
-</section>
-
 {{/* ------------------------------------------------------- engineering */}}
 <section class="section eng">
   <div class="wrap">
@@ -130,8 +180,6 @@
       <span class="chip">TypeScript</span>
       <span class="chip">Cloudflare Workers</span>
       <span class="chip">D1</span>
-      <span class="chip">R2</span>
-      <span class="chip">Cron Triggers</span>
       <span class="chip">SES</span>
       <span class="chip">Resend</span>
     </div>
@@ -153,16 +201,6 @@
           re-mailing anyone who already received the post.</dd>
       </div>
       <div class="spec">
-        <dt>Isolated environments</dt>
-        <dd>Local dev and production each get their own database, storage, and
-          mail transport, so development can never reach a real inbox.</dd>
-      </div>
-      <div class="spec">
-        <dt>Swappable email provider</dt>
-        <dd>SES or Resend in production; a fake in-memory transport for local dev
-          and tests. It's one variable.</dd>
-      </div>
-      <div class="spec">
         <dt>Access-gated admin</dt>
         <dd>Authoring sits behind Cloudflare Access. The reader pages are public,
           gated only by unguessable per-subscriber tokens.</dd>
@@ -182,10 +220,9 @@
   <div class="wrap">
     <div class="section-head">
       <p class="eyebrow">Get started</p>
-      <h2>Try it, then run your own</h2>
+      <h2>See if Kestrel is right for you</h2>
       <p>Kestrel is for publishers who want to own their list and don't mind running a
-        small app to do it. It has no paid subscriptions or discovery network, and you
-        apply its updates. Try it first, in your browser or on your computer.</p>
+        small app to do it. Try it first, in your browser or on your computer.</p>
     </div>
 
     <ol class="wb-steps">
@@ -228,7 +265,7 @@
       </li>
     </ol>
 
-    <p class="wb-host">Rather not run it yourself? <a href="{{ "contact/?topic=hosting" | relURL }}">Ask about hosting</a>.</p>
+    <p class="wb-host">Don't want to run it yourself? <a href="{{ "contact/?topic=hosting" | relURL }}">Ask about a hosted instance</a>.</p>
   </div>
 </section>
 
