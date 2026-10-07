@@ -4,10 +4,9 @@
     <nav class="foot-nav">
       <a href="{{ site.Params.repoApp }}">App repo</a>
       {{ with site.GetPage "/docs" }}<a href="{{ .RelPermalink }}">Docs</a>{{ else }}<a href="{{ site.Params.repoApp }}/tree/main/docs">Docs</a>{{ end }}
-      <a href="{{ site.Params.repoSite }}">This site</a>
       <a href="{{ "contact/" | relURL }}">Contact</a>
     </nav>
     <span class="spacer"></span>
-    <span>Runs on Cloudflare Workers &middot; D1 &middot; R2</span>
+    <span>Kestrel runs on Cloudflare</span>
   </div>
 </footer>

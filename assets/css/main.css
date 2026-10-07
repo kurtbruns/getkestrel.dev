@@ -24,6 +24,7 @@
   --accent-hover: #000000;
   --code-bg: #f4f4f5;        /* zinc-100 */
   --code-ink: #27272a;
+  --chat-you: #f4f4f5;       /* your own message in the sample conversation */
   --ring: #2563eb;           /* focus ring */
   --ok: #15803d;
 
@@ -53,6 +54,7 @@
     --accent-hover: #ffffff;
     --code-bg: #1b1a17;
     --code-ink: #d4d4d8;
+    --chat-you: #26241f;
     --ring: #60a5fa;
     --ok: #4ade80;
   }
@@ -364,6 +366,118 @@ h1, h2, h3 {
 .flow-step h3 { grid-column: 2; grid-row: 1; font-size: 21px; font-family: var(--sans); font-weight: 650; letter-spacing: -0.01em; }
 .flow-step p { grid-column: 2; grid-row: 2; color: var(--muted); margin: 8px 0 0; max-width: 60ch; }
 
+/* ------------------------------------------------- working with robots */
+
+/* A sample conversation, framed like the hero's app preview so the two read as
+   the same product. Claude's own surfaces are the model: what you typed sits in
+   a container, Claude's reply is plain prose, and what it actually did shows as
+   a short list of actions rather than raw API calls. Capped narrower than the
+   wrap — a conversation reads at a prose measure, not a full-width one. */
+
+.robots .chat {
+  max-width: 52rem;
+  border: 1px solid var(--line-strong);
+  background: var(--card);
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: 0 24px 48px -32px rgba(0, 0, 0, 0.35);
+}
+.robots .chat-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--line);
+  background: var(--code-bg);
+}
+.robots .chat-bar .dot { width: 11px; height: 11px; border-radius: 50%; background: var(--line-strong); flex: none; }
+.robots .chat-bar .who {
+  margin-left: 10px;
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--muted);
+}
+.robots .chat-body {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 20px;
+  padding: 24px;
+}
+
+/* what you typed */
+.robots .msg-you {
+  align-self: flex-end;
+  max-width: 88%;
+  margin: 0;
+  padding: 10px 16px;
+  border: 1px solid var(--line);
+  border-radius: 16px 16px 4px 16px;
+  background: var(--chat-you);
+  color: var(--ink);
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+/* Claude's reply: plain prose, the way it actually renders */
+.robots .msg-claude { max-width: 60ch; }
+.robots .msg-claude .who {
+  display: block;
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin: 0 0 8px;
+}
+.robots .msg-claude p { margin: 0; font-size: 16px; line-height: 1.6; }
+.robots .msg-claude p + p,
+.robots .msg-claude ul + p { margin-top: 10px; }
+.robots .msg-claude ul {
+  margin: 10px 0 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 4px;
+  font-size: 15.5px;
+}
+.robots .msg-claude li { padding-left: 1.1em; position: relative; line-height: 1.5; }
+.robots .msg-claude li::before { content: "\2022"; position: absolute; left: 0; color: var(--muted); }
+
+/* what it did: one line per action, the way Claude summarizes its own work */
+.robots .acts { margin: 0; padding: 0; list-style: none; display: grid; gap: 7px; }
+.robots .act {
+  position: relative;
+  padding-left: 17px;
+  font-family: var(--mono);
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--muted);
+  overflow-wrap: anywhere;
+}
+.robots .act::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.45em;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--ok);
+}
+.robots .act b { color: var(--ink); font-weight: 500; }
+
+/* the caption under the frame: what's really running, and where to set it up */
+.robots .chat-note {
+  max-width: 52rem;
+  margin: 18px 0 0;
+  color: var(--muted);
+  font-size: 15px;
+  line-height: 1.6;
+}
+.robots .chat-note a { color: var(--ink); text-decoration: underline; text-underline-offset: 3px; text-decoration-color: var(--line-strong); }
+.robots .chat-note a:hover { text-decoration-color: currentColor; }
+
 /* --------------------------------------------------------- engineering row */
 
 .eng { background: var(--code-bg); }
@@ -441,6 +555,9 @@ pre .muted { color: var(--muted); }
   .flow-step::before { grid-column: 1; grid-row: auto; padding-top: 0; }
   .flow-step h3 { grid-column: 1; grid-row: auto; }
   .flow-step p { grid-column: 1; grid-row: auto; }
+  .robots .chat-body { padding: 18px 16px; gap: 18px; }
+  .robots .msg-you { max-width: 100%; font-size: 15.5px; }
+  .robots .msg-claude p { font-size: 15.5px; }
 }
 
 /* -------------------------------------------------------------------- docs */
