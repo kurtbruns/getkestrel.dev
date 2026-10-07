@@ -197,13 +197,10 @@ h1, h2, h3 {
   overflow: hidden;
   box-shadow: 0 24px 48px -32px rgba(0, 0, 0, 0.35);
 }
-/* Hover/focus: a 1.5px accent border (the 1px border plus a 0.5px ring, so nothing
-   shifts), and the bar's "Open the live demo" label lights up. No transition. The label is
-   always shown, since touch has no hover. */
-.preview:hover, .preview:focus-visible {
-  border-color: var(--accent);
-  box-shadow: 0 0 0 0.5px var(--accent), 0 24px 48px -32px rgba(0, 0, 0, 0.35);
-}
+/* Hover/focus: the border darkens a step and the bar's "Open the live demo" label
+   lights up. The label says what the link does, so the border stays quiet. No
+   transition. The label is always shown, since touch has no hover. */
+.preview:hover, .preview:focus-visible { border-color: var(--muted); }
 .preview-cta {
   margin-left: auto;
   padding-left: 12px;
