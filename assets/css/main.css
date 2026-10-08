@@ -736,7 +736,12 @@ pre .muted { color: var(--muted); }
 
 /* ---------------------------------------------------------------- contact */
 
-/* /contact/: a short intro over one card holding the form. */
+/* /contact/: a short intro over one card holding the form. It opens the page, so it
+   drops .section's top rule, which would double the header's bottom border, and
+   takes the hero's top padding so the eyebrow sits where the landing's does. */
+.contact { border-top: 0; padding-top: 52px; }
+@media (max-width: 620px) { .contact { padding-top: 64px; } }
+.contact .section-head .eyebrow { margin-top: 0; }
 .contact h1 { font-family: var(--serif); font-weight: 600; font-size: clamp(32px, 5vw, 44px); letter-spacing: -.02em; margin: 0; }
 .contact-intro { color: var(--muted); font-size: 17px; line-height: 1.7; margin-top: 14px; }
 .contact-intro p { margin: 0 0 12px; }
