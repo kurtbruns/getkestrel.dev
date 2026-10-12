@@ -211,11 +211,15 @@
 
 {{/* ------------------------------------------------------- get started */}}
 {{- /* A stepped path down a numbered rail: step 1 is trying it (the demo, with a quiet
-       link to running it locally, the developer's alternative, which the README owns),
-       step 2 is deploying your own, the destination once a visitor has decided. */ -}}
-{{- $readme := printf "%s#local-setup" site.Params.repoApp -}}
+       link to running it locally, the developer's alternative, which the Deploy guide's
+       first step covers), step 2 is deploying your own, the destination once a visitor
+       has decided. */ -}}
+{{- $local := printf "%s/blob/main/docs/get-started/02-deploy.md#1-create-your-instances-repository" site.Params.repoApp -}}
+{{- with site.GetPage "/docs/deploy" }}{{ $local = printf "%s#1-create-your-instances-repository" .RelPermalink }}{{ end -}}
 {{- $guide := printf "%s/tree/main/docs" site.Params.repoApp -}}
 {{- with site.GetPage "/docs/overview" }}{{ $guide = .RelPermalink }}{{ end -}}
+{{- $upgrade := printf "%s/blob/main/docs/guides/07-upgrade.md" site.Params.repoApp -}}
+{{- with site.GetPage "/docs/upgrade" }}{{ $upgrade = .RelPermalink }}{{ end -}}
 <section class="section ways-b" id="get-started">
   <div class="wrap">
     <div class="section-head">
@@ -236,7 +240,7 @@
             and your copy is cleared after a while.</p>
           <div class="wb-act">
             <a class="btn" href="{{ site.Params.demoURL }}">Open the demo</a>
-            <a class="wb-link" id="try-it-locally" href="{{ $readme }}">Or run it on your computer →</a>
+            <a class="wb-link" id="try-it-locally" href="{{ $local }}">Or run it on your computer →</a>
           </div>
         </div>
       </li>
@@ -246,14 +250,18 @@
         <div class="wb-body">
           <p class="wb-label">Step 2 · Run your own</p>
           <h3>Deploy your own</h3>
-          <p>A step-by-step guide takes you to a live newsletter on your own domain.
-            You'll need:</p>
+          <p>Kestrel installs from npm as
+            <a href="https://www.npmjs.com/package/@kurtbruns/kestrel"><code>@kurtbruns/kestrel</code></a>.
+            Your instance is a small repository of your own that names the release it
+            runs, so <a href="{{ $upgrade }}">upgrading</a> is installing a newer one. A
+            step-by-step guide takes you from an empty repository to a live newsletter
+            on your own domain. You'll need:</p>
           <div class="wb-needs">
             <ul>
               <li>A Cloudflare account, with your domain's DNS on Cloudflare</li>
               <li>An email provider: Resend or Amazon SES</li>
               <li>Node.js 22 or later, and Git</li>
-              <li>A GitHub account, or another Git host, for your own copy of the repository</li>
+              <li>A GitHub account, or another Git host, for your instance's repository</li>
             </ul>
             <p>No per-subscriber fees. A small list runs free; a large one costs your
               email provider's rates and Cloudflare's $5 Workers Paid plan.</p>
