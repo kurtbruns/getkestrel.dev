@@ -1,0 +1,7 @@
+# Served by Workers Static Assets (the assets directory is public/, which Hugo
+# fills from static/). Kept for pages that were linked and may be bookmarked.
+
+# Kestrel 1.7.0 folded the setup guide's Overview page into Deploy the app, whose
+# Before you begin now holds what the Overview listed.
+/docs/overview/ /docs/deploy/ 301
+/docs/overview /docs/deploy/ 301

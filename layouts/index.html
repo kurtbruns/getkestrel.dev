@@ -211,13 +211,13 @@
 
 {{/* ------------------------------------------------------- get started */}}
 {{- /* A stepped path down a numbered rail: step 1 is trying it (the demo, with a quiet
-       link to running it locally, the developer's alternative, which the Deploy guide's
-       first step covers), step 2 is deploying your own, the destination once a visitor
-       has decided. */ -}}
-{{- $local := printf "%s/blob/main/docs/get-started/02-deploy.md#1-create-your-instances-repository" site.Params.repoApp -}}
-{{- with site.GetPage "/docs/deploy" }}{{ $local = printf "%s#1-create-your-instances-repository" .RelPermalink }}{{ end -}}
+       link to running it locally, the developer's alternative, which the Try Kestrel
+       locally first guide covers), step 2 is deploying your own, the destination once a
+       visitor has decided. */ -}}
+{{- $local := printf "%s/blob/main/docs/guides/08-try-locally.md" site.Params.repoApp -}}
+{{- with site.GetPage "/docs/try-locally" }}{{ $local = .RelPermalink }}{{ end -}}
 {{- $guide := printf "%s/tree/main/docs" site.Params.repoApp -}}
-{{- with site.GetPage "/docs/overview" }}{{ $guide = .RelPermalink }}{{ end -}}
+{{- with site.GetPage "/docs" }}{{ $guide = .RelPermalink }}{{ end -}}
 {{- $upgrade := printf "%s/blob/main/docs/guides/07-upgrade.md" site.Params.repoApp -}}
 {{- with site.GetPage "/docs/upgrade" }}{{ $upgrade = .RelPermalink }}{{ end -}}
 <section class="section ways-b" id="get-started">
@@ -240,7 +240,7 @@
             and your copy is cleared after a while.</p>
           <div class="wb-act">
             <a class="btn" href="{{ site.Params.demoURL }}">Open the demo</a>
-            <a class="wb-link" id="try-it-locally" href="{{ $local }}">Or run it on your computer →</a>
+            <a class="wb-link" id="try-it-locally" href="{{ $local }}">Or try it locally →</a>
           </div>
         </div>
       </li>
