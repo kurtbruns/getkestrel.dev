@@ -65,9 +65,10 @@
           time before it fires; when the window closes, it sends on its own.</p>
       </div>
       <div class="flow-step">
-        <h3>Send to a double opt-in list</h3>
-        <p>Only confirmed subscribers receive it. Nobody is mailed twice, even if a
-          send has to resume, and bounces and spam complaints suppress on their own.</p>
+        <h3>Send to confirmed subscribers</h3>
+        <p>Only subscribers whose consent is on record receive it. Nobody is mailed
+          twice, even if a send has to resume, and bounces and spam complaints
+          suppress on their own.</p>
       </div>
       <div class="flow-step">
         <h3>Archived automatically</h3>
@@ -147,8 +148,9 @@
       <div class="card">
         <p class="k">The consent</p>
         <h3>Proof of permission</h3>
-        <p>Every subscription is double opt-in, with the confirmation and the
-          unsubscribe recorded. The evidence you had consent stays with you.</p>
+        <p>Signups are double opt-in, and every import that adds subscribers carries
+          your word that they opted in. Confirmations and unsubscribes are recorded,
+          so the evidence you had consent stays with you.</p>
       </div>
       <div class="card">
         <p class="k">The delivery</p>
@@ -262,10 +264,12 @@
               <li>Node.js 22 or later, and Git</li>
               <li>A GitHub account, or another Git host, for your instance's repository</li>
             </ul>
-            <p>No per-subscriber fees. You pay Amazon SES's rates per email. On
-              Cloudflare's free Workers plan, a send reaches about 12,000 readers an hour
-              once AWS raises your SES send rate to 50 a second, which costs nothing; its
-              $5 Workers Paid plan only makes a large send faster.</p>
+            <p>No per-subscriber fees. You pay Amazon SES's rates per email.
+              Cloudflare's free Workers plan suits a list of up to about 5,000 subscribers,
+              and sends to all of them in about 25 minutes once AWS raises your SES send
+              rate to 50 a second, which costs nothing. A larger list belongs on
+              Cloudflare's $5 Workers Paid plan, for the database's daily writes as well as
+              faster sends.</p>
           </div>
           <div class="wb-act">
             <a class="btn btn-ghost" href="{{ $guide }}">Open the setup guide</a>
