@@ -39,6 +39,9 @@
   // the deploy token to carry Workers + DNS edit scope.
   "routes": [
     { "pattern": "getkestrel.dev", "custom_domain": true },
+    // Keep this route even though nothing is served from www: it provisions the
+    // proxied DNS record and edge cert that the zone's www → apex Redirect Rule
+    // (in the Cloudflare dashboard, issue #31) needs in order to fire.
     { "pattern": "www.getkestrel.dev", "custom_domain": true }
   ]
 }
