@@ -5,3 +5,8 @@
 # Before you begin now holds what the Overview listed.
 /docs/overview/ /docs/deploy/ 301
 /docs/overview /docs/deploy/ 301
+
+# Kestrel 1.8.0 removed Resend: SES is the one provider, and Connect Amazon SES (at /docs/ses/,
+# where the SES guide was) is the setup guide's step 3.
+/docs/resend/ /docs/ses/ 301
+/docs/resend /docs/ses/ 301
