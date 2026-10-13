@@ -5,7 +5,7 @@ locale = 'en-us'
 title = 'Kestrel'
 
 [params]
-description = 'Run your own Kestrel — a small, self-hosted newsletter app. Write in Markdown, preview the exact email, schedule with a review window, and send to a double opt-in list, while owning the list, the consent, the delivery record, and the archive.'
+description = 'Run your own Kestrel — a small, self-hosted newsletter app. Write in Markdown, preview the exact email, schedule with a review window, and send to confirmed subscribers, while owning the list, the consent, the delivery record, and the archive.'
 tagline = 'Own your newsletter.'
 repoApp = 'https://github.com/kurtbruns/kestrel'
 repoSite = 'https://github.com/kurtbruns/getkestrel.dev'
