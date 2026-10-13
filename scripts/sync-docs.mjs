@@ -102,7 +102,13 @@ function firstPara(md) {
     .replace(/\[([^\]]*)\]\([^)]*\)/g, "$1")
     .replace(/\s+/g, " ")
     .trim();
-  if (text.length > 150) { text = text.slice(0, 148).replace(/\s+\S*$/, "") + "…"; }
+  // It's also the page's meta description, so keep whole sentences that fit: a
+  // search snippet that stops mid-thought reads as cut off. Only a first sentence
+  // too long on its own gets an ellipsis.
+  if (text.length > 160) {
+    const ends = [...text.matchAll(/[.!?](?=\s+[A-Z]|$)/g)].map((m) => m.index + 1).filter((i) => i <= 160);
+    text = ends.length ? text.slice(0, ends.at(-1)) : text.slice(0, 158).replace(/\s+\S*$/, "") + "…";
+  }
   return text;
 }
 
@@ -201,7 +207,7 @@ function syncSections() {
     `    numbered: ${sec.numbered}`,
   ].join("\n")).join("\n");
   writeFileSync(join(OUT, "_index.md"),
-    `---\ntitle: "${yamlEscape(index.title)}"\nsections:\n${sectionsYaml}\n---\n\n${rewriteLinks(index.intro, slugs)}\n`);
+    `---\ntitle: "${yamlEscape(index.title)}"\ndescription: "${yamlEscape(firstPara(index.intro))}"\nsections:\n${sectionsYaml}\n---\n\n${rewriteLinks(index.intro, slugs)}\n`);
   pages.forEach(({ path, section, step }, i) => {
     const md = readFileSync(join(DOCS_DIR, path), "utf8");
     const slug = path.match(PAGE_PATH)[2];

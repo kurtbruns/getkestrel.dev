@@ -1,8 +1,8 @@
 {{- $title := "" -}}
 {{- if .IsHome -}}
-  {{- $title = printf "%s — %s" site.Title site.Params.tagline -}}
+  {{- $title = site.Params.homeTitle -}}
 {{- else -}}
-  {{- $title = printf "%s · %s" .Title site.Title -}}
+  {{- $title = printf "%s · %s" .Title site.Params.titleSuffix -}}
 {{- end -}}
 {{- $desc := or .Description site.Params.description -}}
 <meta charset="UTF-8">
@@ -10,6 +10,7 @@
 <title>{{ $title }}</title>
 <meta name="description" content="{{ $desc }}">
 <link rel="canonical" href="{{ .Permalink }}">
+{{ with .Params.robots }}<meta name="robots" content="{{ . }}">{{ end }}
 
 {{/* Open Graph / Twitter */}}
 <meta property="og:type" content="website">
@@ -24,6 +25,25 @@
 <meta property="og:image:alt" content="The Kestrel logo and name">
 {{/* X reads the og:* tags; twitter:card has no OG equivalent and picks the large-image layout. */}}
 <meta name="twitter:card" content="summary_large_image">
+
+{{- if .IsHome }}
+{{/* Says what Kestrel is (software, free, MIT) so search engines can tell it from
+     other Kestrels. No ratings, so this earns no star snippet; it's for understanding. */}}
+{{- $ld := dict
+  "@context" "https://schema.org"
+  "@type" "SoftwareApplication"
+  "name" site.Title
+  "description" $desc
+  "url" site.Home.Permalink
+  "image" $og.Permalink
+  "applicationCategory" "BusinessApplication"
+  "operatingSystem" "Cloudflare Workers"
+  "license" "https://opensource.org/licenses/MIT"
+  "sameAs" (slice site.Params.repoApp)
+  "offers" (dict "@type" "Offer" "price" "0" "priceCurrency" "USD")
+}}
+<script type="application/ld+json">{{ $ld | jsonify | safeJS }}</script>
+{{- end }}
 
 <link rel="icon" href="{{ "favicon.svg" | relURL }}" type="image/svg+xml">
 
