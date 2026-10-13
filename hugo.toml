@@ -6,10 +6,9 @@ title = 'Kestrel'
 
 [params]
 description = 'Run your own Kestrel — a small, self-hosted newsletter app. Write in Markdown, preview the exact email, schedule with a review window, and send to confirmed subscribers, while owning the list, the consent, the delivery record, and the archive.'
-# The home page's <title>, and the suffix on every other page's. "Kestrel" alone is
-# also ASP.NET Core's web server, so both say which Kestrel this is.
+# The home page's <title>. "Kestrel" alone is also ASP.NET Core's web server, so it
+# says which Kestrel this is. Other pages are "<page> · Kestrel".
 homeTitle = 'Kestrel — Self-hosted newsletter app'
-titleSuffix = 'Kestrel newsletter app'
 repoApp = 'https://github.com/kurtbruns/kestrel'
 repoSite = 'https://github.com/kurtbruns/getkestrel.dev'
 # The hosted, per-visitor sandbox demo (kurtbruns/demo.getkestrel.dev).

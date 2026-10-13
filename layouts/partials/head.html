@@ -2,7 +2,7 @@
 {{- if .IsHome -}}
   {{- $title = site.Params.homeTitle -}}
 {{- else -}}
-  {{- $title = printf "%s · %s" .Title site.Params.titleSuffix -}}
+  {{- $title = printf "%s · %s" .Title site.Title -}}
 {{- end -}}
 {{- $desc := or .Description site.Params.description -}}
 <meta charset="UTF-8">
