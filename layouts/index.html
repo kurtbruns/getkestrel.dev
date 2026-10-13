@@ -148,9 +148,9 @@
       <div class="card">
         <p class="k">The consent</p>
         <h3>Proof of permission</h3>
-        <p>Signups are double opt-in, and an imported list brings its own record of
-          consent. Confirmations and unsubscribes are recorded, so the evidence you
-          had consent stays with you.</p>
+        <p>Signups are double opt-in, and every import that adds subscribers carries
+          your word that they opted in. Confirmations and unsubscribes are recorded,
+          so the evidence you had consent stays with you.</p>
       </div>
       <div class="card">
         <p class="k">The delivery</p>
@@ -266,9 +266,10 @@
             </ul>
             <p>No per-subscriber fees. You pay Amazon SES's rates per email.
               Cloudflare's free Workers plan suits a list of up to about 5,000 subscribers,
-              sending to them in about 25 minutes once AWS raises your SES send rate to 50
-              a second, which costs nothing. From about 5,000, its $5 Workers Paid plan is
-              recommended, for the database's daily writes as well as faster sends.</p>
+              and sends to all of them in about 25 minutes once AWS raises your SES send
+              rate to 50 a second, which costs nothing. A larger list belongs on
+              Cloudflare's $5 Workers Paid plan, for the database's daily writes as well as
+              faster sends.</p>
           </div>
           <div class="wb-act">
             <a class="btn btn-ghost" href="{{ $guide }}">Open the setup guide</a>
