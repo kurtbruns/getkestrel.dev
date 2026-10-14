@@ -241,6 +241,11 @@ h1, h2, h3 {
 .preview-body picture, .preview-body img { display: block; width: 100%; height: auto; }
 
 /* -------------------------------------------------------------- own cards */
+/* the line under the cards: how an existing list gets in */
+.own-note { max-width: 52rem; margin: 24px 0 0; color: var(--muted); font-size: 15px; line-height: 1.6; }
+.own-note a { color: var(--ink); text-decoration: underline; text-underline-offset: 3px; text-decoration-color: var(--line-strong); }
+.own-note a:hover { text-decoration-color: currentColor; }
+.own-note code { font-family: var(--mono); font-size: 0.88em; background: var(--code-bg); padding: 0.1em 0.35em; border-radius: 5px; }
 
 .grid { display: grid; gap: 18px; }
 .grid-4 { grid-template-columns: repeat(4, 1fr); }
@@ -689,6 +694,14 @@ pre .muted { color: var(--muted); }
 /* -------- /docs/ index -------- */
 .docs-index { max-width: 64rem; margin: 0 auto; padding: 3.25rem 1.5rem 6rem; }
 .docs-index > .eyebrow { margin-bottom: 12px; }
+/* The two doc sets as tabs under the "Kestrel docs" eyebrow, as the app's Docs tab has them. */
+.docs-sets { display: flex; gap: 1.5rem; margin: 0 0 2rem; border-bottom: 1px solid var(--line); }
+.docs-sets a {
+  padding: 0 0 10px; margin-bottom: -1px; border-bottom: 2px solid transparent;
+  color: var(--muted); text-decoration: none; font-size: 15px; font-weight: 500;
+}
+.docs-sets a:hover { color: var(--ink); }
+.docs-sets a[aria-current="page"] { color: var(--ink); border-bottom-color: var(--ink); }
 .docs-index h1 { font-family: var(--serif); font-weight: 600; font-size: clamp(32px, 5vw, 44px); letter-spacing: -.02em; margin: 0 0 16px; }
 .docs-index-intro { color: var(--muted); font-size: 17px; line-height: 1.7; }
 .docs-index-intro p { margin: 0 0 14px; }

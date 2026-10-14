@@ -1,6 +1,6 @@
 {{- /* Previous and Next stay within the page's section, so the main path ends at
-       its last step instead of running on into the guides after it. */ -}}
-{{- $pages := (site.GetPage "/docs").Pages.ByWeight -}}
+       its last step instead of running on into the guides after it, and within its set. */ -}}
+{{- $pages := .CurrentSection.RegularPages.ByWeight -}}
 {{- with .Params.docsection }}{{ $pages = where $pages "Params.docsection" . }}{{ end -}}
 {{- $cur := .RelPermalink -}}
 {{- $prev := false -}}{{- $next := false -}}

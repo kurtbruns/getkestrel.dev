@@ -1,11 +1,11 @@
 {{ define "main" }}
 <div class="docs-index">
-  <p class="eyebrow">Documentation</p>
+  {{ partial "docs-sets.html" . }}
   <h1>{{ .Title }}</h1>
   <div class="docs-index-intro">{{ .Content }}</div>
-  {{- $all := .Pages.ByWeight }}
+  {{- $all := .RegularPages.ByWeight }}
   {{- with .Params.sections }}
-  {{- /* Sections, as kestrel's docs/README.md lays them out (scripts/sync-docs.mjs). */}}
+  {{- /* Sections, as the set's README lays them out (scripts/sync-docs.mjs). */}}
   {{- range . }}
   {{- $pages := where $all "Params.docsection" .id }}
   {{- if $pages }}

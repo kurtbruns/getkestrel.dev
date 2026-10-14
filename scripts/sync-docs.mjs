@@ -14,6 +14,10 @@
  *     its pages, numbered when they are steps taken in order. Pages live in the
  *     section folders the README links (docs/get-started/02-deploy.md), and their
  *     slug is the file name without its NN- prefix, unique across sections.
+ *     From kestrel 1.10.0 the docs are two sets, each with a README like that:
+ *     Self-hosting (docs/README.md) at /docs/, and Publishing
+ *     (docs/publishing/README.md, its pages beside it) at /docs/publishing/. A
+ *     release without docs/publishing/ syncs Self-hosting alone.
  *   - Flat (docs/setup/NN-*.md): releases up to v1.2.0. Kept until the pin moves
  *     past them, so a sync of an older release still builds.
  *
@@ -26,7 +30,7 @@
  * Markdown, not this transform.
  *
  *   Source:  $KESTREL_DOCS_SRC (a kestrel checkout), default ~/Git/kestrel.
- *   Output:  content/docs/  (gitignored)
+ *   Output:  content/docs/, and content/docs/publishing/  (gitignored)
  *
  * Which kestrel to point at is decided outside this script, and the two paths
  * differ on purpose: CI/prod (ci.yml, deploy.yml) clone the release tag pinned
@@ -40,7 +44,7 @@
  */
 import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync, rmSync } from "node:fs";
 import { homedir } from "node:os";
-import { basename, join } from "node:path";
+import { basename, join, posix } from "node:path";
 
 const SRC = process.env.KESTREL_DOCS_SRC || join(homedir(), "Git", "kestrel");
 const DOCS_DIR = join(SRC, "docs");
@@ -144,11 +148,24 @@ function syncFlat() {
   return count;
 }
 
-// A page's path under docs/, as the README links it: its section's folder, then
-// the file. The slug drops the NN- prefix.
-const PAGE_PATH = /^([a-z0-9-]+)\/\d{2}-([a-z0-9-]+)\.md$/;
+// A page's path as its set's README links it: its section's folder, if the set
+// has them, then the file (get-started/02-deploy.md, or 03-name-your-publication.md
+// in Publishing). The slug drops the NN- prefix, and is unique across both sets.
+const PAGE_PATH = /^(?:[a-z0-9-]+\/)?\d{2}-([a-z0-9-]+)\.md$/;
+const slugOf = (path) => basename(path).match(/^\d{2}-(.+)\.md$/)[1];
 
-/** Read the README: its title, its intro, and each section with its blurb, its
+// The two sets of kestrel 1.10.0 and later, each with its own README: Self-hosting
+// (docs/README.md) is the /docs/ landing, and Publishing (docs/publishing/README.md)
+// is a section under it at /docs/publishing/. `name` labels the set's tab.
+const SETS = [
+  { name: "Self-hosting", dir: "", url: "/docs/" },
+  { name: "Publishing", dir: "publishing", url: "/docs/publishing/" },
+];
+
+// A heading's anchor, as GitHub (and kestrel's API) make it: a section's id.
+const anchor = (s) => s.toLowerCase().replace(/[^\w\s-]/g, "").trim().replace(/\s+/g, "-");
+
+/** Read a README: its title, its intro, and each section with its blurb, its
  *  numbering, and the pages it lists, in order. */
 function readIndex(md) {
   let title = "";
@@ -162,7 +179,7 @@ function readIndex(md) {
     let m;
     if (!title && (m = line.match(/^#\s+(.+?)\s*$/))) { title = m[1]; continue; }
     if ((m = line.match(/^##\s+(.+?)\s*$/))) {
-      sections.push({ title: m[1], blurb: [], numbered: false, pages: [] });
+      sections.push({ title: m[1], id: anchor(m[1]), blurb: [], numbered: false, pages: [] });
       continue;
     }
     const item = line.match(/^\s*(\d+\.|[-*])\s+.*?\]\(([^)]+)\)/);
@@ -178,47 +195,69 @@ function readIndex(md) {
     }
   }
   const text = (lines) => lines.join("\n").trim();
-  return {
-    title,
-    intro: text(intro),
-    sections: sections.map((sec) => ({ ...sec, blurb: text(sec.blurb), id: sec.pages[0]?.match(PAGE_PATH)?.[1] ?? "" })),
-  };
+  return { title, intro: text(intro), sections: sections.map((sec) => ({ ...sec, blurb: text(sec.blurb) })) };
 }
 
-/** Point relative links between guide pages at the site's URLs, keeping any
- *  anchor: Hugo's heading ids follow GitHub's, as the app's do. */
-function rewriteLinks(md, slugs) {
-  return md.replace(/\]\((?:\.\.\/)?(?:[a-z0-9-]+\/)?\d{2}-([a-z0-9-]+)\.md(#[^)]*)?\)/g, (whole, slug, anchor) =>
-    slugs.has(slug) ? `](/docs/${slug}/${anchor ?? ""})` : whole);
-}
-
-// Sections layout (docs/README.md). The README is the /docs/ landing: its title and
-// intro, and its sections (with blurb and numbering) in the landing's front
-// matter. Each page carries its section and, in a numbered section, its step.
-function syncSections() {
-  const index = readIndex(readFileSync(INDEX, "utf8"));
-  const pages = index.sections.flatMap((sec) =>
-    sec.pages.map((path, i) => ({ path, section: sec, step: sec.numbered ? i + 1 : 0 })));
-  const slugs = new Set(pages.map((p) => p.path.match(PAGE_PATH)[2]));
-  const sectionsYaml = index.sections.map((sec) => [
-    `  - id: "${yamlEscape(sec.id)}"`,
-    `    title: "${yamlEscape(sec.title)}"`,
-    `    blurb: "${yamlEscape(sec.blurb.replace(/\s+/g, " "))}"`,
-    `    numbered: ${sec.numbered}`,
-  ].join("\n")).join("\n");
-  writeFileSync(join(OUT, "_index.md"),
-    `---\ntitle: "${yamlEscape(index.title)}"\ndescription: "${yamlEscape(firstPara(index.intro))}"\nsections:\n${sectionsYaml}\n---\n\n${rewriteLinks(index.intro, slugs)}\n`);
-  pages.forEach(({ path, section, step }, i) => {
-    const md = readFileSync(join(DOCS_DIR, path), "utf8");
-    const slug = path.match(PAGE_PATH)[2];
-    const extra = [
-      `description: "${yamlEscape(firstPara(md))}"`,
-      `docsection: "${yamlEscape(section.id)}"`,
-      step ? `step: ${step}` : "",
-    ].filter(Boolean).join("\n");
-    write(`${slug}.md`, { title: firstH1(md, slug), weight: i + 1, body: rewriteLinks(md, slugs), extra });
+/** Point relative links to another guide page or a set's README at the site's
+ *  URLs, keeping any anchor: Hugo's heading ids follow GitHub's, as the app's do.
+ *  `urls` maps a file's path under docs/ to its URL; `from` is the linking file's
+ *  folder under docs/, so `../get-started/04-ses.md` from Publishing resolves. */
+function rewriteLinks(md, urls, from) {
+  return md.replace(/\]\(([^)#\s:]+\.md)(#[^)]*)?\)/g, (whole, target, hash) => {
+    const url = urls.get(posix.normalize(posix.join(from, target)));
+    return url ? `](${url}${hash ?? ""})` : whole;
   });
-  return pages.length;
+}
+
+// Sections layout (docs/README.md, and docs/publishing/README.md from kestrel
+// 1.10.0). Each README is its set's landing: its title and intro, and its sections
+// (with blurb and numbering) in the landing's front matter. Each page carries its
+// section and, in a numbered section, its step.
+function syncSections() {
+  // A page belongs to the set whose folder it's in. Self-hosting's folder is docs/
+  // itself, so a link there to publishing/01-your-list.md must not make that page
+  // Self-hosting's too: it would be written twice, and take over the other's URL.
+  const owner = (path) => SETS.filter((set) => !set.dir || path.startsWith(`${set.dir}/`)).at(-1);
+  const sets = SETS.filter((set) => existsSync(join(DOCS_DIR, set.dir, "README.md"))).map((set) => {
+    const index = readIndex(readFileSync(join(DOCS_DIR, set.dir, "README.md"), "utf8"));
+    const pages = index.sections.flatMap((sec) =>
+      sec.pages.map((path) => posix.join(set.dir, path)).filter((path) => {
+        if (owner(path) === set) { return true; }
+        console.warn(`[sync-docs] ${posix.join(set.dir, "README.md")} lists ${path}, a ${owner(path).name} page — skipping it in ${set.name}.`);
+        return false;
+      }).map((path, i) => ({ path, slug: slugOf(path), section: sec, step: sec.numbered ? i + 1 : 0 })));
+    return { ...set, index, pages };
+  });
+  // Every file a link can name, across both sets, by its path under docs/.
+  const urls = new Map();
+  for (const set of sets) {
+    urls.set(posix.join(set.dir, "README.md"), set.url);
+    for (const p of set.pages) { urls.set(p.path, `${set.url}${p.slug}/`); }
+  }
+  let count = 0;
+  for (const set of sets) {
+    const out = join(OUT, set.dir);
+    mkdirSync(out, { recursive: true });
+    const sectionsYaml = set.index.sections.map((sec) => [
+      `  - id: "${yamlEscape(sec.id)}"`,
+      `    title: "${yamlEscape(sec.title)}"`,
+      `    blurb: "${yamlEscape(rewriteLinks(sec.blurb, urls, set.dir).replace(/\s+/g, " "))}"`,
+      `    numbered: ${sec.numbered}`,
+    ].join("\n")).join("\n");
+    writeFileSync(join(out, "_index.md"),
+      `---\ntitle: "${yamlEscape(set.index.title)}"\ndescription: "${yamlEscape(firstPara(set.index.intro))}"\ndocset: "${set.name}"\nsections:\n${sectionsYaml}\n---\n\n${rewriteLinks(set.index.intro, urls, set.dir)}\n`);
+    set.pages.forEach(({ path, slug, section, step }, i) => {
+      const md = readFileSync(join(DOCS_DIR, path), "utf8");
+      const extra = [
+        `description: "${yamlEscape(firstPara(md))}"`,
+        `docsection: "${yamlEscape(section.id)}"`,
+        step ? `step: ${step}` : "",
+      ].filter(Boolean).join("\n");
+      write(join(set.dir, `${slug}.md`), { title: firstH1(md, slug), weight: i + 1, body: rewriteLinks(md, urls, posix.dirname(path)), extra });
+    });
+    count += set.pages.length;
+  }
+  return count;
 }
 
 const count = existsSync(INDEX) ? syncSections() : syncFlat();

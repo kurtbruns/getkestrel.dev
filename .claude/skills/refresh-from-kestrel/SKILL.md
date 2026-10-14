@@ -34,7 +34,7 @@ Work in a git worktree/branch off `main`, never on `main` directly.
 kestrel has three roles, and getkestrel.dev's copy depends on getting them right:
 
 - **publisher** — writes and sends the newsletter.
-- **developer** — deploys and operates the app on their own Cloudflare account. getkestrel.dev's `/docs/` are the **developer/setup guides**, and the landing's "self-host" framing addresses this person.
+- **developer** — deploys and operates the app on their own Cloudflare account. getkestrel.dev's `/docs/` is the developer's **Self-hosting** guide, and the landing's "self-host" framing addresses this person. (`/docs/publishing/`, kestrel's **Publishing** set, addresses the publisher.)
 - **reader** — subscribes to and reads a newsletter.
 
 kestrel retired the old word "operator" into publisher + developer. A mechanical
@@ -45,9 +45,9 @@ decide which of the three it means before editing anything.
 
 ## Why "the setup docs didn't change" is never the whole answer
 
-The trap this skill is built to avoid: the sync only ingests kestrel's setup
-guide (`docs/README.md` and the section folders it lists; `docs/setup/*.md` before
-v1.3). A release can leave those byte-identical while still shipping a
+The trap this skill is built to avoid: the sync only ingests kestrel's guides
+(`docs/README.md` and the section folders it lists, `docs/publishing/` from v1.10.0,
+`docs/setup/*.md` before v1.3). A release can leave those byte-identical while still shipping a
 large, site-relevant delta everywhere the sync *doesn't* look — the changelog,
 `docs/SPEC.md`, `docs/DESIGN.md`, and the editor UI the hero screenshot shows.
 
@@ -122,6 +122,7 @@ delta, not a keyword match. Two things to hold onto:
 
 - **The screenshot is the easiest thing to miss** and the one a `/docs` re-sync will never catch. Any editor or dashboard UI change in the delta makes `assets/img/editor-*.png` suspect — treat it as its own mandatory check, not an afterthought.
 - **Only fix copy that has become *wrong*, not copy that has become *incomplete*.** The landing describes what the app *is*, not its full feature list; new-feature marketing is a separate, deliberate decision (#5), not part of a version bump.
+- **Claims that name a way in or a doc page go stale quietly.** The Ownership section's note on bringing an existing list (#52) names how an import happens (the dashboard's Import, and Claude's `/migrate-list` skill) and links the Publishing page "Bring your existing list". Re-check it whenever the changelog touches import, export, or that skill, and whenever the rendered `/docs/` comparison shows a page moved or removed, since the landing links pages by their path (`site.GetPage "/docs/publishing/your-list"`) and falls back to GitHub silently when one moves.
 
 ### 4. Bump the pin and prove the build
 

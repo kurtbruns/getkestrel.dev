@@ -128,6 +128,8 @@
 </section>
 
 {{/* -------------------------------------------------------- ownership */}}
+{{- $yourList := printf "%s/blob/main/docs/publishing/01-your-list.md" site.Params.repoApp -}}
+{{- with site.GetPage "/docs/publishing/your-list" }}{{ $yourList = .RelPermalink }}{{ end -}}
 <section class="section">
   <div class="wrap">
     <div class="section-head">
@@ -165,6 +167,12 @@
           you send never rot behind someone else's platform.</p>
       </div>
     </div>
+
+    <p class="own-note">Moving from another service? Bring your list with you: import it
+      in the dashboard, or ask Claude to move it with its <code>/migrate-list</code> skill.
+      Your readers arrive confirmed, on your word that they opted in, and the import
+      emails no one.
+      <a href="{{ $yourList }}">Bring your existing list &rarr;</a></p>
   </div>
 </section>
 
