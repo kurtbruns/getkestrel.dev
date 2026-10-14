@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What this is
 
-getkestrel.dev is the front door and developer guides for [Kestrel](https://github.com/kurtbruns/kestrel) — a small, open-source, self-hosted newsletter app. It's a static [Hugo](https://gohugo.io) site deployed to Cloudflare Workers Static Assets; it owns none of a publisher's data, since the app is the thing you self-host. The landing pitch lives in `layouts/index.html` (not `content/_index.md`, which is only a build-time placeholder), and the `/docs/` section is the developer/setup guides, synced from the app repo at build time.
+getkestrel.dev is the front door and developer guides for [Kestrel](https://github.com/kurtbruns/kestrel) — a small, open-source, self-hosted newsletter app. It's a static [Hugo](https://gohugo.io) site deployed to Cloudflare Workers Static Assets; it owns none of a publisher's data, since the app is the thing you self-host. The landing pitch lives in `layouts/index.html` (not `content/_index.md`, which is only a build-time placeholder), and the `/docs/` section is kestrel's two doc sets, synced from the app repo at build time: the developer's Self-hosting guide at `/docs/`, and the publisher's Publishing docs at `/docs/publishing/`.
 
 ## Commands
 
@@ -20,7 +20,7 @@ hugo --minify        # the production build that CI and deploy run
 
 ## How the docs pin works
 
-The `/docs/` guides are not committed here. `scripts/sync-docs.mjs` syncs them at build time from kestrel into a gitignored `content/docs/` tree. kestrel's `docs/README.md` is the guide's landing page and table of contents: its title and intro, then a `##` per section (blurb, and a numbered or bulleted list of the section's pages, which live in folders such as `docs/get-started/`). The sync turns that into the `/docs/` landing's front matter and adds a small shim to each page (title from the first `# H1`, its weight, section, and step), and points the pages' relative links at the site's URLs. Releases up to v1.2.0 have the older flat `docs/setup/NN-*.md` layout instead, which the sync still reads. That shim is why the ingest is a script and not a Hugo Modules mount — a mount would carry the raw Markdown, not the transform.
+The `/docs/` guides are not committed here. `scripts/sync-docs.mjs` syncs them at build time from kestrel into a gitignored `content/docs/` tree. kestrel's `docs/README.md` is the guide's landing page and table of contents: its title and intro, then a `##` per section (blurb, and a numbered or bulleted list of the section's pages, which live in folders such as `docs/get-started/`). From kestrel 1.10.0, `docs/publishing/README.md` is a second index of the same shape, for the Publishing set, with its pages beside it; the sync writes it to `content/docs/publishing/` and skips it for a release without one. Slugs are unique across both sets, so links between them resolve. The sync turns each README into its set's landing front matter and adds a small shim to each page (title from the first `# H1`, its weight, section, and step), and points the pages' relative links at the site's URLs. Releases up to v1.2.0 have the older flat `docs/setup/NN-*.md` layout instead, which the sync still reads. That shim is why the ingest is a script and not a Hugo Modules mount — a mount would carry the raw Markdown, not the transform.
 
 Which kestrel to sync from differs by environment, on purpose:
 
@@ -35,7 +35,7 @@ Bump `.kestrel-docs-version` only via the **`refresh-from-kestrel` skill**, neve
 
 ## The role model (before editing copy)
 
-Kestrel has three roles and the site's copy depends on getting them right: a **publisher** writes and sends the newsletter, a **developer** deploys and operates the app, and a **reader** subscribes. getkestrel.dev's `/docs/` are the developer/setup guides, and the landing's "self-host" framing addresses the developer. Kestrel retired the old word "operator" into publisher + developer; don't mechanically find-replace it (PR #27 had to correct a bad `operator → publisher` edit to `operator → developer`). The skill's `SKILL.md` restates this where copy edits happen.
+Kestrel has three roles and the site's copy depends on getting them right: a **publisher** writes and sends the newsletter, a **developer** deploys and operates the app, and a **reader** subscribes. getkestrel.dev's `/docs/` is the developer's Self-hosting guide and `/docs/publishing/` the publisher's Publishing docs, and the landing's "self-host" framing addresses the developer. Kestrel retired the old word "operator" into publisher + developer; don't mechanically find-replace it (PR #27 had to correct a bad `operator → publisher` edit to `operator → developer`). The skill's `SKILL.md` restates this where copy edits happen.
 
 ## The contact form
 

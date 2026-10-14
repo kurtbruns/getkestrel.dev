@@ -10,3 +10,8 @@
 # where the SES guide was) is the setup guide's step 3.
 /docs/resend/ /docs/ses/ 301
 /docs/resend /docs/ses/ 301
+
+# Kestrel 1.10.0 split the docs into Self-hosting (/docs/) and Publishing (/docs/publishing/),
+# and moved the subscriber import format from Self-hosting's Reference into Publishing.
+/docs/import-format/ /docs/publishing/import-format/ 301
+/docs/import-format /docs/publishing/import-format/ 301

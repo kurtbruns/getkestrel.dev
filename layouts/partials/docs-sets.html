@@ -1,0 +1,16 @@
+{{- /* The docs' two sets as tabs under one "Kestrel docs" header, as the app's Docs
+       tab shows them: Publishing (/docs/publishing/) and Self-hosting (/docs/).
+       Takes the set's landing page that's current. A release without Publishing
+       has one set, and shows a plain eyebrow instead. */ -}}
+{{- $cur := . -}}
+{{- $sets := slice -}}
+{{- with site.GetPage "/docs/publishing" }}{{ $sets = $sets | append . }}{{ end -}}
+{{- with site.GetPage "/docs" }}{{ $sets = $sets | append . }}{{ end -}}
+<p class="eyebrow">Kestrel docs</p>
+{{- if gt (len $sets) 1 }}
+<nav class="docs-sets" aria-label="Doc sets">
+  {{- range $sets }}
+  <a href="{{ .RelPermalink }}"{{ if eq .RelPermalink $cur.RelPermalink }} aria-current="page"{{ end }}>{{ .Params.docset | default .Title }}</a>
+  {{- end }}
+</nav>
+{{- end }}

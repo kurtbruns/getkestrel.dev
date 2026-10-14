@@ -42,10 +42,11 @@ import { homedir, tmpdir } from "node:os";
 import { join, relative } from "node:path";
 
 // ---------------------------------------------------------------- args
-// The setup guide's files: docs/README.md and its section folders, or the flat
-// docs/setup/ of releases up to v1.2.0. Everything else under docs/ is drill-down.
+// The synced guides' files: docs/README.md and its section folders, Publishing's
+// docs/publishing/ (kestrel 1.10.0 on), or the flat docs/setup/ of releases up to
+// v1.2.0. Everything else under docs/ is drill-down.
 const isGuide = (path) =>
-  path === "docs/README.md" || /^docs\/(setup|get-started|guides|reference)\//.test(path);
+  path === "docs/README.md" || /^docs\/(setup|get-started|guides|reference|publishing)\//.test(path);
 
 function parseArgs(argv) {
   const out = { positional: [], render: true };
@@ -228,8 +229,8 @@ function buildReport(d) {
   L.push("");
 
   L.push(`## 3. Drill-down diff — what the sync does NOT ingest`);
-  L.push(`The sync only ingests the setup guide (\`docs/README.md\` and its section folders). SPEC/DESIGN and everything else are the drill-down behind the changelog — read them to turn a one-line entry into an actual copy verdict.`);
-  L.push(fmtDiff(d.diff.setup, "the setup guide (feeds the synced /docs/ pages)"));
+  L.push(`The sync only ingests the guides (\`docs/README.md\` and its section folders, and \`docs/publishing/\`). SPEC/DESIGN and everything else are the drill-down behind the changelog — read them to turn a one-line entry into an actual copy verdict.`);
+  L.push(fmtDiff(d.diff.setup, "the synced guides, Self-hosting and Publishing (feed /docs/)"));
   L.push(fmtDiff(d.diff.spec, "docs/SPEC.md"));
   L.push(fmtDiff(d.diff.design, "docs/DESIGN.md"));
   L.push(fmtDiff(d.diff.other, "other docs/"));

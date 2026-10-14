@@ -2,7 +2,7 @@
 <div class="docs">
   <aside class="docs-side">{{ partial "docs-sidebar.html" . }}</aside>
   <article class="docs-body">
-    <p class="eyebrow">{{ with site.GetPage "/docs" }}<a href="{{ .RelPermalink }}">Docs</a>{{ end }}</p>
+    <p class="eyebrow">{{ with .CurrentSection }}<a href="{{ .RelPermalink }}">{{ .Params.docset | default "Docs" }}</a>{{ end }}</p>
     <h1 id="{{ .File.ContentBaseName }}">{{ .Title }}</h1>
     {{ .Content }}
     {{ partial "docs-prevnext.html" . }}
