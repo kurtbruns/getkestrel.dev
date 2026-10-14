@@ -214,10 +214,18 @@ function rewriteLinks(md, urls, from) {
 // (with blurb and numbering) in the landing's front matter. Each page carries its
 // section and, in a numbered section, its step.
 function syncSections() {
+  // A page belongs to the set whose folder it's in. Self-hosting's folder is docs/
+  // itself, so a link there to publishing/01-your-list.md must not make that page
+  // Self-hosting's too: it would be written twice, and take over the other's URL.
+  const owner = (path) => SETS.filter((set) => !set.dir || path.startsWith(`${set.dir}/`)).at(-1);
   const sets = SETS.filter((set) => existsSync(join(DOCS_DIR, set.dir, "README.md"))).map((set) => {
     const index = readIndex(readFileSync(join(DOCS_DIR, set.dir, "README.md"), "utf8"));
     const pages = index.sections.flatMap((sec) =>
-      sec.pages.map((path, i) => ({ path: posix.join(set.dir, path), slug: slugOf(path), section: sec, step: sec.numbered ? i + 1 : 0 })));
+      sec.pages.map((path) => posix.join(set.dir, path)).filter((path) => {
+        if (owner(path) === set) { return true; }
+        console.warn(`[sync-docs] ${posix.join(set.dir, "README.md")} lists ${path}, a ${owner(path).name} page — skipping it in ${set.name}.`);
+        return false;
+      }).map((path, i) => ({ path, slug: slugOf(path), section: sec, step: sec.numbered ? i + 1 : 0 })));
     return { ...set, index, pages };
   });
   // Every file a link can name, across both sets, by its path under docs/.
