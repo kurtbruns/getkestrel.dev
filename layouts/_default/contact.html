@@ -2,8 +2,7 @@
 {{- /* The contact form. It posts to /api/contact (worker/index.js), which checks
        Turnstile, emails the message, and redirects here with ?error=… or on to
        /contact/sent/. It works without JavaScript; the one script below shows which
-       error brought the visitor back, and picks the topic a link asked for
-       (/contact/?topic=hosting). */ -}}
+       error brought the visitor back. */ -}}
 <section class="section contact">
   <div class="wrap">
     <div class="section-head">
@@ -23,13 +22,6 @@
 
       <label for="contact-email">Email</label>
       <input id="contact-email" name="email" type="email" autocomplete="email" maxlength="320" required>
-
-      <label for="contact-topic">What it's about</label>
-      <select id="contact-topic" name="topic">
-        <option value="question">A question about Kestrel</option>
-        <option value="hosting">Having Kestrel hosted for me</option>
-        <option value="other">Something else</option>
-      </select>
 
       <label for="contact-message">Message</label>
       <textarea id="contact-message" name="message" rows="7" maxlength="5000" required></textarea>
@@ -51,13 +43,9 @@
 <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 <script>
   (function () {
-    var params = new URLSearchParams(location.search);
-    var code = params.get("error");
+    var code = new URLSearchParams(location.search).get("error");
     var el = code && document.querySelector('.contact-error[data-error="' + code + '"]');
     if (el) { el.hidden = false; }
-    var topic = document.getElementById("contact-topic");
-    var wanted = params.get("topic");
-    if (wanted && topic.querySelector('option[value="' + wanted + '"]')) { topic.value = wanted; }
   })();
 </script>
 {{ end }}

@@ -762,11 +762,12 @@ pre .muted { color: var(--muted); }
 .contact-form { display: flex; flex-direction: column; gap: 8px; max-width: 36rem; }
 .contact-form label { font-weight: 600; font-size: 15px; margin-top: 10px; }
 .contact-form label:first-child { margin-top: 0; }
-.contact-form input, .contact-form textarea, .contact-form select {
+.contact-form .muted { color: var(--muted); font-weight: 400; }
+.contact-form input, .contact-form textarea {
   font: inherit; font-size: 16px; color: var(--ink); background: var(--bg);
   border: 1px solid var(--line-strong); border-radius: 10px; padding: 10px 12px; width: 100%;
 }
-.contact-form input:focus, .contact-form textarea:focus, .contact-form select:focus { outline: 2px solid var(--ink); outline-offset: 1px; }
+.contact-form input:focus, .contact-form textarea:focus { outline: 2px solid var(--ink); outline-offset: 1px; }
 .contact-form textarea { resize: vertical; }
 .contact-form .cf-turnstile { margin-top: 14px; }
 .contact-form .btn { align-self: flex-start; margin-top: 14px; }
