@@ -13,5 +13,17 @@
 
 # Kestrel 1.10.0 split the docs into Self-hosting (/docs/) and Publishing (/docs/publishing/),
 # and moved the subscriber import format from Self-hosting's Reference into Publishing.
-/docs/import-format/ /docs/publishing/import-format/ 301
-/docs/import-format /docs/publishing/import-format/ 301
+/docs/import-format/ /docs/publishing/your-list/ 301
+/docs/import-format /docs/publishing/your-list/ 301
+
+# Kestrel 1.11.0 folded four pages into others: the import format into Bring your existing list,
+# Scheduling and sending into Write and send a post, After a send into Troubleshooting, and
+# Try Kestrel locally first into kestrel's README (Try it locally).
+/docs/publishing/import-format/ /docs/publishing/your-list/ 301
+/docs/publishing/import-format /docs/publishing/your-list/ 301
+/docs/publishing/scheduling-and-sending/ /docs/publishing/write-a-post/ 301
+/docs/publishing/scheduling-and-sending /docs/publishing/write-a-post/ 301
+/docs/publishing/after-a-send/ /docs/publishing/troubleshooting/ 301
+/docs/publishing/after-a-send /docs/publishing/troubleshooting/ 301
+/docs/try-locally/ https://github.com/kurtbruns/kestrel#try-it-locally 301
+/docs/try-locally https://github.com/kurtbruns/kestrel#try-it-locally 301

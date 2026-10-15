@@ -220,11 +220,10 @@
 
 {{/* ------------------------------------------------------- get started */}}
 {{- /* A stepped path down a numbered rail: step 1 is trying it (the demo, with a quiet
-       link to running it locally, the developer's alternative, which the Try Kestrel
-       locally first guide covers), step 2 is deploying your own, the destination once a
-       visitor has decided. */ -}}
-{{- $local := printf "%s/blob/main/docs/guides/08-try-locally.md" site.Params.repoApp -}}
-{{- with site.GetPage "/docs/try-locally" }}{{ $local = .RelPermalink }}{{ end -}}
+       link to running it locally, the developer's alternative, which kestrel's README
+       covers under Try it locally since 1.11.0), step 2 is deploying your own, the
+       destination once a visitor has decided. */ -}}
+{{- $local := printf "%s#try-it-locally" site.Params.repoApp -}}
 {{- $guide := printf "%s/tree/main/docs" site.Params.repoApp -}}
 {{- with site.GetPage "/docs" }}{{ $guide = .RelPermalink }}{{ end -}}
 {{- $upgrade := printf "%s/blob/main/docs/guides/07-upgrade.md" site.Params.repoApp -}}
