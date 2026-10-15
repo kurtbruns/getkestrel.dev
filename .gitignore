@@ -5,6 +5,7 @@ resources/
 # Developer docs synced from the kestrel repo at build time (issue #3).
 # Single source of truth lives in kurtbruns/kestrel; never commit a copy here.
 content/docs/
+static/docs/
 .kestrel-src/
 
 # Hugo lock file

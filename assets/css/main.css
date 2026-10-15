@@ -667,6 +667,8 @@ pre .muted { color: var(--muted); }
 .docs-body h2 { font-family: var(--serif); font-weight: 600; font-size: 23px; letter-spacing: -.01em; margin: 34px 0 10px; scroll-margin-top: 80px; }
 .docs-body h3 { font-family: var(--sans); font-weight: 650; font-size: 16.5px; margin: 26px 0 8px; scroll-margin-top: 80px; letter-spacing: -0.01em; }
 .docs-body p { margin: 14px 0; line-height: 1.72; }
+/* A screenshot from kestrel's docs (static/docs/, by sync-docs), framed so the app's own page background doesn't run into the site's. */
+.docs-body img { display: block; height: auto; margin: 20px 0; border: 1px solid var(--line); border-radius: 8px; }
 .docs-body ul, .docs-body ol { padding-left: 1.35em; margin: 14px 0; }
 .docs-body li { margin: 6px 0; line-height: 1.65; }
 .docs-body a { color: var(--ink); text-decoration: underline; text-underline-offset: 2px; text-decoration-color: var(--line-strong); }

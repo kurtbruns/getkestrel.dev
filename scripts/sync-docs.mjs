@@ -25,12 +25,16 @@
  * first `# H1`. This adds a light front-matter shim (title from the H1, weight
  * for order, the section and step for the landing) and strips the now-duplicated
  * H1, and it points the pages' relative links (`02-deploy.md#check-it`) at the
- * site's URLs — without editing the source Markdown. This shim is why we ingest
+ * site's URLs — without editing the source Markdown. A page's screenshots live
+ * beside it in kestrel (docs/publishing/img/editor.png, shown as `img/editor.png`);
+ * they're copied to static/docs/ at the same path and each image is pointed at
+ * its copy, /docs/publishing/img/editor.png. This shim is why we ingest
  * with a script rather than a Hugo Modules mount: a mount would carry the raw
  * Markdown, not this transform.
  *
  *   Source:  $KESTREL_DOCS_SRC (a kestrel checkout), default ~/Git/kestrel.
  *   Output:  content/docs/, and content/docs/publishing/  (gitignored)
+ *            static/docs/, the docs' images              (gitignored)
  *
  * Which kestrel to point at is decided outside this script, and the two paths
  * differ on purpose: CI/prod (ci.yml, deploy.yml) clone the release tag pinned
@@ -42,7 +46,7 @@
  * without the /docs/ section. The Docs nav falls back to GitHub in that case
  * (see layouts/partials/header.html).
  */
-import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync, rmSync } from "node:fs";
+import { copyFileSync, existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync, rmSync } from "node:fs";
 import { homedir } from "node:os";
 import { basename, join, posix } from "node:path";
 
@@ -51,6 +55,9 @@ const DOCS_DIR = join(SRC, "docs");
 const INDEX = join(DOCS_DIR, "README.md");
 const SETUP_DIR = join(DOCS_DIR, "setup");
 const OUT = join(process.cwd(), "content", "docs");
+// Hugo serves static/ at the site root, so an image here is at /docs/<its path under docs/>.
+const IMG_OUT = join(process.cwd(), "static", "docs");
+const IMAGE = /\.(?:png|jpe?g|gif|webp|svg)$/i;
 
 if (!existsSync(INDEX) && !existsSync(SETUP_DIR)) {
   console.warn(`[sync-docs] no kestrel docs at ${DOCS_DIR} — skipping. Set KESTREL_DOCS_SRC to a checkout, or ignore (the site builds without /docs/).`);
@@ -203,10 +210,34 @@ function readIndex(md) {
  *  `urls` maps a file's path under docs/ to its URL; `from` is the linking file's
  *  folder under docs/, so `../get-started/04-ses.md` from Publishing resolves. */
 function rewriteLinks(md, urls, from) {
-  return md.replace(/\]\(([^)#\s:]+\.md)(#[^)]*)?\)/g, (whole, target, hash) => {
-    const url = urls.get(posix.normalize(posix.join(from, target)));
-    return url ? `](${url}${hash ?? ""})` : whole;
-  });
+  return md
+    .replace(/\]\(([^)#\s:]+\.md)(#[^)]*)?\)/g, (whole, target, hash) => {
+      const url = urls.get(posix.normalize(posix.join(from, target)));
+      return url ? `](${url}${hash ?? ""})` : whole;
+    })
+    // A relative image, at its copy under static/docs/ (copyImages).
+    .replace(/(!\[[^\]]*\]\()([^)#\s:]+)(?=[)\s])/g, (whole, open, src) => {
+      const path = posix.normalize(posix.join(from, src));
+      return IMAGE.test(src) && !path.startsWith("../") ? `${open}/docs/${path}` : whole;
+    });
+}
+
+/** Copy every image under docs/ to static/docs/ at the same path, where
+ *  rewriteLinks points a page's images. Releases before kestrel 1.11 have none. */
+function copyImages(dir = DOCS_DIR) {
+  let count = 0;
+  for (const e of readdirSync(dir, { withFileTypes: true })) {
+    const src = join(dir, e.name);
+    if (e.isDirectory()) {
+      count += copyImages(src);
+    } else if (IMAGE.test(e.name)) {
+      const dest = join(IMG_OUT, src.slice(DOCS_DIR.length + 1));
+      mkdirSync(join(dest, ".."), { recursive: true });
+      copyFileSync(src, dest);
+      count++;
+    }
+  }
+  return count;
 }
 
 // Sections layout (docs/README.md, and docs/publishing/README.md from kestrel
@@ -261,8 +292,11 @@ function syncSections() {
 }
 
 const count = existsSync(INDEX) ? syncSections() : syncFlat();
+// static/docs is gitignored and fully owned by this script too.
+rmSync(IMG_OUT, { recursive: true, force: true });
+const images = copyImages();
 
 // The SPEC is intentionally not ingested — it lives in the (soon public)
 // kestrel repo, and doesn't belong on the getkestrel.dev docs index.
 
-console.log(`[sync-docs] wrote ${count} doc pages to content/docs/ from ${SRC}`);
+console.log(`[sync-docs] wrote ${count} doc pages to content/docs/ and ${images} images to static/docs/ from ${SRC}`);
