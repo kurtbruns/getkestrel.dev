@@ -14,6 +14,12 @@
       "runtimeArgs": ["scripts/dev-hugo.sh", "--disableFastRender"],
       "port": 1313,
       "autoPort": true
+    },
+    {
+      "name": "Contact form — Worker over a development build",
+      "runtimeExecutable": "bash",
+      "runtimeArgs": ["-c", "hugo -e development && npx wrangler dev --port 8797"],
+      "port": 8797
     }
   ]
 }

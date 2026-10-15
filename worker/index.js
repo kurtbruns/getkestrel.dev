@@ -16,8 +16,6 @@
  */
 
 const LIMITS = { name: 200, email: 320, message: 5000 };
-// The form's topics, as the subject line names them. Anything else reads as "other".
-const TOPICS = { question: "Question", hosting: "Hosting inquiry", other: "Message" };
 const EMAIL = /^[^\s@<>]+@[^\s@<>]+\.[^\s@<>]+$/;
 
 export default {
@@ -70,7 +68,7 @@ async function contact(request, env, url) {
       from: { name: "getkestrel.dev", email: env.CONTACT_FROM },
       to: env.CONTACT_TO,
       replyTo: name ? { name, email } : email,
-      subject: `${Object.hasOwn(TOPICS, field("topic")) ? TOPICS[field("topic")] : TOPICS.other} from ${name || email}`,
+      subject: `Message from ${name || email}`,
       text: `From: ${name ? `${name} <${email}>` : email}\n\n${message}\n`,
     });
   } catch (err) {
