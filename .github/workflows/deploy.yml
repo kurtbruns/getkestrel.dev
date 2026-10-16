@@ -41,12 +41,12 @@ jobs:
 
       # Docs ingestion (issue #3): kestrel is public, so clone it unauthenticated
       # (no KESTREL_DOCS_TOKEN) and sync docs/ into the gitignored content/docs/.
-      # Pinned to the release tag in .kestrel-docs-version, not kestrel's default
+      # Pinned to the release tag in .kestrel-version, not kestrel's default
       # branch, so prod only moves when that file is bumped (edit it → PR → merge)
       # rather than on every merge into kestrel.
       - name: Sync developer docs from kestrel
         run: |
-          REF="$(cat .kestrel-docs-version)"
+          REF="$(cat .kestrel-version)"
           git clone --depth 1 --branch "$REF" https://github.com/kurtbruns/kestrel.git .kestrel-src
           KESTREL_DOCS_SRC="$PWD/.kestrel-src" node scripts/sync-docs.mjs
 

@@ -23,7 +23,7 @@ set -eu
 # Sync the kestrel developer docs into content/docs/ before serving (best-effort:
 # no-ops if the source checkout isn't present). Local dev reads a local kestrel
 # checkout (default ~/Git/kestrel, override with $KESTREL_DOCS_SRC), so you see
-# your working docs; CI/prod instead pin the release tag in .kestrel-docs-version.
+# your working docs; CI/prod instead pin the release tag in .kestrel-version.
 # See scripts/sync-docs.mjs.
 node scripts/sync-docs.mjs || true
 

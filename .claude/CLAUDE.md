@@ -10,7 +10,7 @@ The rest of this file is only what an agent needs on top of it.
 
 ## Bumping the pinned kestrel version
 
-Bump `.kestrel-docs-version` only via the **`refresh-from-kestrel` skill**, never by hand — it catches the stale landing copy and screenshots a plain re-sync misses.
+Bump `.kestrel-version` only via the **`refresh-from-kestrel` skill**, never by hand — it catches the stale landing copy and screenshots a plain re-sync misses.
 
 ## The role model (before editing copy)
 

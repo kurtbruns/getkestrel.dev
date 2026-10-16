@@ -25,14 +25,14 @@
  *
  * Usage:
  *   node .claude/skills/refresh-from-kestrel/scripts/gather-delta.mjs <newRef> [oldRef]
- *   node .../gather-delta.mjs v0.2.0                 # oldRef defaults to .kestrel-docs-version
+ *   node .../gather-delta.mjs v0.2.0                 # oldRef defaults to .kestrel-version
  *   node .../gather-delta.mjs v0.2.0 v0.1.0
  *   node .../gather-delta.mjs v0.2.0 --json report.json --no-render
  *
  * Options:
  *   --src <dir>    kestrel checkout to read (default: $KESTREL_DOCS_SRC or ~/Git/kestrel;
  *                  falls back to a blobless clone of kurtbruns/kestrel if refs are missing).
- *   --repo <dir>   getkestrel.dev root (default: cwd) — for sync-docs.mjs and .kestrel-docs-version.
+ *   --repo <dir>   getkestrel.dev root (default: cwd) — for sync-docs.mjs and .kestrel-version.
  *   --json <path>  also write the structured report as JSON.
  *   --no-render    skip the render-and-diff of /docs/ (question 2). Faster, less proof.
  */
@@ -245,7 +245,7 @@ function buildReport(d) {
   L.push("");
 
   L.push(`## Next: the bump checklist`);
-  L.push(`Continue with the checklist in SKILL.md — bump \`.kestrel-docs-version\`, re-sync, \`hugo\` build, give each landing section a verdict, then open a **draft** PR (never merge).`);
+  L.push(`Continue with the checklist in SKILL.md — bump \`.kestrel-version\`, re-sync, \`hugo\` build, give each landing section a verdict, then open a **draft** PR (never merge).`);
   return L.join("\n") + "\n";
 }
 
@@ -257,8 +257,8 @@ function main() {
   const newRef = args.positional[0];
   let oldRef = args.positional[1];
   if (!oldRef) {
-    const pinFile = join(repoRoot, ".kestrel-docs-version");
-    if (!existsSync(pinFile)) fail(`no old ref given and no .kestrel-docs-version at ${pinFile}`);
+    const pinFile = join(repoRoot, ".kestrel-version");
+    if (!existsSync(pinFile)) fail(`no old ref given and no .kestrel-version at ${pinFile}`);
     oldRef = readFileSync(pinFile, "utf8").trim();
   }
   if (cmpSemver(newRef, oldRef) <= 0) console.error(`[gather-delta] warning: new ref ${newRef} is not newer than old ref ${oldRef}.`);

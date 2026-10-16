@@ -27,13 +27,13 @@ The `/docs/` guides are not committed here. `scripts/sync-docs.mjs` syncs them a
 Which kestrel to sync from differs by environment, on purpose:
 
 - **Local dev** reads a local checkout — `$KESTREL_DOCS_SRC`, else `~/Git/kestrel` — so you can preview against uncommitted doc changes. If no checkout is present the site still builds, just without `/docs/`.
-- **CI and prod** (`.github/workflows/ci.yml`, `deploy.yml`) clone the kestrel **release tag** pinned in `.kestrel-docs-version`, so the live docs only move when that file is bumped, not on every merge into kestrel.
+- **CI and prod** (`.github/workflows/ci.yml`, `deploy.yml`) clone the kestrel **release tag** pinned in `.kestrel-version`, so the live docs only move when that file is bumped, not on every merge into kestrel.
 
 The landing screenshots (`assets/img/*.png`) are captured from a running, seeded kestrel dev server by `scripts/shots.mjs` (`npm run shots`); regenerate them when the app's editor or dashboard UI changes.
 
 ### Bumping the pinned kestrel version
 
-Bump `.kestrel-docs-version` with the [`refresh-from-kestrel`](.claude/skills/refresh-from-kestrel/SKILL.md) Claude Code skill rather than by hand. A plain re-sync updates `/docs/`, but it misses landing copy and screenshots that a release made stale; the skill checks those against the changelog and opens a draft PR.
+Bump `.kestrel-version` with the [`refresh-from-kestrel`](.claude/skills/refresh-from-kestrel/SKILL.md) Claude Code skill rather than by hand. A plain re-sync updates `/docs/`, but it misses landing copy and screenshots that a release made stale; the skill checks those against the changelog and opens a draft PR.
 
 ## The contact form
 
@@ -45,7 +45,7 @@ The site is static except for one route. `/contact/` (Hugo pages `content/contac
 
 ## Deploy
 
-Cloudflare Workers Static Assets, config in `wrangler.jsonc`. A push to `main` deploys via `.github/workflows/deploy.yml`; pull requests run a build-only check (`.github/workflows/ci.yml`). Both read `.kestrel-docs-version` and clone that kestrel tag before building.
+Cloudflare Workers Static Assets, config in `wrangler.jsonc`. A push to `main` deploys via `.github/workflows/deploy.yml`; pull requests run a build-only check (`.github/workflows/ci.yml`). Both read `.kestrel-version` and clone that kestrel tag before building.
 
 ## Conventions
 
