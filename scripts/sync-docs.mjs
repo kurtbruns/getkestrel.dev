@@ -34,7 +34,7 @@
  *
  * Which kestrel to point at is decided outside this script, and the two paths
  * differ on purpose: CI/prod (ci.yml, deploy.yml) clone the release tag pinned
- * in .kestrel-docs-version, so the live site only moves when that file is
+ * in .kestrel-version, so the live site only moves when that file is
  * bumped; local dev reads a local checkout (default ~/Git/kestrel, override
  * with $KESTREL_DOCS_SRC) so you can preview against uncommitted doc changes.
  *

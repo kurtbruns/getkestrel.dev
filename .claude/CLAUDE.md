@@ -25,13 +25,13 @@ The `/docs/` guides are not committed here. `scripts/sync-docs.mjs` syncs them a
 Which kestrel to sync from differs by environment, on purpose:
 
 - **Local dev** reads a local checkout — `$KESTREL_DOCS_SRC`, else `~/Git/kestrel` — so you can preview against uncommitted doc changes. If no checkout is present the site still builds, just without `/docs/`.
-- **CI and prod** (`.github/workflows/ci.yml`, `deploy.yml`) clone the kestrel **release tag** pinned in `.kestrel-docs-version`, so the live docs only move when that file is bumped, not on every merge into kestrel.
+- **CI and prod** (`.github/workflows/ci.yml`, `deploy.yml`) clone the kestrel **release tag** pinned in `.kestrel-version`, so the live docs only move when that file is bumped, not on every merge into kestrel.
 
 The landing screenshots (`assets/img/*.png`) are captured from a running, seeded kestrel dev server by `scripts/shots.mjs` (`npm run shots`); regenerate them when the app's editor or dashboard UI changes.
 
 ## Bumping the pinned kestrel version
 
-Bump `.kestrel-docs-version` only via the **`refresh-from-kestrel` skill**, never by hand — it catches the stale landing copy and screenshots a plain re-sync misses.
+Bump `.kestrel-version` only via the **`refresh-from-kestrel` skill**, never by hand — it catches the stale landing copy and screenshots a plain re-sync misses.
 
 ## The role model (before editing copy)
 
@@ -47,7 +47,7 @@ The site is static except for one route. `/contact/` (Hugo pages `content/contac
 
 ## Deploy
 
-Cloudflare Workers Static Assets, config in `wrangler.jsonc`. A push to `main` deploys via `.github/workflows/deploy.yml`; pull requests run a build-only check (`.github/workflows/ci.yml`). Both read `.kestrel-docs-version` and clone that kestrel tag before building.
+Cloudflare Workers Static Assets, config in `wrangler.jsonc`. A push to `main` deploys via `.github/workflows/deploy.yml`; pull requests run a build-only check (`.github/workflows/ci.yml`). Both read `.kestrel-version` and clone that kestrel tag before building.
 
 ## Conventions
 

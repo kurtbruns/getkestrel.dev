@@ -5,17 +5,17 @@ description: >-
   actually changed in that release. Use this whenever kestrel cuts a new tag and
   the site should track it — "bump the kestrel docs version", "pin kestrel
   v0.3.0", "kestrel cut a release, update the site", "refresh /docs from
-  kestrel", "advance .kestrel-docs-version". It reads the old→new changelog
+  kestrel", "advance .kestrel-version". It reads the old→new changelog
   delta, re-syncs the docs, proves whether the rendered /docs/ actually changed,
   flags stale landing copy and a stale hero screenshot, and opens a DRAFT PR for
-  review. Reach for it any time you edit .kestrel-docs-version by hand — the pin
+  review. Reach for it any time you edit .kestrel-version by hand — the pin
   bump is the easy part; catching the copy and screenshots that silently went
   stale is the point.
 ---
 
 # refresh-from-kestrel
 
-The editorial layer on top of the docs pin. Bumping `.kestrel-docs-version` is a
+The editorial layer on top of the kestrel pin. Bumping `.kestrel-version` is a
 one-line edit; this skill exists because that one line can silently make the
 landing page lie — a screenshot goes stale, a concept gets renamed, a claim in
 the copy stops being true — and a plain re-sync will never notice. Run it
@@ -25,7 +25,7 @@ human reviews. It never merges.
 ## Inputs
 
 - **New ref** (required): the kestrel tag to move to, e.g. `v0.3.0`. The user names it.
-- **Old ref** (optional): defaults to the current pin in [`.kestrel-docs-version`](.kestrel-docs-version). Only pass it to diff a different starting point.
+- **Old ref** (optional): defaults to the current pin in [`.kestrel-version`](.kestrel-version). Only pass it to diff a different starting point.
 
 Work in a git worktree/branch off `main`, never on `main` directly.
 
@@ -127,7 +127,7 @@ delta, not a keyword match. Two things to hold onto:
 ### 4. Bump the pin and prove the build
 
 ```bash
-echo "<newRef>" > .kestrel-docs-version
+echo "<newRef>" > .kestrel-version
 # Re-sync /docs/ from the *new tag* so the local build matches CI/prod. Point the
 # sync at a checkout at <newRef>; the reliable way (no need to move your working
 # checkout) is to archive the tag into a temp dir, exactly as gather-delta does:
@@ -139,7 +139,7 @@ hugo --minify        # must build clean; note the page count
 CI and prod clone the tag themselves (see `.github/workflows/`), so this local
 build is a sanity check. `content/docs/` is gitignored and rebuilt by the sync — it is never committed.
 The only tracked change from the pin bump itself is the one line in
-`.kestrel-docs-version`, plus any copy edits you made in step 3 and any
+`.kestrel-version`, plus any copy edits you made in step 3 and any
 screenshots from step 5.
 
 ### 5. Screenshots
@@ -170,7 +170,7 @@ where it is *none*), and what was deferred.
 
 ```markdown
 ## What
-Advance `.kestrel-docs-version` from `<old>` to `<new>` — kestrel cut `<new>`.
+Advance `.kestrel-version` from `<old>` to `<new>` — kestrel cut `<new>`.
 
 ## Downstream impact
 - **Synced /docs/ pages:** <unchanged (byte-identical, proven by re-render) | changed: …>. Build clean (<N> pages).
@@ -186,7 +186,7 @@ Produced by the `refresh-from-kestrel` skill (#21). Draft for review; not auto-m
 
 Include a checklist so the reviewer can see what was and wasn't done:
 
-- [ ] `.kestrel-docs-version` bumped `<old>` → `<new>`
+- [ ] `.kestrel-version` bumped `<old>` → `<new>`
 - [ ] `hugo --minify` builds clean
 - [ ] rendered `/docs/` delta stated (unchanged / listed)
 - [ ] every landing surface given a verdict against the changelog
@@ -197,7 +197,7 @@ Include a checklist so the reviewer can see what was and wasn't done:
 ## Guardrails
 
 - **Draft PR, human-reviewed, never auto-merged.** This skill produces a proposal.
-- **Scope of edits:** `.kestrel-docs-version`, landing copy in `layouts/index.html`, and `assets/img/*` screenshots. `content/docs/` is gitignored — never commit it. Don't touch CI/deploy or the sync/shots scripts as part of a bump.
+- **Scope of edits:** `.kestrel-version`, landing copy in `layouts/index.html`, and `assets/img/*` screenshots. `content/docs/` is gitignored — never commit it. Don't touch CI/deploy or the sync/shots scripts as part of a bump.
 - **Do not rename `/docs/` → `/guides/`.** That is issue #15's separate, deliberate change; keep it out of a version bump.
 - **Flag follow-ups against a real issue** — find an existing one that fits, or open one — rather than inventing a number. (#19 is *more* screenshots on the landing, not stale ones; don't file staleness there.)
 - **When the changelog and the diff disagree, trust the diff** — and when a claim's truth is genuinely unclear, flag it for the human rather than guessing.
