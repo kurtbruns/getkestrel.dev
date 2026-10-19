@@ -67,8 +67,8 @@
       <div class="flow-step">
         <h3>Send to confirmed subscribers</h3>
         <p>Only subscribers whose consent is on record receive it. Nobody is mailed
-          twice, even if a send has to resume, and bounces and spam complaints
-          suppress on their own.</p>
+          twice, even if a send has to resume. A bounce stops mail to that address,
+          and a spam complaint unsubscribes the reader, on their own.</p>
       </div>
       <div class="flow-step">
         <h3>Archived automatically</h3>
@@ -158,8 +158,8 @@
       <div class="card">
         <p class="k">The delivery</p>
         <h3>An auditable record</h3>
-        <p>Each send records who received which post, plus suppressions from
-          hard bounces and spam complaints. You control the whole trail.</p>
+        <p>Each send records who received which post, and every bounce and spam
+          complaint it drew. You control the whole trail.</p>
       </div>
       <div class="card">
         <p class="k">The archive</p>
@@ -274,8 +274,8 @@
               <li>A GitHub account, or another Git host, for your instance's repository</li>
             </ul>
             <p>No per-subscriber fees. You pay Amazon SES's rates per email.
-              Cloudflare's free Workers plan suits a list of up to about 5,000 subscribers,
-              and sends to all of them in about 25 minutes once AWS raises your SES send
+              Cloudflare's free Workers plan suits a list of up to about 1,000 subscribers,
+              and sends to all of them in about 5 minutes once AWS raises your SES send
               rate to 50 a second, which costs nothing. A larger list belongs on
               Cloudflare's $5 Workers Paid plan, for the database's daily writes as well as
               faster sends.</p>
