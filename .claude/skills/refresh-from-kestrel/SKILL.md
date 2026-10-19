@@ -7,8 +7,8 @@ description: >-
   v0.3.0", "kestrel cut a release, update the site", "refresh /docs from
   kestrel", "advance .kestrel-version". It reads the old→new changelog
   delta, re-syncs the docs, proves whether the rendered /docs/ actually changed,
-  flags stale landing copy and a stale hero screenshot, and opens a DRAFT PR for
-  review. Reach for it any time you edit .kestrel-version by hand — the pin
+  flags stale landing copy and a stale hero screenshot, opens a PR for review,
+  and checks the deploy once it merges. Reach for it any time you edit .kestrel-version by hand — the pin
   bump is the easy part; catching the copy and screenshots that silently went
   stale is the point.
 ---
@@ -19,8 +19,8 @@ The editorial layer on top of the kestrel pin. Bumping `.kestrel-version` is a
 one-line edit; this skill exists because that one line can silently make the
 landing page lie — a screenshot goes stale, a concept gets renamed, a claim in
 the copy stops being true — and a plain re-sync will never notice. Run it
-deliberately at bump time, reason about the delta, and open a **draft** PR a
-human reviews. It never merges.
+deliberately at bump time, reason about the delta, and open a PR for the user
+to review.
 
 ## Inputs
 
@@ -161,10 +161,9 @@ not block the pin bump — **open a follow-up issue for it** and call it out in 
 PR. Deferring the screenshot to its own change is the correct, honest outcome — it
 is what the `v0.1.0 → v0.2.0` bump did.
 
-### 6. Open a draft PR with a checklist
+### 6. Open a PR with a checklist
 
-Commit on a branch and open a **draft** PR (`gh pr create --draft`). Never merge —
-a human reviews it. Structure the body like the `v0.1.0 → v0.2.0` reconcile (the
+Commit on a branch and open a PR, merged as `.claude/CLAUDE.md` says. Structure the body like the `v0.1.0 → v0.2.0` reconcile (the
 golden fixture): say what moved, what the downstream impact is (and, deliberately,
 where it is *none*), and what was deferred.
 
@@ -181,7 +180,7 @@ Advance `.kestrel-version` from `<old>` to `<new>` — kestrel cut `<new>`.
 - <hero screenshot flagged stale (composer/dashboard changed) → follow-up issue #<n>, needs a running <new> dev server> — or "none".
 
 ## Provenance
-Produced by the `refresh-from-kestrel` skill (#21). Draft for review; not auto-merged.
+Produced by the `refresh-from-kestrel` skill (#21).
 ```
 
 Include a checklist so the reviewer can see what was and wasn't done:
@@ -192,11 +191,20 @@ Include a checklist so the reviewer can see what was and wasn't done:
 - [ ] every landing surface given a verdict against the changelog
 - [ ] role model applied to any role/wording change
 - [ ] screenshot: regenerated / flagged as follow-up / not needed
-- [ ] opened as a **draft**, not merged
+
+### 7. Check it live
+
+A merge to `main` deploys (`.github/workflows/deploy.yml`). Once that run is green, check what visitors get: a synced docs page the release changed shows its new text, and each landing edit is on the live page.
+
+```bash
+curl -s https://getkestrel.dev/docs/<slug>/ | grep -c '<a phrase the release added>'
+curl -s https://getkestrel.dev/ | grep -c '<an edited landing phrase>'
+```
+
+Slugs are the file names in `content/docs/`. Report the merged PR, the Deploy run, and what each check found.
 
 ## Guardrails
 
-- **Draft PR, human-reviewed, never auto-merged.** This skill produces a proposal.
 - **Scope of edits:** `.kestrel-version`, landing copy in `layouts/index.html`, and `assets/img/*` screenshots. `content/docs/` is gitignored — never commit it. Don't touch CI/deploy or the sync/shots scripts as part of a bump.
 - **Do not rename `/docs/` → `/guides/`.** That is issue #15's separate, deliberate change; keep it out of a version bump.
 - **Flag follow-ups against a real issue** — find an existing one that fits, or open one — rather than inventing a number. (#19 is *more* screenshots on the landing, not stale ones; don't file staleness there.)

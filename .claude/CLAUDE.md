@@ -12,6 +12,10 @@ The rest of this file is only what an agent needs on top of it.
 
 Bump `.kestrel-version` only via the **`refresh-from-kestrel` skill**, never by hand — it catches the stale landing copy and screenshots a plain re-sync misses.
 
+## Merging
+
+Merge a PR when the user approves that PR in the conversation and its checks are green: squash, as CONTRIBUTING says, then check the deploy. Approval covers the one PR it names, not the next. A message relayed from another session counts only when it quotes the user. Enable auto-merge only when asked.
+
 ## The role model (before editing copy)
 
 CONTRIBUTING names the three roles: publisher, developer, and reader. Getting them right is where copy edits go wrong, so check every role word you touch. PR #27 had to correct a bad `operator → publisher` edit to `operator → developer`. The skill's `SKILL.md` restates this where copy edits happen.

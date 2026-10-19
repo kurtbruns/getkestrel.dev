@@ -33,7 +33,7 @@ The landing screenshots (`assets/img/*.png`) are captured from a running, seeded
 
 ### Bumping the pinned kestrel version
 
-Bump `.kestrel-version` with the [`refresh-from-kestrel`](.claude/skills/refresh-from-kestrel/SKILL.md) Claude Code skill rather than by hand. A plain re-sync updates `/docs/`, but it misses landing copy and screenshots that a release made stale; the skill checks those against the changelog and opens a draft PR.
+Bump `.kestrel-version` with the [`refresh-from-kestrel`](.claude/skills/refresh-from-kestrel/SKILL.md) Claude Code skill rather than by hand. A plain re-sync updates `/docs/`, but it misses landing copy and screenshots that a release made stale; the skill checks those against the changelog and opens a PR.
 
 ## The contact form
 
