@@ -245,7 +245,7 @@ function buildReport(d) {
   L.push("");
 
   L.push(`## Next: the bump checklist`);
-  L.push(`Continue with the checklist in SKILL.md — bump \`.kestrel-version\`, re-sync, \`hugo\` build, give each landing section a verdict, then open a **draft** PR (never merge).`);
+  L.push(`Continue with the checklist in SKILL.md — bump \`.kestrel-version\`, re-sync, \`hugo\` build, give each landing section a verdict, then open a PR and, once it merges, check the deploy.`);
   return L.join("\n") + "\n";
 }
 
