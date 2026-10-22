@@ -85,16 +85,16 @@
        Kestrel is built on an API, the app is one client of it, and Claude reaches
        the same one. A short sample conversation carries it, because the claim is
        more convincing shown than asserted. */ -}}
-{{- $connect := printf "%s/blob/main/docs/guides/01-connect-claude.md" site.Params.repoApp -}}
-{{- with site.GetPage "/docs/connect-claude" }}{{ $connect = .RelPermalink }}{{ end -}}
+{{- $connect := printf "%s/blob/main/docs/publishing/08-connect-claude.md" site.Params.repoApp -}}
+{{- with site.GetPage "/docs/publishing/connect-claude" }}{{ $connect = .RelPermalink }}{{ end -}}
 <section class="section robots">
   <div class="wrap">
     <div class="section-head">
       <p class="eyebrow">Working with robots</p>
       <h2>Ask Claude to do it</h2>
       <p>Kestrel is built on an API. Everything the app does, it does through that
-        API. Connect Claude to your instance and it can do everything you can do in
-        the editor. The same guardrails hold either way: a scheduled post waits out
+        API. Connect Claude to your instance and it works through that same API, as
+        you, from proofreading a draft to scheduling its send. The same guardrails hold either way: a scheduled post waits out
         its review window, and you can still move it or cancel it.</p>
     </div>
 
@@ -122,8 +122,9 @@
       </div>
     </div>
 
-    <p class="chat-note">Claude Code connects with a Cloudflare Access service token,
-      and its edits are recorded as Claude, not as you.
+    <p class="chat-note">Add Kestrel as a connector in Claude Desktop or claude.ai,
+      or sign Claude Code in. Either way Claude signs in as you, and its changes show
+      as yours, marked as made through Claude.
       <a href="{{ $connect }}">How to connect Claude &rarr;</a></p>
   </div>
 </section>
