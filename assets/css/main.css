@@ -682,6 +682,19 @@ pre .muted { color: var(--muted); }
 /* code blocks (Chroma) — full column width */
 .docs-body .highlight { margin: 18px 0; border: 1px solid var(--line); border-radius: 10px; overflow: hidden; }
 .docs-body .highlight pre.chroma { margin: 0; padding: 15px 18px; overflow-x: auto; font-size: 13.5px; line-height: 1.6; }
+/* A doc's code block (layouts/_default/_markup/render-codeblock.html), as in Kestrel's Docs
+   tab: the code beside a Copy that is its glyph alone, level with the first line, so the
+   button never sits over the code. A fence with no language is the same block, unhighlighted. */
+.docs-body .code-bare { display: flex; align-items: flex-start; margin: 18px 0; border: 1px solid var(--line); border-radius: 10px; overflow: hidden; }
+.docs-body .code-bare .highlight { flex: 1; min-width: 0; margin: 0; border: 0; border-radius: 0; }
+.docs-body .code-bare > pre { flex: 1; min-width: 0; padding: 15px 8px 15px 18px; overflow-x: auto; font-size: 13.5px; line-height: 1.6; }
+.docs-body .code-bare .highlight pre.chroma { padding-right: 8px; }
+.copy-btn { flex: none; display: inline-flex; margin: 12px 8px 0 0; padding: 5px; border: 0; border-radius: 5px; background: transparent; color: var(--muted); cursor: pointer; }
+.copy-btn[hidden] { display: none; }
+.copy-btn:hover { color: var(--ink); background: var(--line); }
+.copy-btn svg { width: 16px; height: 16px; }
+.copy-btn .i-check, .copy-btn.copied .i-copy { display: none; }
+.copy-btn.copied .i-check { display: block; color: var(--ok); }
 
 /* prev / next at the foot of a doc */
 .doc-prevnext { display: flex; justify-content: space-between; gap: 16px; margin-top: 52px; padding-top: 24px; border-top: 1px solid var(--line); }

@@ -1,0 +1,18 @@
+{{- /* A fenced code block. In /docs/ it is a bare block with a Copy beside its first line,
+     as in Kestrel's own Docs tab (client/ui/copy.ts `bareCodeBlock`): the code, highlighted
+     by Chroma when the fence names a language and plain when it names none, and a Copy that
+     is its glyph alone. The button ships hidden, and assets/js/copy-code.js shows it once it
+     can work, so a page without the script carries no dead control. Elsewhere it is Hugo's
+     own rendering. */ -}}
+{{- $code := "" -}}
+{{- if .Type -}}
+  {{- $code = (transform.HighlightCodeBlock .).Wrapped -}}
+{{- else -}}
+  {{- $code = printf "<pre tabindex=\"0\"><code>%s</code></pre>" (htmlEscape .Inner) | safeHTML -}}
+{{- end -}}
+{{- if eq .Page.Section "docs" -}}
+{{- /* `chroma` carries the code's surface out to the button's strip. */ -}}
+<div class="code-bare chroma">{{ $code }}<button type="button" class="copy-btn" aria-label="Copy" title="Copy" hidden><svg class="i-copy" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="8" width="13" height="13" rx="2"/><path d="M16 8V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h3"/></svg><svg class="i-check" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></button></div>
+{{- else -}}
+{{ $code }}
+{{- end -}}
