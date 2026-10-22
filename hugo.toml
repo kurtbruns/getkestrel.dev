@@ -27,8 +27,9 @@ turnstileSiteKey = '0x4AAAAAAFPrnxhdh0_sZDHN'
     startLevel = 2
     endLevel = 3
     ordered = false
-  # Class-based syntax highlighting (Chroma) so a light + dark theme can be
-  # swapped via prefers-color-scheme in assets/css/chroma.css.
+  # Chroma, class-based, for a fence outside /docs/ (none today). /docs/ fences skip it:
+  # layouts/_default/_markup/render-codeblock.html sends them out plain, and
+  # assets/js/docs-code.js highlights them as Kestrel's Docs tab does.
   [markup.highlight]
     noClasses = false
     tabWidth = 2

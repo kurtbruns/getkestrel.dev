@@ -55,8 +55,6 @@
 {{ $css := resources.Get "css/main.css" | minify | fingerprint -}}
 <link rel="stylesheet" href="{{ $css.RelPermalink }}" integrity="{{ $css.Data.Integrity }}">
 {{ if eq .Section "docs" -}}
-{{ $chroma := resources.Get "css/chroma.css" | minify | fingerprint -}}
-<link rel="stylesheet" href="{{ $chroma.RelPermalink }}" integrity="{{ $chroma.Data.Integrity }}">
-{{ $copy := resources.Get "js/copy-code.js" | minify | fingerprint -}}
-<script src="{{ $copy.RelPermalink }}" integrity="{{ $copy.Data.Integrity }}" defer></script>
+{{ $code := resources.Get "js/docs-code.js" | minify | fingerprint -}}
+<script src="{{ $code.RelPermalink }}" integrity="{{ $code.Data.Integrity }}" defer></script>
 {{- end }}
