@@ -27,3 +27,11 @@
 /docs/publishing/after-a-send /docs/publishing/troubleshooting/ 301
 /docs/try-locally/ https://github.com/kurtbruns/kestrel#try-it-locally 301
 /docs/try-locally https://github.com/kurtbruns/kestrel#try-it-locally 301
+
+# Kestrel 1.14.0 split the Self-hosting guide's Connect Claude to the API into Allow Claude to
+# connect (Managed OAuth, so Claude signs in as the publisher) and Automate with a service token,
+# and folded Publishing's Working with Claude into a new Publishing page, Connect Claude.
+/docs/connect-claude/ /docs/allow-claude/ 301
+/docs/connect-claude /docs/allow-claude/ 301
+/docs/publishing/working-with-claude/ /docs/publishing/connect-claude/ 301
+/docs/publishing/working-with-claude /docs/publishing/connect-claude/ 301
