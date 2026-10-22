@@ -1,0 +1,11 @@
+{{- /* A fenced code block. In /docs/ it is a bare block with a Copy beside its first line,
+     as in Kestrel's own Docs tab (client/ui/copy.ts `bareCodeBlock`). The code goes out as
+     written, with its fence's language on the <code>; assets/js/copy-code.js highlights a
+     bash or JSON fence the way the app does, and a fence in any other language, or none,
+     stays plain. The button ships hidden and the script shows it once it can work, so a page
+     without the script carries no dead control. Elsewhere it is Hugo's own rendering. */ -}}
+{{- if eq .Page.Section "docs" -}}
+<div class="code-bare"><pre tabindex="0"><code{{ with .Type }} class="language-{{ . }}" data-lang="{{ . }}"{{ end }}>{{ .Inner }}</code></pre><button type="button" class="copy-btn" aria-label="Copy" title="Copy" hidden><svg class="i-copy" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="8" width="13" height="13" rx="2"/><path d="M16 8V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h3"/></svg><svg class="i-check" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></button></div>
+{{- else -}}
+{{ (transform.HighlightCodeBlock .).Wrapped }}
+{{- end -}}

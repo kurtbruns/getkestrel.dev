@@ -28,6 +28,18 @@
   --ring: #2563eb;           /* focus ring */
   --ok: #15803d;
 
+  /* Docs code, on Kestrel's own syntax palette (its public/dashboard/styles.css, v1.14.0), so a
+     doc reads the same here as in the app's Docs tab: inline code in maroon, and a block's
+     command, flags, strings, variables, and punctuation (assets/js/docs-code.js). */
+  --code-inline: #9b2c2c;
+  --syntax-tag: #7a5bd6;
+  --syntax-string: #0f7a5a;
+  --syntax-property: #1d4ed8;
+  --syntax-number: #b0530c;
+  --syntax-punctuation: #a1a1aa;
+  --syntax-variable: #2d47b8;
+  --syntax-variable-bg: rgba(51, 85, 204, 0.11);
+
   /* Type */
   --serif: Fraunces, Georgia, "Iowan Old Style", "Times New Roman", serif;
   --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
@@ -57,6 +69,14 @@
     --chat-you: #26241f;
     --ring: #60a5fa;
     --ok: #4ade80;
+    --code-inline: #f07a7a;
+    --syntax-tag: #c4a7ff;
+    --syntax-string: #7fd9b0;
+    --syntax-property: #86b6ff;
+    --syntax-number: #f0a86a;
+    --syntax-punctuation: #6a6a72;
+    --syntax-variable: #a9bbf2;
+    --syntax-variable-bg: rgba(120, 150, 240, 0.18);
   }
 }
 
@@ -679,9 +699,29 @@ pre .muted { color: var(--muted); }
 .docs-body img { border: 1px solid var(--line); border-radius: 8px; }
 .docs-body hr { border: 0; border-top: 1px solid var(--line); margin: 32px 0; }
 
-/* code blocks (Chroma) — full column width */
-.docs-body .highlight { margin: 18px 0; border: 1px solid var(--line); border-radius: 10px; overflow: hidden; }
-.docs-body .highlight pre.chroma { margin: 0; padding: 15px 18px; overflow-x: auto; font-size: 13.5px; line-height: 1.6; }
+/* inline code — a maroon name on a chip, as in Kestrel's Docs tab: it reads apart from the
+   sentence and from a link, and is never bold, even inside a bold lead-in. */
+.docs-body :not(pre) > code { color: var(--code-inline); background: var(--code-bg); border: 1px solid var(--line); border-radius: 4px; padding: 0.05em 0.35em; }
+.docs-body strong code { font-weight: normal; }
+
+/* code blocks (layouts/_default/_markup/render-codeblock.html), as in Kestrel's Docs tab: the
+   code on the raised card, beside a Copy that is its glyph alone, level with the first line,
+   so the button never sits over the code. assets/js/docs-code.js highlights a bash or JSON
+   fence onto the .cx-* classes; any other fence stays plain. */
+.docs-body .code-bare { display: flex; align-items: flex-start; margin: 18px 0; background: var(--card); border: 1px solid var(--line); border-radius: 10px; overflow: hidden; }
+.docs-body .code-bare > pre { flex: 1; min-width: 0; padding: 15px 8px 15px 18px; overflow-x: auto; font-size: 13.5px; line-height: 1.6; }
+.cx-tag { color: var(--syntax-tag); }
+.cx-str { color: var(--syntax-string); }
+.cx-prop { color: var(--syntax-property); }
+.cx-num { color: var(--syntax-number); }
+.cx-punct { color: var(--syntax-punctuation); }
+.cx-var { color: var(--syntax-variable); background: var(--syntax-variable-bg); border-radius: 3px; padding: 0 2px; font-weight: 600; }
+.copy-btn { flex: none; display: inline-flex; margin: 12px 8px 0 0; padding: 5px; border: 0; border-radius: 5px; background: transparent; color: var(--muted); cursor: pointer; }
+.copy-btn[hidden] { display: none; }
+.copy-btn:hover { color: var(--ink); background: var(--line); }
+.copy-btn svg { width: 16px; height: 16px; }
+.copy-btn .i-check, .copy-btn.copied .i-copy { display: none; }
+.copy-btn.copied .i-check { display: block; color: var(--ok); }
 
 /* prev / next at the foot of a doc */
 .doc-prevnext { display: flex; justify-content: space-between; gap: 16px; margin-top: 52px; padding-top: 24px; border-top: 1px solid var(--line); }
