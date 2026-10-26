@@ -55,6 +55,12 @@
 {{ $css := resources.Get "css/main.css" | minify | fingerprint -}}
 <link rel="stylesheet" href="{{ $css.RelPermalink }}" integrity="{{ $css.Data.Integrity }}">
 {{ if eq .Section "docs" -}}
+{{/* The page's Markdown copy, for an agent (issue #66): its URL without the trailing slash,
+     plus .md. scripts/sync-docs.mjs writes it into static/, so name it only once it's there. */ -}}
+{{ $md := printf "%s.md" (strings.TrimSuffix "/" .RelPermalink) -}}
+{{ if fileExists (path.Join "static" $md) -}}
+<link rel="alternate" type="text/markdown" href="{{ $md | absURL }}">
+{{ end -}}
 {{ $code := resources.Get "js/docs-code.js" | minify | fingerprint -}}
 <script src="{{ $code.RelPermalink }}" integrity="{{ $code.Data.Integrity }}" defer></script>
 {{- end }}

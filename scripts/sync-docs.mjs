@@ -31,6 +31,14 @@
  *
  *   Source:  $KESTREL_DOCS_SRC (a kestrel checkout), default ~/Git/kestrel.
  *   Output:  content/docs/, and content/docs/publishing/  (gitignored)
+ *            static/docs/, static/docs.md, static/llms*.txt, for agents  (gitignored)
+ *
+ * For agents (issue #66), the same sync writes a Markdown copy of each page at its
+ * URL plus .md (/docs/deploy/ → /docs/deploy.md, a set's landing /docs/publishing/
+ * → /docs/publishing.md), with links between pages pointing at the other copies,
+ * and an /llms.txt that lists them (and /llms-full.txt, all of them in one file).
+ * Hugo copies static/ into public/ as it is, so they move with the pin like the
+ * HTML does, with no step of their own.
  *
  * Which kestrel to point at is decided outside this script, and the two paths
  * differ on purpose: CI/prod (ci.yml, deploy.yml) clone the release tag pinned
@@ -45,12 +53,28 @@
 import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync, rmSync } from "node:fs";
 import { homedir } from "node:os";
 import { basename, join, posix } from "node:path";
+import { fileURLToPath } from "node:url";
 
 const SRC = process.env.KESTREL_DOCS_SRC || join(homedir(), "Git", "kestrel");
 const DOCS_DIR = join(SRC, "docs");
 const INDEX = join(DOCS_DIR, "README.md");
 const SETUP_DIR = join(DOCS_DIR, "setup");
 const OUT = join(process.cwd(), "content", "docs");
+// The Markdown copies and llms*.txt: static files Hugo copies into public/ as they are.
+const STATIC = join(process.cwd(), "static");
+const MD_OUT = join(STATIC, "docs");
+const MD_FILES = ["docs.md", "llms.txt", "llms-full.txt"];
+
+// The site's address and the release the docs document, from this repo (not the cwd, which
+// gather-delta.mjs points at a scratch dir): the byline names the pin in .kestrel-version,
+// as layouts/partials/docs-release.html does on the HTML pages.
+const REPO = fileURLToPath(new URL("..", import.meta.url));
+const readRepo = (name) => (existsSync(join(REPO, name)) ? readFileSync(join(REPO, name), "utf8") : "");
+const tomlString = (key) => readRepo("hugo.toml").match(new RegExp(`^\\s*${key}\\s*=\\s*['"]([^'"]+)['"]`, "m"))?.[1];
+const SITE = (tomlString("baseURL") ?? "https://getkestrel.dev/").replace(/\/$/, "");
+const REPO_APP = tomlString("repoApp") ?? "https://github.com/kurtbruns/kestrel";
+const TAG = readRepo(".kestrel-version").trim();
+const BYLINE = TAG ? `*[Kestrel version ${TAG.replace(/^v/, "")}](${REPO_APP}/releases/tag/${TAG})*` : "";
 
 if (!existsSync(INDEX) && !existsSync(SETUP_DIR)) {
   console.warn(`[sync-docs] no kestrel docs at ${DOCS_DIR} — skipping. Set KESTREL_DOCS_SRC to a checkout, or ignore (the site builds without /docs/).`);
@@ -60,6 +84,9 @@ if (!existsSync(INDEX) && !existsSync(SETUP_DIR)) {
 // content/docs is gitignored and fully owned by this script — rebuild it clean.
 rmSync(OUT, { recursive: true, force: true });
 mkdirSync(OUT, { recursive: true });
+// So are the Markdown copies and llms*.txt; only the sections layout writes them again.
+rmSync(MD_OUT, { recursive: true, force: true });
+for (const name of MD_FILES) { rmSync(join(STATIC, name), { force: true }); }
 
 const yamlEscape = (s) => s.replace(/\\/g, "\\\\").replace(/"/g, '\\"');
 const firstH1 = (md, fallback) => {
@@ -228,12 +255,15 @@ function syncSections() {
       }).map((path, i) => ({ path, slug: slugOf(path), section: sec, step: sec.numbered ? i + 1 : 0 })));
     return { ...set, index, pages };
   });
-  // Every file a link can name, across both sets, by its path under docs/.
+  // Every file a link can name, across both sets, by its path under docs/: its page's URL,
+  // and its Markdown copy's (the URL without its trailing slash, plus .md).
   const urls = new Map();
+  const mdUrls = new Map();
   for (const set of sets) {
     urls.set(posix.join(set.dir, "README.md"), set.url);
     for (const p of set.pages) { urls.set(p.path, `${set.url}${p.slug}/`); }
   }
+  for (const [path, url] of urls) { mdUrls.set(path, `${SITE}${url.replace(/\/$/, "")}.md`); }
   let count = 0;
   for (const set of sets) {
     const out = join(OUT, set.dir);
@@ -257,7 +287,56 @@ function syncSections() {
     });
     count += set.pages.length;
   }
+  writeForAgents(sets, mdUrls);
   return count;
+}
+
+/** The Markdown copies, and the llms.txt that lists them (issue #66). Each copy is the page's
+ *  source as kestrel wrote it, its title, then the byline, with links between pages pointing
+ *  at the other copies, so an agent can follow them without the HTML. */
+function writeForAgents(sets, mdUrls) {
+  const copy = (path) => {
+    const md = rewriteLinks(readFileSync(join(DOCS_DIR, path), "utf8"), mdUrls, posix.dirname(path)).trim();
+    const withByline = BYLINE ? md.replace(/^(\s{0,3}#\s+.+)$/m, `$1\n\n${BYLINE}`) : md;
+    const file = join(STATIC, new URL(mdUrls.get(path)).pathname);
+    mkdirSync(join(file, ".."), { recursive: true });
+    writeFileSync(file, `${withByline}\n`);
+    return withByline;
+  };
+  const link = (path, title, about) => `- [${title}](${mdUrls.get(path)}): ${about}`;
+  const lines = [];
+  const full = [];
+  for (const set of sets) {
+    const readme = posix.join(set.dir, "README.md");
+    full.push(copy(readme));
+    lines.push(`## ${set.name}`, "", link(readme, set.index.title, `the index of these pages. ${firstPara(set.index.intro)}`));
+    for (const { path, slug } of set.pages) {
+      const md = readFileSync(join(DOCS_DIR, path), "utf8");
+      full.push(copy(path));
+      lines.push(link(path, firstH1(md, slug), firstPara(md)));
+    }
+    lines.push("");
+  }
+  const release = TAG ? ` They document Kestrel version ${TAG.replace(/^v/, "")} ([release notes](${REPO_APP}/releases/tag/${TAG})).` : "";
+  const head = [
+    "# Kestrel",
+    "",
+    "> Kestrel is a small, self-hosted newsletter app that runs on your own Cloudflare account. Write in Markdown, preview the exact email, schedule with a review window, and send to confirmed subscribers, while you own the list, the consent, the delivery record, and the archive.",
+    "",
+    `Kestrel's docs are two sets: Self-hosting, for the developer who deploys and runs an instance, and Publishing, for the publisher who writes and sends the newsletter. Each page below is Markdown; its HTML is at the same address with a trailing slash in place of \`.md\`.${release}`,
+    "",
+    "Each Kestrel instance serves the same docs, for its own release, and its API reference as Markdown: a page at `/api/docs/<slug>.md`, a set's index at `/api/docs/self-hosting.md` and `/api/docs/publishing.md`, and the API at `/api/reference.md`. They are behind Cloudflare Access, so sign in as the person you work for, or send a service token; the instance's own `/llms.txt` says how.",
+    "",
+  ];
+  const tail = [
+    "## Optional",
+    "",
+    `- [All of these docs in one file](${SITE}/llms-full.txt): every page above, in order.`,
+    `- [Source code](${REPO_APP}): the kestrel repository, where these docs are written and each release's changelog is kept.`,
+    "",
+  ];
+  writeFileSync(join(STATIC, "llms.txt"), [...head, ...lines, ...tail].join("\n"));
+  writeFileSync(join(STATIC, "llms-full.txt"), `${full.join("\n\n---\n\n")}\n`);
 }
 
 const count = existsSync(INDEX) ? syncSections() : syncFlat();

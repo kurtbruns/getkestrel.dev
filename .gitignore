@@ -6,6 +6,12 @@ resources/
 # Single source of truth lives in kurtbruns/kestrel; never commit a copy here.
 content/docs/
 .kestrel-src/
+# ...and the Markdown copies of those pages and the llms.txt that lists them (issue #66),
+# which the same sync writes for Hugo to copy into public/.
+static/docs/
+static/docs.md
+static/llms.txt
+static/llms-full.txt
 
 # Hugo lock file
 .hugo_build.lock
