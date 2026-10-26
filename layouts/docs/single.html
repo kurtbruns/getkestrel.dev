@@ -7,6 +7,7 @@
       <h1 id="{{ .File.ContentBaseName }}">{{ .Title }}</h1>
       {{ partial "docs-topnav.html" . }}
     </div>
+    {{ partial "docs-release.html" . }}
     {{ .Content }}
     {{ partial "docs-prevnext.html" . }}
   </article>
