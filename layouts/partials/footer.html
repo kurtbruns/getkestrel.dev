@@ -1,6 +1,13 @@
 <footer class="site-footer">
   <div class="wrap">
     <span>&copy; {{ now.Year }} Kurt Bruns</span>
+    {{- /* On doc pages, the kestrel release they document: the pin in .kestrel-version,
+       the tag CI and deploy sync /docs/ from (a local server syncs a local checkout
+       instead, so there it names the pin, not what you're previewing). */}}
+    {{- if and (eq .Section "docs") (fileExists ".kestrel-version") }}
+      {{- $tag := os.ReadFile ".kestrel-version" | strings.TrimSpace }}
+    <a href="{{ site.Params.repoApp }}/releases/tag/{{ $tag }}">Docs for Kestrel {{ strings.TrimPrefix "v" $tag }}</a>
+    {{- end }}
     <span class="spacer"></span>
     {{- /* Same order as the header nav, so the two read as one set. */}}
     <nav class="foot-nav">

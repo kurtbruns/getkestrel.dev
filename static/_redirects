@@ -35,3 +35,8 @@
 /docs/connect-claude /docs/allow-claude/ 301
 /docs/publishing/working-with-claude/ /docs/publishing/connect-claude/ 301
 /docs/publishing/working-with-claude /docs/publishing/connect-claude/ 301
+
+# Troubleshooting is a Publishing page (/docs/publishing/troubleshooting/), which the Self-hosting
+# guide's pages link to; the shorter /docs/troubleshooting/ is where a reader guesses it is.
+/docs/troubleshooting/ /docs/publishing/troubleshooting/ 301
+/docs/troubleshooting /docs/publishing/troubleshooting/ 301
