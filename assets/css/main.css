@@ -768,7 +768,7 @@ pre .muted { color: var(--muted); }
 .docs-index h1 { font-family: var(--serif); font-weight: 600; font-size: clamp(32px, 5vw, 44px); letter-spacing: -.02em; margin: 0 0 16px; }
 /* The release the docs document, under the title where a date or author would go. */
 /* The byline's row: the release on the left, the page's Copy page menu on the right. */
-.doc-meta { display: flex; align-items: center; gap: 16px; margin: -4px 0 22px; }
+.doc-meta { display: flex; align-items: center; gap: 1rem; margin: 0 0 1.5rem; }
 .doc-byline { font-family: var(--sans); font-size: 16px; font-style: italic; color: var(--muted); margin: 0; }
 .doc-byline a { color: inherit; text-decoration: underline; text-decoration-color: var(--line); text-underline-offset: 3px; }
 .doc-byline a:hover { color: var(--ink); text-decoration-color: currentColor; }
