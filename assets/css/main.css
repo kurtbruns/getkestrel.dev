@@ -769,7 +769,9 @@ pre .muted { color: var(--muted); }
 /* The release the docs document, under the title where a date or author would go. */
 /* The byline's row: the release on the left, the page's Copy page menu on the right. */
 .doc-meta { display: flex; align-items: center; gap: 1rem; margin: 0 0 1.5rem; }
-.doc-byline { font-family: var(--sans); font-size: 16px; font-style: italic; color: var(--muted); margin: 0; }
+.doc-byline { font-family: var(--sans); font-size: 16px; font-style: italic; color: var(--muted); }
+/* .doc-meta .doc-byline outranks .docs-body p, whose 14px margins would otherwise stand the row 56px tall. */
+.doc-meta .doc-byline { margin: 0; }
 .doc-byline a { color: inherit; text-decoration: underline; text-decoration-color: var(--line); text-underline-offset: 3px; }
 .doc-byline a:hover { color: var(--ink); text-decoration-color: currentColor; }
 /* Copy page (docs-markdown.html): a quiet button that opens a two-item menu under it. */
