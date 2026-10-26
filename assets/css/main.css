@@ -639,6 +639,10 @@ pre .muted { color: var(--muted); }
   padding-left: 0.8125rem;
 }
 
+/* On desktop the fold is always open and its summary is only the label. */
+.docs-onpage > summary { list-style: none; pointer-events: none; }
+.docs-onpage > summary::-webkit-details-marker { display: none; }
+
 /* the current page (H1) — the prominent "you are here" entry at the top */
 .toc-h1 {
   display: block;
@@ -797,6 +801,20 @@ pre .muted { color: var(--muted); }
   .docs-back { margin-bottom: 0.875rem; }
   .docs-body { padding-top: 0.75rem; padding-bottom: 0; } /* rail isn't sticky here: no spy to reach */
   .docs-body { max-width: none; }
+  /* Stacked, "On this page" is one tappable row with a chevron (the script above
+     the article closes it); open, it drops its list under the row. */
+  .docs-onpage > summary {
+    pointer-events: auto; cursor: pointer;
+    display: flex; align-items: center; justify-content: space-between;
+    min-height: 44px; margin: 0;
+  }
+  .docs-onpage > summary::after {
+    content: ""; width: 7px; height: 7px; margin-right: 0.8125rem;
+    border-right: 1.5px solid var(--muted); border-bottom: 1.5px solid var(--muted);
+    transform: rotate(45deg) translateY(-2px); transition: transform .15s;
+  }
+  .docs-onpage[open] > summary::after { transform: rotate(-135deg) translateY(-2px); }
+  .docs-onpage[open] { padding-bottom: 0.75rem; }
 }
 
 @media (prefers-reduced-motion: reduce) {
