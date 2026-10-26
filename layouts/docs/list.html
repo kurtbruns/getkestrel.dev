@@ -2,7 +2,7 @@
 <div class="docs-index">
   {{ partial "docs-sets.html" . }}
   <h1>{{ .Title }}</h1>
-  {{ partial "docs-release.html" . }}
+  <div class="doc-meta">{{ partial "docs-release.html" . }}{{ partial "docs-markdown.html" . }}</div>
   <div class="docs-index-intro">{{ .Content }}</div>
   {{- $all := .RegularPages.ByWeight }}
   {{- with .Params.sections }}
@@ -25,6 +25,5 @@
     {{- range $all }}{{ partial "doc-card.html" (dict "Page" . "N" .Weight) }}{{ end }}
   </ol>
   {{- end }}
-  {{ partial "docs-markdown.html" . }}
 </div>
 {{ end }}
