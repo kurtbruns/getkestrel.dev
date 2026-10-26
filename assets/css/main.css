@@ -793,10 +793,13 @@ pre .muted { color: var(--muted); }
 .doc-card-d { color: var(--muted); font-size: 0.90625rem; line-height: 1.55; }
 
 @media (max-width: 1040px) {
-  .docs { grid-template-columns: 1fr; gap: 0; padding-top: 0; }
+  .docs { grid-template-columns: 1fr; gap: 0; padding-top: 0; max-width: none; }
+  /* The stacked rail runs edge to edge under the site header, its rule as wide as the
+     header's, while its contents keep the article's edges. */
   .docs-side-inner {
     position: static; width: auto; max-height: none; overflow: visible;
-    padding: 0; margin-bottom: 1.375rem; border-bottom: 1px solid var(--line);
+    margin: 0 calc(-1 * var(--docs-pad)) 1.375rem; padding: 0 var(--docs-pad);
+    border-bottom: 1px solid var(--line);
   }
   /* The eyebrow over the title already links back to the set's index. */
   .docs-back { display: none; }
