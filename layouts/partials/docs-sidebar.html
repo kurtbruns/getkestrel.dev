@@ -2,11 +2,32 @@
   {{- with .CurrentSection }}
   <a class="docs-back" href="{{ .RelPermalink }}"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M10 3.5 5.5 8l4.5 4.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>{{ .Params.docset | default "Documentation" }}</a>
   {{- end }}
-  <div class="docs-onpage">
-    <p class="docs-rail-h">On this page</p>
+  <details class="docs-onpage" id="docsOnPage" open>
+    <summary class="docs-rail-h">On this page</summary>
     <a class="toc-h1" href="#{{ .File.ContentBaseName }}">{{ .Title }}</a>
     {{- if gt (len .TableOfContents) 80 }}
     <div class="docs-onpage-toc">{{ .TableOfContents }}</div>
     {{- end }}
-  </div>
+  </details>
 </nav>
+<script>
+  // "On this page" folds where the rail stacks above the article (the app's Docs tab does
+  // the same): one tappable row, closed until opened, closing again once a section is
+  // picked, so the title sits near the top. It runs before the article paints. The state
+  // follows the layout, so widening the window reopens it, and the summary leaves the tab
+  // order on desktop, where it's only a label. Without JavaScript the list stays open.
+  (function () {
+    var fold = document.getElementById("docsOnPage");
+    var summary = fold.querySelector("summary");
+    var stacked = window.matchMedia("(max-width: 1040px)");
+    function sync() {
+      fold.open = !stacked.matches;
+      summary.tabIndex = stacked.matches ? 0 : -1;
+    }
+    sync();
+    stacked.addEventListener("change", sync);
+    fold.addEventListener("click", function (e) {
+      if (stacked.matches && e.target.closest("a")) { fold.open = false; }
+    });
+  })();
+</script>

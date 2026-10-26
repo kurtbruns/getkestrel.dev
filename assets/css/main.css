@@ -639,6 +639,10 @@ pre .muted { color: var(--muted); }
   padding-left: 0.8125rem;
 }
 
+/* On desktop the fold is always open and its summary is only the label. */
+.docs-onpage > summary { list-style: none; pointer-events: none; }
+.docs-onpage > summary::-webkit-details-marker { display: none; }
+
 /* the current page (H1) — the prominent "you are here" entry at the top */
 .toc-h1 {
   display: block;
@@ -683,6 +687,22 @@ pre .muted { color: var(--muted); }
 .docs-body > .eyebrow a { color: inherit; text-decoration: none; }
 .docs-body > .eyebrow a:hover { color: var(--ink); }
 .docs-body h1 { font-size: clamp(30px, 4vw, 40px); margin: 0 0 14px; scroll-margin-top: 80px; }
+/* The title row: the H1 and the compact Previous / Next beside it, as the app's Docs
+   tab sets them. The pair takes the H1's first line box, so the two centre together
+   while a long title wraps under it. */
+.doc-head { --title-line: calc(clamp(30px, 4vw, 40px) * 1.12); display: flex; align-items: flex-start; justify-content: space-between; gap: 20px; margin: 0 0 14px; }
+.doc-head h1 { flex: 1 1 auto; min-width: 0; margin: 0; }
+.doc-topnav { flex: none; display: flex; align-items: center; gap: 16px; height: var(--title-line); }
+.docs-body .doc-topnav a { display: inline-flex; align-items: center; gap: 5px; color: var(--muted); text-decoration: none; font-size: 14px; white-space: nowrap; }
+.docs-body .doc-topnav a:hover { color: var(--ink); }
+@media (max-width: 620px) {
+  /* Arrows alone, each a full tap target, centred on the title's first line. */
+  .doc-head { gap: 8px; }
+  .doc-topnav { gap: 4px; }
+  .docs-body .doc-topnav a { width: 40px; height: 44px; margin-block: calc((var(--title-line) - 44px) / 2); justify-content: center; border-radius: 6px; font-size: 16px; }
+  .docs-body .doc-topnav a:hover { background: var(--code-bg); }
+  .doc-topnav-word { display: none; }
+}
 
 .docs-body h2 { font-family: var(--serif); font-weight: 600; font-size: 23px; letter-spacing: -.01em; margin: 34px 0 10px; scroll-margin-top: 80px; }
 .docs-body h3 { font-family: var(--sans); font-weight: 650; font-size: 16.5px; margin: 26px 0 8px; scroll-margin-top: 80px; letter-spacing: -0.01em; }
@@ -773,14 +793,32 @@ pre .muted { color: var(--muted); }
 .doc-card-d { color: var(--muted); font-size: 0.90625rem; line-height: 1.55; }
 
 @media (max-width: 1040px) {
-  .docs { grid-template-columns: 1fr; gap: 0; padding-top: 0.5rem; }
+  .docs { grid-template-columns: 1fr; gap: 0; padding-top: 0; max-width: none; }
+  /* The stacked rail runs edge to edge under the site header, its rule as wide as the
+     header's, while its contents keep the article's edges. */
   .docs-side-inner {
     position: static; width: auto; max-height: none; overflow: visible;
-    padding: 1rem 0 0.5rem; margin-bottom: 1.375rem; border-bottom: 1px solid var(--line);
+    margin: 0 calc(-1 * var(--docs-pad)) 1.375rem; padding: 0 var(--docs-pad);
+    border-bottom: 1px solid var(--line);
   }
-  .docs-back { margin-bottom: 0.875rem; }
+  /* The eyebrow over the title already links back to the set's index. */
+  .docs-back { display: none; }
   .docs-body { padding-top: 0.75rem; padding-bottom: 0; } /* rail isn't sticky here: no spy to reach */
   .docs-body { max-width: none; }
+  /* Stacked, "On this page" is one tappable row with a chevron (the script above
+     the article closes it); open, it drops its list under the row. */
+  .docs-onpage > summary {
+    pointer-events: auto; cursor: pointer;
+    display: flex; align-items: center; justify-content: space-between;
+    min-height: 52px; margin: 0; padding: 0;
+  }
+  .docs-onpage > summary::after {
+    content: ""; width: 7px; height: 7px; margin-right: 3px;
+    border-right: 1.5px solid var(--muted); border-bottom: 1.5px solid var(--muted);
+    transform: rotate(45deg) translateY(-2px); transition: transform .15s;
+  }
+  .docs-onpage[open] > summary::after { transform: rotate(-135deg) translateY(-2px); }
+  .docs-onpage[open] { padding-bottom: 0.75rem; }
 }
 
 @media (prefers-reduced-motion: reduce) {
