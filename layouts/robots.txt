@@ -2,8 +2,17 @@
   Gated on hugo.Environment: production builds (deploy.yml) advertise the
   sitemap; preview builds (ci.yml, HUGO_ENVIRONMENT=preview) Disallow all
   crawlers so PR preview aliases on *.workers.dev don't get indexed.
+
+  Content-Signal (contentsignals.org) states how the site's content may be used once
+  fetched: in search, as input to an AI's answer, and for training. All yes, since the
+  site is here to be found and read by agents (issue #66), and the docs and code are
+  public under MIT anyway.
 */ -}}
 {{- if eq hugo.Environment "production" -}}
+User-agent: *
+Content-Signal: search=yes, ai-input=yes, ai-train=yes
+Allow: /
+
 Sitemap: {{ "sitemap.xml" | absURL }}
 {{- else -}}
 User-agent: *
