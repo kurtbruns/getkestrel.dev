@@ -323,7 +323,7 @@ function writeForAgents(sets, mdUrls) {
     "",
     "> Kestrel is a small, self-hosted newsletter app that runs on your own Cloudflare account. Write in Markdown, preview the exact email, schedule with a review window, and send to confirmed subscribers, while you own the list, the consent, the delivery record, and the archive.",
     "",
-    `Kestrel's docs are two sets: Self-hosting, for the developer who deploys and runs an instance, and Publishing, for the publisher who writes and sends the newsletter. Each page below is Markdown; its HTML is at the same address with a trailing slash in place of \`.md\`.${release}`,
+    `Kestrel's docs are two sets: Self-hosting, for the developer who deploys and runs an instance, and Publishing, for the publisher who writes and sends the newsletter. Each page below is Markdown; its HTML is at the same address with a trailing slash in place of \`.md\`, which also answers with the Markdown to a request that sends \`Accept: text/markdown\`.${release}`,
     "",
     "Each Kestrel instance serves the same docs, for its own release, and its API reference as Markdown: a page at `/api/docs/<slug>.md`, a set's index at `/api/docs/self-hosting.md` and `/api/docs/publishing.md`, and the API at `/api/reference.md`. They are behind Cloudflare Access, so sign in as the person you work for, or send a service token; the instance's own `/llms.txt` says how.",
     "",
