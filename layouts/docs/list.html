@@ -2,6 +2,7 @@
 <div class="docs-index">
   {{ partial "docs-sets.html" . }}
   <h1>{{ .Title }}</h1>
+  {{ partial "docs-release.html" . }}
   <div class="docs-index-intro">{{ .Content }}</div>
   {{- $all := .RegularPages.ByWeight }}
   {{- with .Params.sections }}

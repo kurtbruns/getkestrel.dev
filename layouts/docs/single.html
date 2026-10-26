@@ -2,11 +2,12 @@
 <div class="docs">
   <aside class="docs-side">{{ partial "docs-sidebar.html" . }}</aside>
   <article class="docs-body">
-    <p class="eyebrow">{{ with .CurrentSection }}<a href="{{ .RelPermalink }}">{{ .Params.docset | default "Docs" }}</a>{{ end }}{{ partial "docs-release.html" (.CurrentSection.Params.docset | default "Docs") }}</p>
+    <p class="eyebrow">{{ with .CurrentSection }}<a href="{{ .RelPermalink }}">{{ .Params.docset | default "Docs" }}</a>{{ end }}</p>
     <div class="doc-head">
       <h1 id="{{ .File.ContentBaseName }}">{{ .Title }}</h1>
       {{ partial "docs-topnav.html" . }}
     </div>
+    {{ partial "docs-release.html" . }}
     {{ .Content }}
     {{ partial "docs-prevnext.html" . }}
   </article>

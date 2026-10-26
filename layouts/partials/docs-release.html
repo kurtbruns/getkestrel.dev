@@ -1,9 +1,8 @@
-{{- /* The kestrel release the docs document, appended to the eyebrow over a doc's title:
-       the pin in .kestrel-version, the tag CI and deploy sync /docs/ from. A local server
-       syncs a local checkout instead, so there it names the pin, not what you're
-       previewing. Takes the eyebrow's text so far, which on a landing already says Kestrel. */ -}}
+{{- /* The kestrel release the docs document, as a byline under a doc's title, where a
+       date or an author would go: the pin in .kestrel-version, the tag CI and deploy sync
+       /docs/ from. A local server syncs a local checkout instead, so there it names the
+       pin, not what you're previewing. */ -}}
 {{- if fileExists ".kestrel-version" -}}
 {{- $tag := os.ReadFile ".kestrel-version" | strings.TrimSpace -}}
-{{- $version := strings.TrimPrefix "v" $tag -}}
-{{ " · " }}<a href="{{ site.Params.repoApp }}/releases/tag/{{ $tag }}">{{ if not (strings.Contains . "Kestrel") }}Kestrel {{ end }}{{ $version }}</a>
+<p class="doc-byline"><a href="{{ site.Params.repoApp }}/releases/tag/{{ $tag }}">Kestrel version {{ strings.TrimPrefix "v" $tag }}</a></p>
 {{- end -}}
