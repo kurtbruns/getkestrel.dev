@@ -84,10 +84,14 @@ function prefersMarkdown(accept) {
 }
 
 /** A Markdown copy's response, with a `Link` naming its HTML page (the copy's path with a
- *  trailing slash in place of `.md`) as canonical, so it isn't indexed as a second page. */
+ *  trailing slash in place of `.md`) as canonical, so it isn't indexed as a second page.
+ *  It also says the copy is UTF-8: the assets send a bare `text/markdown` in production
+ *  (`wrangler dev` adds the charset, so it doesn't show there), and a browser then reads
+ *  an arrow or an em dash as Windows-1252. */
 function canonical(res, url, mdPath) {
   const out = new Response(res.body, res);
   if (res.ok) {
+    out.headers.set("Content-Type", "text/markdown; charset=utf-8");
     out.headers.set("Link", `<${url.origin}${mdPath.replace(/\.md$/, "/")}>; rel="canonical"`);
   }
   return out;
