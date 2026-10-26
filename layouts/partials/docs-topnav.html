@@ -1,0 +1,10 @@
+{{- /* The compact pair on the title line, right of the H1, as the app's Docs tab shows it:
+       no titles (the foot pager carries those; each link's aria-label names its target).
+       On a phone the words drop and the arrows remain, so the pair fits beside a wrapping title. */ -}}
+{{- $n := partial "docs-neighbors.html" . -}}
+{{- if or $n.prev $n.next -}}
+<nav class="doc-topnav" aria-label="Adjacent docs">
+  {{- with $n.prev }}<a href="{{ .RelPermalink }}" aria-label="Previous: {{ .Title }}"><span aria-hidden="true">←</span><span class="doc-topnav-word">Previous</span></a>{{ end -}}
+  {{- with $n.next }}<a href="{{ .RelPermalink }}" aria-label="Next: {{ .Title }}"><span class="doc-topnav-word">Next</span><span aria-hidden="true">→</span></a>{{ end -}}
+</nav>
+{{- end -}}

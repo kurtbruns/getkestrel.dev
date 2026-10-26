@@ -683,6 +683,22 @@ pre .muted { color: var(--muted); }
 .docs-body > .eyebrow a { color: inherit; text-decoration: none; }
 .docs-body > .eyebrow a:hover { color: var(--ink); }
 .docs-body h1 { font-size: clamp(30px, 4vw, 40px); margin: 0 0 14px; scroll-margin-top: 80px; }
+/* The title row: the H1 and the compact Previous / Next beside it, as the app's Docs
+   tab sets them. The pair takes the H1's first line box, so the two centre together
+   while a long title wraps under it. */
+.doc-head { --title-line: calc(clamp(30px, 4vw, 40px) * 1.12); display: flex; align-items: flex-start; justify-content: space-between; gap: 20px; margin: 0 0 14px; }
+.doc-head h1 { flex: 1 1 auto; min-width: 0; margin: 0; }
+.doc-topnav { flex: none; display: flex; align-items: center; gap: 16px; height: var(--title-line); }
+.docs-body .doc-topnav a { display: inline-flex; align-items: center; gap: 5px; color: var(--muted); text-decoration: none; font-size: 14px; white-space: nowrap; }
+.docs-body .doc-topnav a:hover { color: var(--ink); }
+@media (max-width: 620px) {
+  /* Arrows alone, each a full tap target, centred on the title's first line. */
+  .doc-head { gap: 8px; }
+  .doc-topnav { gap: 4px; }
+  .docs-body .doc-topnav a { width: 40px; height: 44px; margin-block: calc((var(--title-line) - 44px) / 2); justify-content: center; border-radius: 6px; font-size: 16px; }
+  .docs-body .doc-topnav a:hover { background: var(--code-bg); }
+  .doc-topnav-word { display: none; }
+}
 
 .docs-body h2 { font-family: var(--serif); font-weight: 600; font-size: 23px; letter-spacing: -.01em; margin: 34px 0 10px; scroll-margin-top: 80px; }
 .docs-body h3 { font-family: var(--sans); font-weight: 650; font-size: 16.5px; margin: 26px 0 8px; scroll-margin-top: 80px; letter-spacing: -0.01em; }
