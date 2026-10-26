@@ -1,0 +1,8 @@
+{{- /* A quiet pointer, at the foot of a docs page, to the page's Markdown copy and to
+       /llms.txt (issue #66), for whoever wants to hand the docs to an agent. The
+       <link rel="alternate"> in head.html says the same to a machine; this says it to a
+       person. scripts/sync-docs.mjs writes both files, so name them only once they're there. */ -}}
+{{- $md := printf "%s.md" (strings.TrimSuffix "/" .RelPermalink) -}}
+{{- if fileExists (path.Join "static" $md) -}}
+<p class="doc-machine">For an agent: <a href="{{ $md }}" type="text/markdown">this page as Markdown</a>, and <a href="{{ "llms.txt" | relURL }}">llms.txt</a> for all the docs.</p>
+{{- end -}}

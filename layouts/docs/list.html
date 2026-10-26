@@ -25,5 +25,6 @@
     {{- range $all }}{{ partial "doc-card.html" (dict "Page" . "N" .Weight) }}{{ end }}
   </ol>
   {{- end }}
+  {{ partial "docs-markdown.html" . }}
 </div>
 {{ end }}

@@ -754,6 +754,11 @@ pre .muted { color: var(--muted); }
 .pn b { font-family: var(--serif); font-weight: 600; font-size: 16px; color: var(--ink); }
 .pn:hover b { text-decoration: underline; text-underline-offset: 2px; }
 
+/* The quiet pointer to a doc's Markdown copy and llms.txt, under the pager (docs-markdown.html). */
+.doc-machine { margin: 40px 0 0; font-size: 13.5px; color: var(--muted); }
+.doc-machine a { color: var(--muted); text-underline-offset: 2px; }
+.doc-machine a:hover { color: var(--ink); }
+
 /* -------- /docs/ index -------- */
 .docs-index { max-width: 64rem; margin: 0 auto; padding: 3.25rem 1.5rem 6rem; }
 .docs-index > .eyebrow { margin-bottom: 12px; }

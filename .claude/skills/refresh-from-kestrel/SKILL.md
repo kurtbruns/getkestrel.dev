@@ -108,6 +108,8 @@ ownership cards, the "write / preview / schedule / send" how-it-works flow, the
 "Under the hood" tech-stack chips and engineering spec list, and the self-host
 quickstart — but read the file, not this sentence.)
 
+`assets/llms-intro.md`, the pitch that heads `/llms.txt` for agents, restates the landing's claims (what Kestrel is, what a publisher keeps, what it takes to run, working with Claude), so give it the same verdicts and make the same edits there.
+
 Go section by section. For each claim, weigh it against the changelog (§1) and the
 SPEC/DESIGN drill-down (§2 above / the report's §3) and reach one verdict:
 
@@ -214,7 +216,7 @@ Slugs are the file names in `content/docs/`. Check `curl -s https://getkestrel.d
 
 ## Guardrails
 
-- **Scope of edits:** `.kestrel-version`, landing copy in `layouts/index.html`, and `assets/img/*` screenshots. `content/docs/` and the generated files under `static/` are gitignored — never commit them. Don't touch CI/deploy or the sync/shots scripts as part of a bump.
+- **Scope of edits:** `.kestrel-version`, landing copy in `layouts/index.html` and `assets/llms-intro.md`, and `assets/img/*` screenshots. `content/docs/` and the generated files under `static/` are gitignored — never commit them. Don't touch CI/deploy or the sync/shots scripts as part of a bump.
 - **Do not rename `/docs/` → `/guides/`.** That is issue #15's separate, deliberate change; keep it out of a version bump.
 - **Flag follow-ups against a real issue** — find an existing one that fits, or open one — rather than inventing a number. (#19 is *more* screenshots on the landing, not stale ones; don't file staleness there.)
 - **When the changelog and the diff disagree, trust the diff** — and when a claim's truth is genuinely unclear, flag it for the human rather than guessing.

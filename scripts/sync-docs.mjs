@@ -32,6 +32,7 @@
  *   Source:  $KESTREL_DOCS_SRC (a kestrel checkout), default ~/Git/kestrel.
  *   Output:  content/docs/, and content/docs/publishing/  (gitignored)
  *            static/docs/, static/docs.md, static/llms*.txt, for agents  (gitignored)
+ *   Also reads: assets/llms-intro.md, the pitch that heads llms.txt  (committed)
  *
  * For agents (issue #66), the same sync writes a Markdown copy of each page at its
  * URL plus .md (/docs/deploy/ → /docs/deploy.md, a set's landing /docs/publishing/
@@ -317,11 +318,15 @@ function writeForAgents(sets, mdUrls) {
     }
     lines.push("");
   }
+  // The pitch, from assets/llms-intro.md: what Kestrel is and when it fits, written from
+  // the landing page's copy (layouts/index.html), so the refresh-from-kestrel skill checks
+  // it with the landing. Then how to read the docs, which names the pinned release.
+  const intro = readRepo("assets/llms-intro.md").trim() || "# Kestrel";
   const release = TAG ? ` They document Kestrel version ${TAG.replace(/^v/, "")} ([release notes](${REPO_APP}/releases/tag/${TAG})).` : "";
   const head = [
-    "# Kestrel",
+    intro,
     "",
-    "> Kestrel is a small, self-hosted newsletter app that runs on your own Cloudflare account. Write in Markdown, preview the exact email, schedule with a review window, and send to confirmed subscribers, while you own the list, the consent, the delivery record, and the archive.",
+    "## Reading these docs",
     "",
     `Kestrel's docs are two sets: Self-hosting, for the developer who deploys and runs an instance, and Publishing, for the publisher who writes and sends the newsletter. Each page below is Markdown; its HTML is at the same address with a trailing slash in place of \`.md\`, which also answers with the Markdown to a request that sends \`Accept: text/markdown\`.${release}`,
     "",

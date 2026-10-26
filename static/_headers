@@ -1,0 +1,5 @@
+# Served by Workers Static Assets with the files in public/ (Hugo copies static/ there).
+# The home page names /llms.txt for an agent that lands on it (issue #66), with the
+# llmstxt.org relation. /docs answers through worker/index.js, so it's not set here.
+/
+  Link: </llms.txt>; rel="llms-txt"
