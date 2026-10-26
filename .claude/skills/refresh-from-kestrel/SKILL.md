@@ -108,6 +108,8 @@ ownership cards, the "write / preview / schedule / send" how-it-works flow, the
 "Under the hood" tech-stack chips and engineering spec list, and the self-host
 quickstart — but read the file, not this sentence.)
 
+`assets/llms-intro.md`, the pitch that heads `/llms.txt` for agents, restates the landing's claims (what Kestrel is, what a publisher keeps, what it takes to run, working with Claude), so give it the same verdicts and make the same edits there.
+
 Go section by section. For each claim, weigh it against the changelog (§1) and the
 SPEC/DESIGN drill-down (§2 above / the report's §3) and reach one verdict:
 
@@ -136,8 +138,17 @@ KESTREL_DOCS_SRC="$SRC" npm run docs:sync
 hugo --minify        # must build clean; note the page count
 ```
 
+The sync also writes the Markdown copies of the pages and `/llms.txt` (issue #66), so a bump moves them with no step of its own. Check that `llms.txt` still lists every page, and that every link in it and in the copies lands on a copy. A page the release added, moved, or removed shows up here as a line too many or too few:
+
+```bash
+ls content/docs/*.md content/docs/publishing/*.md | grep -vc _index   # pages synced
+grep -c '^- \[.*\](https://getkestrel.dev/docs' static/llms.txt     # = pages + 2 landings
+grep -ohE 'https://getkestrel.dev/[^)# ]+' static/llms.txt static/docs.md static/docs/*.md static/docs/publishing/*.md \
+  | sort -u | while read -r u; do [ -f "static${u#https://getkestrel.dev}" ] || echo "missing: $u"; done
+```
+
 CI and prod clone the tag themselves (see `.github/workflows/`), so this local
-build is a sanity check. `content/docs/` is gitignored and rebuilt by the sync — it is never committed.
+build is a sanity check. `content/docs/`, and the copies and `llms*.txt` under `static/`, are gitignored and rebuilt by the sync — they are never committed.
 The only tracked change from the pin bump itself is the one line in
 `.kestrel-version`, plus any copy edits you made in step 3 and any
 screenshots from step 5.
@@ -201,11 +212,11 @@ curl -s https://getkestrel.dev/docs/<slug>/ | grep -c '<a phrase the release add
 curl -s https://getkestrel.dev/ | grep -c '<an edited landing phrase>'
 ```
 
-Slugs are the file names in `content/docs/`. Report the merged PR, the Deploy run, and what each check found.
+Slugs are the file names in `content/docs/`. Check `curl -s https://getkestrel.dev/llms.txt | head -8` names the new version too. Report the merged PR, the Deploy run, and what each check found.
 
 ## Guardrails
 
-- **Scope of edits:** `.kestrel-version`, landing copy in `layouts/index.html`, and `assets/img/*` screenshots. `content/docs/` is gitignored — never commit it. Don't touch CI/deploy or the sync/shots scripts as part of a bump.
+- **Scope of edits:** `.kestrel-version`, landing copy in `layouts/index.html` and `assets/llms-intro.md`, and `assets/img/*` screenshots. `content/docs/` and the generated files under `static/` are gitignored — never commit them. Don't touch CI/deploy or the sync/shots scripts as part of a bump.
 - **Do not rename `/docs/` → `/guides/`.** That is issue #15's separate, deliberate change; keep it out of a version bump.
 - **Flag follow-ups against a real issue** — find an existing one that fits, or open one — rather than inventing a number. (#19 is *more* screenshots on the landing, not stale ones; don't file staleness there.)
 - **When the changelog and the diff disagree, trust the diff** — and when a claim's truth is genuinely unclear, flag it for the human rather than guessing.

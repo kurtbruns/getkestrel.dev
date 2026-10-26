@@ -13,15 +13,17 @@
     "enabled": true
   },
   // The site is static except for one route: the contact form posts to
-  // /api/contact, which worker/index.js handles. run_worker_first sends only
-  // /api/* to the script, so every page is still served straight from assets.
+  // /api/contact, which worker/index.js handles. /docs goes through the script
+  // too, so a request that asks for Markdown gets a page's Markdown copy (issue
+  // #66). run_worker_first sends only those to the script, so every other page
+  // is still served straight from assets.
   "main": "worker/index.js",
   "assets": {
     "directory": "./public",
     "binding": "ASSETS",
     "html_handling": "auto-trailing-slash",
     "not_found_handling": "404-page",
-    "run_worker_first": ["/api/*"]
+    "run_worker_first": ["/api/*", "/docs", "/docs/*", "/docs.md"]
   },
   // The contact form's mail. Sending to a destination address verified in the
   // account is free on every plan; the sender must be on a domain with Cloudflare

@@ -10,9 +10,11 @@
 // the Clipboard API is missing or refused (an http:// preview, an older browser), it falls back
 // to a hidden textarea and execCommand; failing that, it selects the code so a keyboard copy
 // takes it.
+//
+// The same copy serves a page's Copy page menu (layouts/partials/docs-markdown.html): Copy as
+// Markdown puts the page's Markdown copy on the clipboard, fetched from its .md URL.
 (function () {
   var blocks = document.querySelectorAll(".code-bare");
-  if (!blocks.length) { return; }
 
   function esc(s) {
     return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#39;");
@@ -140,6 +142,57 @@
     var sel = window.getSelection();
     sel.removeAllRanges();
     sel.addRange(range);
+  }
+
+  // Copy page. The fetch starts when the menu opens, so the text is usually there by the
+  // click. Safari only lets a click write what it hands the clipboard at once, so where the
+  // browser takes a ClipboardItem it gets the fetch itself, as a promise.
+  var page = document.querySelector(".page-md");
+  if (page) {
+    var item = page.querySelector("[data-copy]");
+    var text = null;
+    var fetchText = function () {
+      if (!text) {
+        text = fetch(page.getAttribute("data-md")).then(function (r) {
+          if (!r.ok) { throw new Error(r.status); }
+          return r.text();
+        });
+        text.catch(function () { text = null; });
+      }
+      return text;
+    };
+    var copyPage = function () {
+      if (navigator.clipboard && navigator.clipboard.write && window.ClipboardItem && window.isSecureContext) {
+        var blob = fetchText().then(function (t) { return new Blob([t], { type: "text/plain" }); });
+        return navigator.clipboard.write([new ClipboardItem({ "text/plain": blob })]).then(
+          function () { return true; },
+          function () { return fetchText().then(copy); }
+        );
+      }
+      return fetchText().then(copy);
+    };
+    var label = page.querySelector(".page-md-btn span");
+    var pageTimer = 0;
+    page.addEventListener("toggle", function () { if (page.open) { fetchText(); } });
+    item.addEventListener("click", function () {
+      copyPage().then(function (ok) {
+        page.open = false;
+        if (!ok) { return; }
+        clearTimeout(pageTimer);
+        page.classList.add("copied");
+        label.textContent = "Copied";
+        pageTimer = setTimeout(function () {
+          page.classList.remove("copied");
+          label.textContent = "Copy page";
+        }, 1500);
+      }, function () { page.open = false; });
+    });
+    item.hidden = false;
+    // Close it as a menu closes: on a click elsewhere, or Escape, which returns focus to it.
+    document.addEventListener("click", function (e) { if (page.open && !page.contains(e.target)) { page.open = false; } });
+    page.addEventListener("keydown", function (e) {
+      if (e.key === "Escape" && page.open) { page.open = false; page.querySelector("summary").focus(); }
+    });
   }
 
   Array.prototype.forEach.call(blocks, function (block) {

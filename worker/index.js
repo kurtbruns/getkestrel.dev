@@ -2,9 +2,14 @@
  * getkestrel.dev's one dynamic route: the contact form at /contact/ posts here.
  *
  * Everything else on the site is static (Hugo's output, served as Workers Static
- * Assets). wrangler.jsonc's `run_worker_first: ["/api/*"]` sends only /api/ paths
- * to this script, so the pages never pay for it; anything else that reaches it is
+ * Assets). wrangler.jsonc's `run_worker_first` sends only /api/ paths and /docs to
+ * this script, so the other pages never pay for it; anything else that reaches it is
  * handed back to the assets.
+ *
+ * /docs comes here so an agent can ask for a page as Markdown (issue #66): a request
+ * for /docs/deploy/ that prefers `text/markdown` gets the page's Markdown copy,
+ * /docs/deploy.md, which scripts/sync-docs.mjs writes. Both answers say `Vary: Accept`,
+ * so a cache keeps them apart, and the Markdown names its HTML page as canonical.
  *
  * A message is checked by Turnstile, then emailed to the site's owner through
  * Cloudflare's `send_email` binding. Sending to a destination address verified in the
@@ -27,9 +32,66 @@ export default {
       }
       return contact(request, env, url);
     }
+    if (url.pathname === "/docs" || url.pathname.startsWith("/docs/") || url.pathname === "/docs.md") {
+      return docs(request, env, url);
+    }
     return env.ASSETS.fetch(request);
   },
 };
+
+/** A docs page as the request prefers it: its HTML, or its Markdown copy when the
+ *  request asks for Markdown and the page has one. A Markdown copy asked for by its own
+ *  URL is served as it is, naming its HTML page as canonical. */
+async function docs(request, env, url) {
+  if (url.pathname.endsWith(".md")) {
+    return canonical(await env.ASSETS.fetch(request), url, url.pathname);
+  }
+  if (prefersMarkdown(request.headers.get("Accept"))) {
+    const md = `${url.pathname.replace(/\/$/, "")}.md`;
+    const res = await env.ASSETS.fetch(new Request(new URL(md, url.origin), request));
+    if (res.ok) {
+      const out = canonical(res, url, md);
+      out.headers.set("Content-Location", md);
+      out.headers.append("Vary", "Accept");
+      return out;
+    }
+  }
+  // The HTML, or whatever the assets answer (a redirect from _redirects, the 404 page).
+  const html = await env.ASSETS.fetch(request);
+  const res = new Response(html.body, html);
+  res.headers.append("Vary", "Accept");
+  return res;
+}
+
+/** Whether an Accept header prefers Markdown to HTML: `text/markdown` with a weight
+ *  above zero and no lower than `text/html`'s. Claude Code sends
+ *  `text/markdown, text/html, *\/*`, a tie, which goes to Markdown; a browser never
+ *  names `text/markdown`, so it keeps getting HTML. */
+function prefersMarkdown(accept) {
+  const weight = (type) => {
+    for (const part of (accept ?? "").split(",")) {
+      const [range, ...params] = part.trim().toLowerCase().split(";");
+      if (range.trim() !== type) {
+        continue;
+      }
+      const q = params.map((p) => p.trim().match(/^q=([\d.]+)$/)).find(Boolean);
+      return q ? Number(q[1]) : 1;
+    }
+    return 0;
+  };
+  const md = weight("text/markdown");
+  return md > 0 && md >= weight("text/html");
+}
+
+/** A Markdown copy's response, with a `Link` naming its HTML page (the copy's path with a
+ *  trailing slash in place of `.md`) as canonical, so it isn't indexed as a second page. */
+function canonical(res, url, mdPath) {
+  const out = new Response(res.body, res);
+  if (res.ok) {
+    out.headers.set("Link", `<${url.origin}${mdPath.replace(/\.md$/, "/")}>; rel="canonical"`);
+  }
+  return out;
+}
 
 async function contact(request, env, url) {
   let form;

@@ -1,0 +1,17 @@
+{{- /* The page's Markdown copy (issue #66), offered to a person on the byline's line: a
+       Copy page menu with Copy as Markdown, to paste the page into Claude, and View as
+       Markdown. The <link rel="alternate"> in head.html says the same to a machine.
+       scripts/sync-docs.mjs writes the copy, so name it only once it's there.
+
+       It's a <details>, so it opens without JavaScript; View is a plain link, and Copy,
+       which needs the script (assets/js/docs-code.js), stays hidden until it runs. */ -}}
+{{- $md := printf "%s.md" (strings.TrimSuffix "/" .RelPermalink) -}}
+{{- if fileExists (path.Join "static" $md) -}}
+<details class="page-md" data-md="{{ $md }}">
+  <summary class="page-md-btn"><svg class="i-copy" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="8" width="13" height="13" rx="2"/><path d="M16 8V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h3"/></svg><svg class="i-check" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg><span>Copy page</span><svg class="i-caret" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6l4 4 4-4"/></svg></summary>
+  <div class="page-md-menu">
+    <button type="button" class="page-md-item" data-copy hidden><b>Copy as Markdown</b><span>To paste this page into Claude</span></button>
+    <a class="page-md-item" href="{{ $md }}" type="text/markdown"><b>View as Markdown</b><span>This page as plain text</span></a>
+  </div>
+</details>
+{{- end -}}

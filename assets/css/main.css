@@ -767,9 +767,41 @@ pre .muted { color: var(--muted); }
 .docs-sets a[aria-current="page"] { color: var(--ink); border-bottom-color: var(--ink); }
 .docs-index h1 { font-family: var(--serif); font-weight: 600; font-size: clamp(32px, 5vw, 44px); letter-spacing: -.02em; margin: 0 0 16px; }
 /* The release the docs document, under the title where a date or author would go. */
-.doc-byline { font-family: var(--sans); font-size: 16px; font-style: italic; color: var(--muted); margin: -4px 0 22px; }
+/* The byline's row: the release on the left, the page's Copy page menu on the right. */
+.doc-meta { display: flex; align-items: center; gap: 1rem; margin: 0 0 1.5rem; }
+.doc-byline { font-family: var(--sans); font-size: 16px; font-style: italic; color: var(--muted); }
+/* .doc-meta .doc-byline outranks .docs-body p, whose 14px margins would otherwise stand the row 56px tall. */
+.doc-meta .doc-byline { margin: 0; }
 .doc-byline a { color: inherit; text-decoration: underline; text-decoration-color: var(--line); text-underline-offset: 3px; }
 .doc-byline a:hover { color: var(--ink); text-decoration-color: currentColor; }
+/* Copy page (docs-markdown.html): a quiet button that opens a two-item menu under it. */
+.page-md { position: relative; margin-left: auto; flex: none; }
+.page-md-btn {
+  display: inline-flex; align-items: center; gap: 6px; padding: 5px 8px 5px 9px;
+  border: 1px solid var(--line); border-radius: var(--radius-sm); background: var(--card);
+  color: var(--muted); font-size: 13.5px; font-weight: 500; cursor: pointer; list-style: none; user-select: none;
+}
+.page-md-btn::-webkit-details-marker { display: none; }
+.page-md-btn:hover, .page-md[open] .page-md-btn { color: var(--ink); border-color: var(--line-strong); }
+.page-md-btn svg { width: 14px; height: 14px; }
+.page-md-btn .i-caret { width: 12px; height: 12px; margin-left: -1px; transition: transform .15s; }
+.page-md[open] .i-caret { transform: rotate(180deg); }
+.page-md .i-check, .page-md.copied .i-copy { display: none; }
+.page-md.copied .i-check { display: block; color: var(--ok); }
+.page-md-menu {
+  position: absolute; right: 0; top: calc(100% + 6px); z-index: 20; min-width: 15rem; padding: 4px;
+  background: var(--card); border: 1px solid var(--line); border-radius: var(--radius-sm);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, .08);
+}
+.page-md-item {
+  display: flex; flex-direction: column; gap: 2px; width: 100%; padding: 8px 10px; border: 0; border-radius: 5px;
+  background: none; color: var(--ink); font: inherit; text-align: left; text-decoration: none; cursor: pointer;
+}
+.page-md-item[hidden] { display: none; }
+.docs-body .page-md-item, .docs-index .page-md-item { color: var(--ink); text-decoration: none; }
+.page-md-item:hover, .page-md-item:focus-visible { background: var(--code-bg); }
+.page-md-item b { font-size: 14px; font-weight: 500; }
+.page-md-item span { font-size: 12.5px; color: var(--muted); }
 .docs-index-intro { color: var(--muted); font-size: 17px; line-height: 1.7; }
 .docs-index-intro p { margin: 0 0 14px; }
 .docs-index-intro a { color: var(--ink); text-decoration: underline; text-underline-offset: 2px; }
