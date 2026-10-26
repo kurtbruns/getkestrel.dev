@@ -720,8 +720,9 @@ pre .muted { color: var(--muted); }
 .docs-body hr { border: 0; border-top: 1px solid var(--line); margin: 32px 0; }
 
 /* inline code — a maroon name on a chip, as in Kestrel's Docs tab: it reads apart from the
-   sentence and from a link, and is never bold, even inside a bold lead-in. */
-.docs-body :not(pre) > code { color: var(--code-inline); background: var(--code-bg); border: 1px solid var(--line); border-radius: 4px; padding: 0.05em 0.35em; }
+   sentence and from a link, and is never bold, even inside a bold lead-in. A long one (a URL,
+   a one-line JSON error) breaks where it must rather than push a phone's page sideways. */
+.docs-body :not(pre) > code { color: var(--code-inline); background: var(--code-bg); border: 1px solid var(--line); border-radius: 4px; padding: 0.05em 0.35em; overflow-wrap: anywhere; }
 .docs-body strong code { font-weight: normal; }
 
 /* code blocks (layouts/_default/_markup/render-codeblock.html), as in Kestrel's Docs tab: the
@@ -790,7 +791,7 @@ pre .muted { color: var(--muted); }
 .doc-card-t { font-family: var(--serif); font-weight: 600; font-size: 1.1875rem; letter-spacing: -.01em; }
 .doc-card-go { color: var(--muted); font-family: var(--sans); font-weight: 400; transition: transform .12s; display: inline-block; }
 .doc-card:hover .doc-card-go { color: var(--ink); transform: translateX(3px); }
-.doc-card-d { color: var(--muted); font-size: 0.90625rem; line-height: 1.55; }
+.doc-card-d { color: var(--muted); font-size: 0.90625rem; line-height: 1.55; overflow-wrap: anywhere; } /* a blurb can quote a URL */
 
 @media (max-width: 1040px) {
   .docs { grid-template-columns: 1fr; gap: 0; padding-top: 0; max-width: none; }
