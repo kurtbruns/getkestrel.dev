@@ -6,7 +6,7 @@
 {{- $sets := slice -}}
 {{- with site.GetPage "/docs/publishing" }}{{ $sets = $sets | append . }}{{ end -}}
 {{- with site.GetPage "/docs" }}{{ $sets = $sets | append . }}{{ end -}}
-<p class="eyebrow">Kestrel docs</p>
+<p class="eyebrow">Kestrel docs{{ partial "docs-release.html" "Kestrel docs" }}</p>
 {{- if gt (len $sets) 1 }}
 <nav class="docs-sets" aria-label="Doc sets">
   {{- range $sets }}

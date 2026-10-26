@@ -757,6 +757,8 @@ pre .muted { color: var(--muted); }
 /* -------- /docs/ index -------- */
 .docs-index { max-width: 64rem; margin: 0 auto; padding: 3.25rem 1.5rem 6rem; }
 .docs-index > .eyebrow { margin-bottom: 12px; }
+.docs-index > .eyebrow a { color: inherit; text-decoration: none; }
+.docs-index > .eyebrow a:hover { color: var(--ink); }
 /* The two doc sets as tabs under the "Kestrel docs" eyebrow, as the app's Docs tab has them. */
 .docs-sets { display: flex; gap: 1.5rem; margin: 0 0 2rem; border-bottom: 1px solid var(--line); }
 .docs-sets a {
