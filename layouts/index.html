@@ -85,7 +85,7 @@
        Kestrel is built on an API, the app is one client of it, and Claude reaches
        the same one. A short sample conversation carries it, because the claim is
        more convincing shown than asserted. */ -}}
-{{- $connect := printf "%s/blob/main/docs/publishing/08-connect-claude.md" site.Params.repoApp -}}
+{{- $connect := printf "%s/blob/main/docs/publishing/connect-claude.md" site.Params.repoApp -}}
 {{- with site.GetPage "/docs/publishing/connect-claude" }}{{ $connect = .RelPermalink }}{{ end -}}
 <section class="section robots">
   <div class="wrap">
@@ -130,7 +130,7 @@
 </section>
 
 {{/* -------------------------------------------------------- ownership */}}
-{{- $yourList := printf "%s/blob/main/docs/publishing/01-your-list.md" site.Params.repoApp -}}
+{{- $yourList := printf "%s/blob/main/docs/publishing/your-list.md" site.Params.repoApp -}}
 {{- with site.GetPage "/docs/publishing/your-list" }}{{ $yourList = .RelPermalink }}{{ end -}}
 <section class="section">
   <div class="wrap">
@@ -229,7 +229,7 @@
 {{- $local := printf "%s#try-it-locally" site.Params.repoApp -}}
 {{- $guide := printf "%s/tree/main/docs" site.Params.repoApp -}}
 {{- with site.GetPage "/docs" }}{{ $guide = .RelPermalink }}{{ end -}}
-{{- $upgrade := printf "%s/blob/main/docs/guides/07-upgrade.md" site.Params.repoApp -}}
+{{- $upgrade := printf "%s/blob/main/docs/guides/upgrade.md" site.Params.repoApp -}}
 {{- with site.GetPage "/docs/upgrade" }}{{ $upgrade = .RelPermalink }}{{ end -}}
 <section class="section ways-b" id="get-started">
   <div class="wrap">

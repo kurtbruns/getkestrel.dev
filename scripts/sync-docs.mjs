@@ -12,8 +12,12 @@
  *     contents. Its H1 and intro head the /docs/ landing; each `##` heading is a
  *     section, with the paragraph under it as the section's blurb and a list of
  *     its pages, numbered when they are steps taken in order. Pages live in the
- *     section folders the README links (docs/get-started/02-deploy.md), and their
- *     slug is the file name without its NN- prefix, unique across sections.
+ *     section folders the README links (docs/get-started/deploy.md), and their
+ *     slug is the file name, unique across sections. Releases before the one
+ *     after v1.22.0 number the files (docs/get-started/02-deploy.md); the slug
+ *     drops that NN- prefix, so both namings give the same URLs. Order comes
+ *     only from the README's lists, never from a number in a file name, and a
+ *     file no README lists is never a page.
  *     From kestrel 1.10.0 the docs are two sets, each with a README like that:
  *     Self-hosting (docs/README.md) at /docs/, and Publishing
  *     (docs/publishing/README.md, its pages beside it) at /docs/publishing/. A
@@ -24,7 +28,7 @@
  * The kestrel docs carry no Hugo front matter and derive their title from the
  * first `# H1`. This adds a light front-matter shim (title from the H1, weight
  * for order, the section and step for the landing) and strips the now-duplicated
- * H1, and it points the pages' relative links (`02-deploy.md#check-it`) at the
+ * H1, and it points the pages' relative links (`deploy.md#check-it`) at the
  * site's URLs — without editing the source Markdown. This shim is why we ingest
  * with a script rather than a Hugo Modules mount: a mount would carry the raw
  * Markdown, not this transform.
@@ -50,6 +54,10 @@
  * If the source isn't present, this no-ops so the site still builds — just
  * without the /docs/ section. The Docs nav falls back to GitHub in that case
  * (see layouts/partials/header.html).
+ *
+ * If the source is present but the sync can't read the pages its READMEs list,
+ * it exits non-zero, naming what it expected (see checkSets), so CI and deploy
+ * fail instead of building a /docs/ with no pages.
  */
 import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync, rmSync } from "node:fs";
 import { homedir } from "node:os";
@@ -177,10 +185,16 @@ function syncFlat() {
 }
 
 // A page's path as its set's README links it: its section's folder, if the set
-// has them, then the file (get-started/02-deploy.md, or 03-name-your-publication.md
-// in Publishing). The slug drops the NN- prefix, and is unique across both sets.
-const PAGE_PATH = /^(?:[a-z0-9-]+\/)?\d{2}-([a-z0-9-]+)\.md$/;
-const slugOf = (path) => basename(path).match(/^\d{2}-(.+)\.md$/)[1];
+// has them, then the file (get-started/deploy.md, or name-your-publication.md in
+// Publishing). Releases up to v1.22.0 number the file (get-started/02-deploy.md);
+// the slug drops that optional NN- prefix, so both namings give the same slug, which
+// is unique across both sets.
+const PAGE_PATH = /^(?:[a-z0-9-]+\/)?(?:\d{2}-)?[a-z0-9-]+\.md$/;
+const slugOf = (path) => basename(path, ".md").replace(/^\d{2}-/, "");
+// A list item's link to a Markdown file in the set's own folder: what an index lists a
+// page by. One that isn't a PAGE_PATH fails the sync rather than being dropped quietly.
+// A set's README (a link to the other set's landing) isn't a page, and isn't flagged.
+const LOCAL_MD = /^(?![a-z][a-z0-9+.-]*:|\/|\.\.\/)(?!(?:.*\/)?README\.md$)[^#?]+\.md$/i;
 
 // The two sets of kestrel 1.10.0 and later, each with its own README: Self-hosting
 // (docs/README.md) is the /docs/ landing, and Publishing (docs/publishing/README.md)
@@ -207,13 +221,14 @@ function readIndex(md) {
     let m;
     if (!title && (m = line.match(/^#\s+(.+?)\s*$/))) { title = m[1]; continue; }
     if ((m = line.match(/^##\s+(.+?)\s*$/))) {
-      sections.push({ title: m[1], id: anchor(m[1]), blurb: [], numbered: false, pages: [] });
+      sections.push({ title: m[1], id: anchor(m[1]), blurb: [], numbered: false, pages: [], unread: [] });
       continue;
     }
     const item = line.match(/^\s*(\d+\.|[-*])\s+.*?\]\(([^)]+)\)/);
     if (cur && item) {
       cur.numbered = /\d/.test(item[1]);
       if (PAGE_PATH.test(item[2])) { cur.pages.push(item[2]); }
+      else if (LOCAL_MD.test(item[2])) { cur.unread.push(item[2]); }
       continue;
     }
     if (cur) {
@@ -226,10 +241,53 @@ function readIndex(md) {
   return { title, intro: text(intro), sections: sections.map((sec) => ({ ...sec, blurb: text(sec.blurb) })) };
 }
 
+/** Fail loudly when a set's README lists pages the sync can't make. Each of these
+ *  would otherwise build a /docs/ quietly short of pages (as the rename of kestrel's
+ *  docs files from NN-slug.md to slug.md did, when only the numbered names were read):
+ *    - a list item links a Markdown file in the set's folder that isn't a page path;
+ *    - a listed page's file is missing;
+ *    - a section that lists pages, or a whole set, ends up with none;
+ *    - two pages share a slug, so one would take the other's URL. */
+function checkSets(sets) {
+  const errors = [];
+  const slugs = new Map();
+  for (const set of sets) {
+    const readme = posix.join("docs", set.dir, "README.md");
+    for (const sec of set.index.sections) {
+      for (const link of sec.unread) {
+        errors.push(`${readme} lists ${link} under "${sec.title}", which isn't a page file name the sync reads (section/slug.md or section/NN-slug.md, lowercase).`);
+      }
+      const listed = sec.pages.length + sec.unread.length;
+      const kept = set.pages.filter((p) => p.section === sec).length;
+      if (listed && !kept) {
+        errors.push(`${readme}: section "${sec.title}" lists ${listed} page(s) but none was synced.`);
+      }
+    }
+    if (!set.pages.length) {
+      errors.push(`${readme} (${set.name}) gave no pages: expected the pages its sections list.`);
+    }
+    for (const { path, slug } of set.pages) {
+      if (!existsSync(join(DOCS_DIR, path))) {
+        errors.push(`${readme} lists ${path}, but docs/${path} doesn't exist.`);
+      }
+      if (slugs.has(slug)) {
+        errors.push(`docs/${path} and docs/${slugs.get(slug)} both have the slug "${slug}".`);
+      }
+      slugs.set(slug, path);
+    }
+  }
+  if (errors.length) {
+    for (const e of errors) { console.error(`[sync-docs] ${e}`); }
+    console.error(`[sync-docs] failed: ${errors.length} problem(s) reading the docs at ${DOCS_DIR}.`);
+    process.exit(1);
+  }
+}
+
 /** Point relative links to another guide page or a set's README at the site's
  *  URLs, keeping any anchor: Hugo's heading ids follow GitHub's, as the app's do.
  *  `urls` maps a file's path under docs/ to its URL; `from` is the linking file's
- *  folder under docs/, so `../get-started/04-ses.md` from Publishing resolves. */
+ *  folder under docs/, so `../get-started/ses.md` from Publishing resolves. A link to
+ *  a file no index lists (a stub kept under an old name, say) is left as it is. */
 function rewriteLinks(md, urls, from) {
   return md.replace(/\]\(([^)#\s:]+\.md)(#[^)]*)?\)/g, (whole, target, hash) => {
     const url = urls.get(posix.normalize(posix.join(from, target)));
@@ -243,7 +301,7 @@ function rewriteLinks(md, urls, from) {
 // section and, in a numbered section, its step.
 function syncSections() {
   // A page belongs to the set whose folder it's in. Self-hosting's folder is docs/
-  // itself, so a link there to publishing/01-your-list.md must not make that page
+  // itself, so a link there to publishing/your-list.md must not make that page
   // Self-hosting's too: it would be written twice, and take over the other's URL.
   const owner = (path) => SETS.filter((set) => !set.dir || path.startsWith(`${set.dir}/`)).at(-1);
   const sets = SETS.filter((set) => existsSync(join(DOCS_DIR, set.dir, "README.md"))).map((set) => {
@@ -256,6 +314,7 @@ function syncSections() {
       }).map((path, i) => ({ path, slug: slugOf(path), section: sec, step: sec.numbered ? i + 1 : 0 })));
     return { ...set, index, pages };
   });
+  checkSets(sets);
   // Every file a link can name, across both sets, by its path under docs/: its page's URL,
   // and its Markdown copy's (the URL without its trailing slash, plus .md).
   const urls = new Map();
