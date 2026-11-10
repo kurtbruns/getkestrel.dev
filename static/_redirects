@@ -40,3 +40,10 @@
 # guide's pages link to; the shorter /docs/troubleshooting/ is where a reader guesses it is.
 /docs/troubleshooting/ /docs/publishing/troubleshooting/ 301
 /docs/troubleshooting /docs/publishing/troubleshooting/ 301
+
+# Kestrel 1.23.0 removed the Notifications guide: notifications go only through SES, and the
+# new Set up alerts guide covers what the second channel was for, hearing when email can't
+# tell you. The Markdown copy (issue #66) goes to the new page's copy.
+/docs/notifications/ /docs/alerts/ 301
+/docs/notifications /docs/alerts/ 301
+/docs/notifications.md /docs/alerts.md 301
