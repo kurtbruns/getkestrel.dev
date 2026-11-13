@@ -35,7 +35,7 @@ Bump `.kestrel-version` with the [`refresh-from-kestrel`](.claude/skills/refresh
 
 ## The contact form
 
-`/contact/` (Hugo pages `content/contact.md` and `content/contact-sent.md`) posts to `/api/contact`, which `worker/index.js` handles: it checks Turnstile, then emails the message to the owner through the `send_email` binding. Every other page comes straight from the static assets. The Worker's header comment says how the routing and the form work.
+`/contact/` (Hugo pages `content/contact.md` and `content/contact-sent.md`) posts to `/api/contact`, which `worker/index.js` handles: it checks Turnstile, then emails the message to the owner through the `send_email` binding. The Worker also answers `/docs` requests, so one that prefers `text/markdown` gets the page's Markdown copy; every other page comes straight from the static assets. The Worker's header comment has the routing and the no-JavaScript flow.
 
 - **Secrets:** `TURNSTILE_SECRET` and `CONTACT_TO` (the destination address, kept out of this public repo), set with `npx wrangler secret put` from this repo. Locally they come from `.dev.vars` (copy `.dev.vars.example`, which carries Cloudflare's always-pass Turnstile test secret).
 - **The Turnstile site key** is public: `params.turnstileSiteKey` in `hugo.toml`, with the always-pass test key in `config/development/hugo.toml`.

@@ -14,7 +14,7 @@ Bump `.kestrel-version` only via the **`refresh-from-kestrel` skill**, never by 
 
 ## Before pushing
 
-Run `npm run docs:sync`, `npm run hugo:check`, and `hugo --minify`. CI runs the sync and the build on every pull request, against the Kestrel tag in `.kestrel-version`, and has no other checks.
+Run `npm run docs:sync`, `npm run hugo:check`, and `hugo --minify`. Locally the sync reads your kestrel checkout, and skips without one, so it can pass where CI fails: CI runs the sync and the build on pull requests to `main`, against the tag in `.kestrel-version`, and has no other checks.
 
 ## Merging
 
