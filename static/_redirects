@@ -47,3 +47,10 @@
 /docs/notifications/ /docs/alerts/ 301
 /docs/notifications /docs/alerts/ 301
 /docs/notifications.md /docs/alerts.md 301
+
+# Kestrel 1.25.0 renamed Publishing's Check your setup page to Get notified, and moved its
+# other checks to the pages they belong to (the test email to Write and send a post, subscribing
+# yourself to Share your subscribe link). The Markdown copy goes to the new page's copy.
+/docs/publishing/check-your-setup/ /docs/publishing/get-notified/ 301
+/docs/publishing/check-your-setup /docs/publishing/get-notified/ 301
+/docs/publishing/check-your-setup.md /docs/publishing/get-notified.md 301
