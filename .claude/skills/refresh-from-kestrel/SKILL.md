@@ -217,7 +217,6 @@ Slugs are the file names in `content/docs/`. Check `curl -s https://getkestrel.d
 ## Guardrails
 
 - **Scope of edits:** `.kestrel-version`, landing copy in `layouts/index.html` and `assets/llms-intro.md`, and `assets/img/*` screenshots. `content/docs/` and the generated files under `static/` are gitignored — never commit them. Don't touch CI/deploy or the sync/shots scripts as part of a bump.
-- **Do not rename `/docs/` → `/guides/`.** That is issue #15's separate, deliberate change; keep it out of a version bump.
 - **Flag follow-ups against a real issue** — find an existing one that fits, or open one — rather than inventing a number. (#19 is *more* screenshots on the landing, not stale ones; don't file staleness there.)
 - **When the changelog and the diff disagree, trust the diff** — and when a claim's truth is genuinely unclear, flag it for the human rather than guessing.
 
