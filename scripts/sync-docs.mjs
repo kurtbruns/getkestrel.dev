@@ -214,6 +214,10 @@ function readIndex(md) {
   const intro = [];
   const sections = [];
   let inFence = false;
+  // Whether the current section's list has begun. Its blurb ends there, at the first
+  // item, linked or not: an index may list a step with no page of its own, and that
+  // step is part of the list, not of the paragraph above it.
+  let listed = false;
   for (const line of md.split(/\r?\n/)) {
     if (/^\s*(```|~~~)/.test(line)) { inFence = !inFence; }
     if (inFence) { continue; }
@@ -222,8 +226,10 @@ function readIndex(md) {
     if (!title && (m = line.match(/^#\s+(.+?)\s*$/))) { title = m[1]; continue; }
     if ((m = line.match(/^##\s+(.+?)\s*$/))) {
       sections.push({ title: m[1], id: anchor(m[1]), blurb: [], numbered: false, pages: [], unread: [] });
+      listed = false;
       continue;
     }
+    if (cur && /^\s*(\d+\.|[-*])\s+/.test(line)) { listed = true; }
     const item = line.match(/^\s*(\d+\.|[-*])\s+.*?\]\(([^)]+)\)/);
     if (cur && item) {
       cur.numbered = /\d/.test(item[1]);
@@ -232,7 +238,7 @@ function readIndex(md) {
       continue;
     }
     if (cur) {
-      if (!cur.pages.length && (line.trim() || cur.blurb.length)) { cur.blurb.push(line); }
+      if (!listed && (line.trim() || cur.blurb.length)) { cur.blurb.push(line); }
     } else if (title) {
       intro.push(line);
     }
